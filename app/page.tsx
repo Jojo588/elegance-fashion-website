@@ -1,23 +1,118 @@
-export default function Page() {
+import Navbar from "@/components/Navbar";
+import HeroSection from "@/components/HeroSection";
+import ProductGrid from "@/components/ProductGrid";
+import Footer from "@/components/Footer";
+import { products } from "@/data/products";
+
+export const metadata = {
+  title: "Elegance Fashion - Discover Premium Dresses",
+  description: "Browse our beautiful collection of elegant dresses perfect for any occasion. Shop now and order via WhatsApp.",
+};
+
+export default function HomePage() {
+  const featuredProducts = products.filter((p) => p.isFeatured).slice(0, 6);
+  const newArrivals = products.filter((p) => p.isNew).slice(0, 6);
+  const bestSellers = products.filter((p) => p.isBestSeller).slice(0, 6);
+
   return (
-    <main className="relative flex min-h-screen items-center justify-center bg-[color:light-dark(#fff,#000)] text-[color:light-dark(#000,#fff)]">
-      <svg
-        aria-hidden="true"
-        className="size-20"
-        fill="none"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-        stroke="currentColor"
-        strokeWidth="0.5"
-      >
-        <path
-          d="M14.2 14.2H17V6.9375C17 4.76288 15.2371 3 13.0625 3H5.8V5.8M14.2 14.2V7.79063L7.79062 14.2H14.2ZM14.2 14.2V17H6.9375C4.76288 17 3 15.2371 3 13.0625V5.8H5.8M5.8 5.8V12.2313L12.2313 5.8H5.8Z"
-          strokeLinejoin="round"
+    <main className="bg-white">
+      {/* Navigation */}
+      <Navbar />
+
+      {/* Hero Section */}
+      <HeroSection />
+
+      {/* Featured Section */}
+      <section id="featured" className="bg-white">
+        <ProductGrid
+          title="Featured Collection"
+          subtitle="Handpicked pieces for the elegant woman"
+          showFilters={false}
+          initialFilter="featured"
         />
-      </svg>
-      <p className="absolute left-1/2 top-[calc(50%+56px)] -translate-x-1/2 whitespace-nowrap text-sm font-medium text-muted-foreground">
-        Your v0 generation will show here.
-      </p>
+      </section>
+
+      {/* Statistics Section */}
+      <section className="bg-gradient-to-r from-primary/5 to-accent/5 py-12 md:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
+                Premium
+              </div>
+              <p className="text-foreground text-lg">
+                High-quality fabrics and craftsmanship
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
+                Affordable
+              </div>
+              <p className="text-foreground text-lg">
+                Luxury doesn&apos;t have to break the bank
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
+                Instant
+              </div>
+              <p className="text-foreground text-lg">
+                Order via WhatsApp for quick service
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* New Arrivals Section */}
+      <section id="new-arrivals">
+        <ProductGrid
+          title="New Arrivals"
+          subtitle="Fresh styles added weekly"
+          showFilters={false}
+          initialFilter="new"
+        />
+      </section>
+
+      {/* Best Sellers Section */}
+      <section id="best-sellers" className="bg-muted/20">
+        <ProductGrid
+          title="Best Sellers"
+          subtitle="Customer favorites"
+          showFilters={false}
+          initialFilter="bestsellers"
+        />
+      </section>
+
+      {/* All Dresses Section */}
+      <section id="dresses" className="bg-white">
+        <ProductGrid
+          title="Browse All Dresses"
+          subtitle="Find your perfect dress"
+          showFilters={true}
+        />
+      </section>
+
+      {/* CTA Section */}
+      <section className="bg-gradient-to-r from-primary to-accent py-16 md:py-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+          <h2 className="text-3xl md:text-5xl font-bold text-white">
+            Ready to find your elegance?
+          </h2>
+          <p className="text-lg text-white/90 max-w-2xl mx-auto">
+            Browse our stunning collection and place your order directly through WhatsApp. We&apos;ll help you with everything you need.
+          </p>
+          <a
+            href="#dresses"
+            className="inline-block px-8 py-4 bg-white text-primary font-semibold rounded-lg hover:opacity-90 transition-smooth"
+          >
+            Shop Now
+          </a>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <Footer />
     </main>
-  )
+  );
 }
