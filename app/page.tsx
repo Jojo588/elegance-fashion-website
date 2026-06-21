@@ -104,7 +104,7 @@ export default function HomePage() {
           </p>
           <a
             href="#dresses"
-            className="inline-block px-8 py-4 bg-white text-primary font-semibold rounded-lg hover:opacity-90 transition-smooth"
+            className="inline-block px-8 py-4 bg-white text-primary font-semibold rounded-lg hover:opacity-90 transition-all duration-300 ease-in-out"
           >
             Shop Now
           </a>

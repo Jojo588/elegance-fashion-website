@@ -25,16 +25,16 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex gap-8 items-center">
-            <Link href="/" className="text-foreground hover:text-primary transition-smooth font-medium">
+            <Link href="/" className="text-foreground hover:text-primary transition-all duration-300 ease-in-out font-medium">
               Home
             </Link>
-            <Link href="/#dresses" className="text-foreground hover:text-primary transition-smooth font-medium">
+            <Link href="/#dresses" className="text-foreground hover:text-primary transition-all duration-300 ease-in-out font-medium">
               Shop
             </Link>
-            <Link href="/#new-arrivals" className="text-foreground hover:text-primary transition-smooth font-medium">
+            <Link href="/#new-arrivals" className="text-foreground hover:text-primary transition-all duration-300 ease-in-out font-medium">
               New Arrivals
             </Link>
-            <Link href="/#best-sellers" className="text-foreground hover:text-primary transition-smooth font-medium">
+            <Link href="/#best-sellers" className="text-foreground hover:text-primary transition-all duration-300 ease-in-out font-medium">
               Best Sellers
             </Link>
           </div>
@@ -42,7 +42,7 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
-            className="md:hidden p-2 rounded-lg hover:bg-muted transition-smooth"
+            className="md:hidden p-2 rounded-lg hover:bg-muted transition-all duration-300 ease-in-out"
           >
             {isOpen ? (
               <X className="w-6 h-6 text-foreground" />
@@ -57,28 +57,28 @@ export default function Navbar() {
           <div className="md:hidden pb-4 space-y-2 border-t border-border">
             <Link
               href="/"
-              className="block px-4 py-2 text-foreground hover:text-primary transition-smooth"
+              className="block px-4 py-2 text-foreground hover:text-primary transition-all duration-300 ease-in-out"
               onClick={() => setIsOpen(false)}
             >
               Home
             </Link>
             <Link
               href="/#dresses"
-              className="block px-4 py-2 text-foreground hover:text-primary transition-smooth"
+              className="block px-4 py-2 text-foreground hover:text-primary transition-all duration-300 ease-in-out"
               onClick={() => setIsOpen(false)}
             >
               Shop
             </Link>
             <Link
               href="/#new-arrivals"
-              className="block px-4 py-2 text-foreground hover:text-primary transition-smooth"
+              className="block px-4 py-2 text-foreground hover:text-primary transition-all duration-300 ease-in-out"
               onClick={() => setIsOpen(false)}
             >
               New Arrivals
             </Link>
             <Link
               href="/#best-sellers"
-              className="block px-4 py-2 text-foreground hover:text-primary transition-smooth"
+              className="block px-4 py-2 text-foreground hover:text-primary transition-all duration-300 ease-in-out"
               onClick={() => setIsOpen(false)}
             >
               Best Sellers

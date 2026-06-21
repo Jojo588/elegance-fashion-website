@@ -15,7 +15,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [isImageLoading, setIsImageLoading] = useState(true);
 
   return (
-    <div className="group bg-white rounded-lg overflow-hidden shadow-elegant hover:shadow-hover transition-smooth duration-500">
+    <div className="group bg-white rounded-lg overflow-hidden shadow-elegant hover:shadow-hover transition-all duration-500">
       {/* Image Container */}
       <div className="relative w-full aspect-[2/3] overflow-hidden bg-muted">
         {/* Badge */}
@@ -39,7 +39,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           src={product.image}
           alt={product.name}
           fill
-          className={`object-cover w-full h-full group-hover:scale-105 transition-smooth duration-500 ${
+          className={`object-cover w-full h-full group-hover:scale-105 transition-all duration-500 ${
             isImageLoading ? "blur-sm" : "blur-0"
           }`}
           onLoadingComplete={() => setIsImageLoading(false)}
@@ -49,10 +49,10 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Wishlist Button */}
         <button
           onClick={() => setIsWishlisted(!isWishlisted)}
-          className="absolute top-4 right-4 z-20 bg-white rounded-full p-2 shadow-elegant hover:shadow-hover transition-smooth"
+          className="absolute top-4 right-4 z-20 bg-white rounded-full p-2 shadow-elegant hover:shadow-hover transition-all duration-300 ease-in-out"
         >
           <Heart
-            className={`w-5 h-5 transition-smooth ${
+            className={`w-5 h-5 transition-all duration-300 ease-in-out ${
               isWishlisted
                 ? "fill-primary text-primary"
                 : "text-muted-foreground hover:text-primary"
@@ -61,7 +61,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </button>
 
         {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-smooth" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out" />
       </div>
 
       {/* Content */}
@@ -135,13 +135,13 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="flex gap-2 pt-2">
           <Link
             href={`/products/${product.id}`}
-            className="flex-1 px-3 py-2 bg-secondary text-primary rounded-lg font-medium text-center transition-smooth hover:bg-accent hover:text-foreground"
+            className="flex-1 px-3 py-2 bg-secondary text-primary rounded-lg font-medium text-center transition-all duration-300 ease-in-out hover:bg-accent hover:text-foreground"
           >
             View
           </Link>
           <Link
             href={`/purchase?id=${product.id}`}
-            className="flex-1 px-3 py-2 bg-primary text-white rounded-lg font-medium text-center transition-smooth hover:opacity-90 flex items-center justify-center gap-2"
+            className="flex-1 px-3 py-2 bg-primary text-white rounded-lg font-medium text-center transition-all duration-300 ease-in-out hover:opacity-90 flex items-center justify-center gap-2"
           >
             <ShoppingBag className="w-4 h-4" />
             <span>Buy</span>
