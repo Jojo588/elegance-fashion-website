@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search, Filter } from "lucide-react";
-import { Product, products } from "@/data/products";
+import { Product, getAllProducts, getFeaturedProducts, getNewArrivals, getBestSellers } from "@/lib/firestore";
 import ProductCard from "./ProductCard";
 
 interface ProductGridProps {
@@ -18,11 +18,40 @@ export default function ProductGrid({
   showFilters = true,
   initialFilter = "all",
 }: ProductGridProps) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [priceRange, setPriceRange] = useState([0, 500]);
   const [sortBy, setSortBy] = useState("newest");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  // Fetch products from Firebase
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        let data: Product[] = [];
+        
+        if (initialFilter === "featured") {
+          data = await getFeaturedProducts();
+        } else if (initialFilter === "new") {
+          data = await getNewArrivals();
+        } else if (initialFilter === "bestsellers") {
+          data = await getBestSellers();
+        } else {
+          data = await getAllProducts();
+        }
+        
+        setProducts(data);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [initialFilter]);
 
   // Get categories
   const categories = useMemo(() => {
@@ -46,15 +75,6 @@ export default function ProductGrid({
       return matchesSearch && matchesCategory && matchesPrice;
     });
 
-    // Apply initial filter
-    if (initialFilter === "featured") {
-      filtered = filtered.filter((p) => p.isFeatured);
-    } else if (initialFilter === "new") {
-      filtered = filtered.filter((p) => p.isNew);
-    } else if (initialFilter === "bestsellers") {
-      filtered = filtered.filter((p) => p.isBestSeller);
-    }
-
     // Sort
     filtered.sort((a, b) => {
       switch (sortBy) {
@@ -66,12 +86,12 @@ export default function ProductGrid({
           return a.name.localeCompare(b.name);
         case "newest":
         default:
-          return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
+          return (b.createdAt || 0) - (a.createdAt || 0);
       }
     });
 
     return filtered;
-  }, [searchQuery, selectedCategory, priceRange, sortBy, initialFilter]);
+  }, [products, searchQuery, selectedCategory, priceRange, sortBy]);
 
   return (
     <section className="w-full py-12 md:py-16 lg:py-20 bg-white">
@@ -173,24 +193,36 @@ export default function ProductGrid({
           </>
         )}
 
-        {/* Results Count */}
-        <p className="text-sm text-muted-foreground mb-6">
-          Showing {filteredProducts.length} dresses
-        </p>
+        {/* Loading State */}
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-foreground">Loading dresses...</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Results Count */}
+            <p className="text-sm text-muted-foreground mb-6">
+              Showing {filteredProducts.length} dresses
+            </p>
 
-        {/* Product Grid */}
-        {filteredProducts.length > 0 ? (
+            {/* Product Grid */}
+            {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-lg text-muted-foreground">
-              No dresses found. Try adjusting your filters.
-            </p>
-          </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-lg text-muted-foreground">
+                  No dresses found. Try adjusting your filters.
+                </p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>

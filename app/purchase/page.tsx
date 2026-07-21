@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, MessageCircle } from "lucide-react";
-import { products, Product } from "@/data/products";
+import { getProductById, addOrder, Product } from "@/lib/firestore";
 import { openWhatsAppChat, OrderDetails } from "@/lib/whatsapp";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -14,8 +14,8 @@ export default function PurchasePage() {
   const searchParams = useSearchParams();
   const productId = searchParams.get("id");
 
-  const product = products.find((p) => p.id === productId);
-
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -23,13 +23,42 @@ export default function PurchasePage() {
   const [customerLocation, setCustomerLocation] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Set default selections
+  // Fetch product from Firebase
   useEffect(() => {
-    if (product) {
-      setSelectedSize(product.sizes[0] || "");
-      setSelectedColor(product.colors[0] || "");
-    }
-  }, [product]);
+    const fetchProduct = async () => {
+      try {
+        if (productId) {
+          const data = await getProductById(productId);
+          setProduct(data);
+          if (data) {
+            setSelectedSize(data.sizes[0] || "");
+            setSelectedColor(data.colors[0] || "");
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch product:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [productId]);
+
+  if (loading) {
+    return (
+      <main className="bg-white">
+        <Navbar />
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-foreground">Loading product...</p>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
 
   if (!product) {
     return (
@@ -53,31 +82,53 @@ export default function PurchasePage() {
     );
   }
 
-  const handleOrderSubmit = () => {
-    if (!selectedSize || !selectedColor) {
+  const handleOrderSubmit = async () => {
+    if (!product || !selectedSize || !selectedColor) {
       alert("Please select size and color");
       return;
     }
 
     setIsSubmitting(true);
 
-    const orderDetails: OrderDetails = {
-      productId: product.id,
-      productName: product.name,
-      size: selectedSize,
-      color: selectedColor,
-      quantity,
-      price: product.price * quantity,
-      imageUrl: product.image,
-      customerName: customerName || undefined,
-      customerLocation: customerLocation || undefined,
-    };
+    try {
+      const totalPrice = product.price * quantity;
 
-    // Open WhatsApp with order details
-    setTimeout(() => {
+      // Save order to Firebase
+      await addOrder({
+        productId: product.id || "",
+        productName: product.name,
+        productImage: product.image,
+        size: selectedSize,
+        color: selectedColor,
+        quantity,
+        price: product.price,
+        totalPrice,
+        customerName: customerName || undefined,
+        customerLocation: customerLocation || undefined,
+        status: "pending",
+        whatsappSent: true,
+      });
+
+      const orderDetails: OrderDetails = {
+        productId: product.id || "",
+        productName: product.name,
+        size: selectedSize,
+        color: selectedColor,
+        quantity,
+        price: totalPrice,
+        imageUrl: product.image,
+        customerName: customerName || undefined,
+        customerLocation: customerLocation || undefined,
+      };
+
+      // Open WhatsApp with order details
       openWhatsAppChat(orderDetails);
+    } catch (error) {
+      console.error("Failed to save order:", error);
+      alert("Failed to process order. Please try again.");
+    } finally {
       setIsSubmitting(false);
-    }, 500);
+    }
   };
 
   const totalPrice = product.price * quantity;
