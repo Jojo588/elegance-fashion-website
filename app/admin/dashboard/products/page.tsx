@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from 'react';
 import { getAllProducts, Product } from '@/lib/firestore';
 import ProductForm from '@/components/admin/ProductForm';

@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from 'react';
 import { getAllProducts, getAllOrders, Product, Order } from '@/lib/firestore';
 import { Package, ShoppingCart, TrendingUp, Clock } from 'lucide-react';

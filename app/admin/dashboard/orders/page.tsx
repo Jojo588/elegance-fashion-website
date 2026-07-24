@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from 'react';
 import { getAllOrders, Order, updateOrderStatus } from '@/lib/firestore';
 import OrdersTable from '@/components/admin/OrdersTable';

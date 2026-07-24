@@ -1,10 +1,7 @@
+'use client';
+
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import AdminSidebar from '@/components/admin/AdminSidebar';
-
-export const metadata = {
-  title: 'Admin Dashboard - Elegance Fashion',
-  description: 'Manage products and orders',
-};
 
 export default function AdminLayout({
   children,

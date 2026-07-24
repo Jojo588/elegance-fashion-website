@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,10 +10,9 @@ import { openWhatsAppChat, OrderDetails } from "@/lib/whatsapp";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-export default function PurchasePage() {
+function PurchasePageContent() {
   const searchParams = useSearchParams();
-  const productId = searchParams.get("id");
-
+  
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState("");
@@ -27,6 +26,7 @@ export default function PurchasePage() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
+        const productId = searchParams.get("id");
         if (productId) {
           const data = await getProductById(productId);
           setProduct(data);
@@ -43,7 +43,7 @@ export default function PurchasePage() {
     };
 
     fetchProduct();
-  }, [productId]);
+  }, [searchParams]);
 
   if (loading) {
     return (
@@ -394,5 +394,26 @@ export default function PurchasePage() {
 
       <Footer />
     </main>
+  );
+}
+
+export default function PurchasePage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="bg-white">
+          <Navbar />
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-foreground">Loading...</p>
+            </div>
+          </div>
+          <Footer />
+        </main>
+      }
+    >
+      <PurchasePageContent />
+    </Suspense>
   );
 }
