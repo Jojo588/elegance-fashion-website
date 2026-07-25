@@ -19,6 +19,8 @@ export default function ProductForm({
 }: ProductFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState(initialProduct?.image || '');
   const [formData, setFormData] = useState({
@@ -59,19 +61,24 @@ export default function ProductForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
+    setUploadProgress(0);
 
     try {
       let imageUrl = initialProduct?.image || '';
 
       // Upload image if new one is selected
       if (imageFile) {
+        setUploadProgress(25);
         const storageRef = ref(
           storage,
           `products/${Date.now()}-${imageFile.name}`
         );
         await uploadBytes(storageRef, imageFile);
+        setUploadProgress(75);
         imageUrl = await getDownloadURL(storageRef);
+        setUploadProgress(90);
       }
 
       const productData = {
@@ -81,16 +88,22 @@ export default function ProductForm({
 
       if (initialProduct?.id) {
         await updateProduct(initialProduct.id, productData);
+        setSuccess('Product updated successfully!');
       } else {
         await addProduct({
           ...productData,
           images: [imageUrl],
         });
+        setSuccess('Product added successfully!');
       }
 
-      onSuccess();
+      setUploadProgress(100);
+      setTimeout(() => {
+        onSuccess();
+      }, 500);
     } catch (err: any) {
       setError(err.message || 'Failed to save product');
+      setUploadProgress(0);
     } finally {
       setLoading(false);
     }
@@ -239,10 +252,32 @@ export default function ProductForm({
             </label>
           </div>
 
+          {/* Success */}
+          {success && (
+            <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm text-green-600">{success}</p>
+            </div>
+          )}
+
           {/* Error */}
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
+
+          {/* Upload Progress */}
+          {loading && uploadProgress > 0 && uploadProgress < 100 && (
+            <div className="space-y-2">
+              <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-primary h-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground text-center">
+                {uploadProgress}% - {uploadProgress < 50 ? 'Uploading image...' : 'Saving product...'}
+              </p>
             </div>
           )}
 
@@ -251,7 +286,8 @@ export default function ProductForm({
             <button
               type="button"
               onClick={onClose}
-              className="btn-secondary flex-1"
+              disabled={loading}
+              className="btn-secondary flex-1 disabled:opacity-50"
             >
               Cancel
             </button>
@@ -260,7 +296,7 @@ export default function ProductForm({
               disabled={loading}
               className="btn-primary flex-1 disabled:opacity-50"
             >
-              {loading ? 'Saving...' : initialProduct ? 'Update' : 'Add'} Product
+              {loading ? `Saving... ${uploadProgress}%` : initialProduct ? 'Update' : 'Add'} Product
             </button>
           </div>
         </form>
