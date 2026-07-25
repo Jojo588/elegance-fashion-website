@@ -87,36 +87,59 @@ export default function ProductForm({
 
       // Upload image if new one is selected
       if (imageFile) {
-        console.log('[v0] Uploading image to Firebase Storage:', imageFile.name);
+        console.log('[v0] ===== IMAGE UPLOAD START =====');
+        console.log('[v0] File name:', imageFile.name);
+        console.log('[v0] File size:', imageFile.size, 'bytes');
+        console.log('[v0] File type:', imageFile.type);
+        console.log('[v0] Storage object:', typeof storage, storage ? 'defined' : 'undefined');
         
         if (!storage) {
-          throw new Error('Firebase Storage is not initialized. Please check your Firebase configuration.');
+          console.error('[v0] Storage is not initialized');
+          throw new Error('Firebase Storage is not initialized. Make sure Firebase environment variables are set.');
         }
         
         setUploadProgress(25);
-        const storagePath = `products/${Date.now()}-${imageFile.name}`;
-        console.log('[v0] Uploading to path:', storagePath);
+        const timestamp = Date.now();
+        const storagePath = `products/${timestamp}-${imageFile.name}`;
+        console.log('[v0] Storage path:', storagePath);
         
         try {
+          console.log('[v0] Step 1: Creating storage reference...');
           const storageRef = ref(storage, storagePath);
-          console.log('[v0] Storage reference created, uploading...');
+          console.log('[v0] Step 2: Storage ref created successfully, fullPath:', storageRef.fullPath);
           
-          // Add timeout for upload
-          const uploadPromise = uploadBytes(storageRef, imageFile);
-          const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Image upload timeout - taking too long')), 30000)
+          console.log('[v0] Step 3: Starting uploadBytes...');
+          setUploadProgress(30);
+          
+          const uploadTask = uploadBytes(storageRef, imageFile);
+          
+          // Add detailed promise handling
+          uploadTask.then(
+            (snapshot) => {
+              console.log('[v0] Step 4a: Upload completed! Snapshot:', snapshot);
+            },
+            (error) => {
+              console.error('[v0] Step 4b: Upload error in promise:', error);
+            }
           );
           
-          await Promise.race([uploadPromise, timeoutPromise]);
-          console.log('[v0] Image uploaded successfully');
+          console.log('[v0] Step 4: Awaiting upload...');
+          const result = await uploadTask;
+          console.log('[v0] Step 5: Upload completed successfully');
           setUploadProgress(75);
           
+          console.log('[v0] Step 6: Getting download URL...');
           imageUrl = await getDownloadURL(storageRef);
-          console.log('[v0] Image URL obtained:', imageUrl.substring(0, 50) + '...');
+          console.log('[v0] Step 7: Download URL obtained:', imageUrl.substring(0, 60));
           setUploadProgress(90);
+          console.log('[v0] ===== IMAGE UPLOAD SUCCESS =====');
         } catch (uploadErr: any) {
-          console.error('[v0] Image upload failed:', uploadErr);
-          throw new Error(`Image upload failed: ${uploadErr.message}`);
+          console.error('[v0] ===== IMAGE UPLOAD FAILED =====');
+          console.error('[v0] Error code:', uploadErr.code);
+          console.error('[v0] Error message:', uploadErr.message);
+          console.error('[v0] Error name:', uploadErr.name);
+          console.error('[v0] Full error object:', uploadErr);
+          throw new Error(`Image upload failed (${uploadErr.code}): ${uploadErr.message}`);
         }
       }
 
