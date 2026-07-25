@@ -66,18 +66,22 @@ export default function ProductForm({
     setUploadProgress(0);
 
     try {
+      console.log('[v0] Form submission started');
       let imageUrl = initialProduct?.image || '';
 
       // Upload image if new one is selected
       if (imageFile) {
+        console.log('[v0] Uploading image to Firebase Storage:', imageFile.name);
         setUploadProgress(25);
         const storageRef = ref(
           storage,
           `products/${Date.now()}-${imageFile.name}`
         );
         await uploadBytes(storageRef, imageFile);
+        console.log('[v0] Image uploaded, getting download URL...');
         setUploadProgress(75);
         imageUrl = await getDownloadURL(storageRef);
+        console.log('[v0] Image URL obtained:', imageUrl.substring(0, 50) + '...');
         setUploadProgress(90);
       }
 
@@ -87,13 +91,17 @@ export default function ProductForm({
       };
 
       if (initialProduct?.id) {
+        console.log('[v0] Updating existing product:', initialProduct.id);
         await updateProduct(initialProduct.id, productData);
+        console.log('[v0] Product update successful');
         setSuccess('Product updated successfully!');
       } else {
+        console.log('[v0] Adding new product:', formData.name);
         await addProduct({
           ...productData,
           images: [imageUrl],
         });
+        console.log('[v0] Product added successful');
         setSuccess('Product added successfully!');
       }
 
@@ -102,6 +110,7 @@ export default function ProductForm({
         onSuccess();
       }, 500);
     } catch (err: any) {
+      console.error('[v0] Error in product form submission:', err);
       setError(err.message || 'Failed to save product');
       setUploadProgress(0);
     } finally {

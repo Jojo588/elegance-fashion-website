@@ -121,26 +121,47 @@ export const getBestSellers = async (limitCount = 6): Promise<Product[]> => {
 
 // Add product
 export const addProduct = async (product: Omit<Product, 'id'>): Promise<string> => {
-  const docRef = await addDoc(collection(db, 'products'), {
-    ...product,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  });
-  return docRef.id;
+  try {
+    console.log('[v0] Adding product to Firebase:', product.name);
+    const docRef = await addDoc(collection(db, 'products'), {
+      ...product,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    });
+    console.log('[v0] Product saved successfully with ID:', docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error('[v0] Error adding product:', error);
+    throw error;
+  }
 };
 
 // Update product
 export const updateProduct = async (productId: string, product: Partial<Product>): Promise<void> => {
-  const docRef = doc(db, 'products', productId);
-  await updateDoc(docRef, {
-    ...product,
-    updatedAt: Date.now(),
-  });
+  try {
+    console.log('[v0] Updating product:', productId);
+    const docRef = doc(db, 'products', productId);
+    await updateDoc(docRef, {
+      ...product,
+      updatedAt: Date.now(),
+    });
+    console.log('[v0] Product updated successfully:', productId);
+  } catch (error) {
+    console.error('[v0] Error updating product:', error);
+    throw error;
+  }
 };
 
 // Delete product
 export const deleteProduct = async (productId: string): Promise<void> => {
-  await deleteDoc(doc(db, 'products', productId));
+  try {
+    console.log('[v0] Deleting product:', productId);
+    await deleteDoc(doc(db, 'products', productId));
+    console.log('[v0] Product deleted successfully:', productId);
+  } catch (error) {
+    console.error('[v0] Error deleting product:', error);
+    throw error;
+  }
 };
 
 // Add order
