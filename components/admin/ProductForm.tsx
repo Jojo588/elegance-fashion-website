@@ -39,10 +39,17 @@ export default function ProductForm({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
+    let finalValue: any = value;
+    
+    if (type === 'checkbox') {
+      finalValue = (e.target as HTMLInputElement).checked;
+    } else if (type === 'number') {
+      finalValue = parseFloat(value) || 0;
+    }
+    
     setFormData((prev) => ({
       ...prev,
-      [name]:
-        type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
+      [name]: finalValue,
     }));
   };
 
@@ -67,7 +74,21 @@ export default function ProductForm({
 
     try {
       console.log('[v0] Form submission started');
+      
+      // Validation: Check required fields
+      if (!formData.name.trim()) {
+        throw new Error('Product name is required');
+      }
+      if (formData.price <= 0) {
+        throw new Error('Price must be greater than 0');
+      }
+      
       let imageUrl = initialProduct?.image || '';
+
+      // For new products, image is required
+      if (!initialProduct?.id && !imageFile && !imageUrl) {
+        throw new Error('Product image is required for new products');
+      }
 
       // Upload image if new one is selected
       if (imageFile) {
@@ -77,12 +98,17 @@ export default function ProductForm({
           storage,
           `products/${Date.now()}-${imageFile.name}`
         );
+        console.log('[v0] Uploading to path:', `products/${Date.now()}-${imageFile.name}`);
         await uploadBytes(storageRef, imageFile);
-        console.log('[v0] Image uploaded, getting download URL...');
+        console.log('[v0] Image uploaded successfully');
         setUploadProgress(75);
         imageUrl = await getDownloadURL(storageRef);
         console.log('[v0] Image URL obtained:', imageUrl.substring(0, 50) + '...');
         setUploadProgress(90);
+      }
+
+      if (!imageUrl) {
+        throw new Error('Failed to upload image or get image URL');
       }
 
       const productData = {
@@ -97,20 +123,25 @@ export default function ProductForm({
         setSuccess('Product updated successfully!');
       } else {
         console.log('[v0] Adding new product:', formData.name);
-        await addProduct({
+        const newProductId = await addProduct({
           ...productData,
           images: [imageUrl],
         });
-        console.log('[v0] Product added successful');
+        console.log('[v0] Product added successfully with ID:', newProductId);
         setSuccess('Product added successfully!');
       }
 
       setUploadProgress(100);
+      console.log('[v0] Product save completed successfully');
+      
+      // Wait for success message to show, then close
       setTimeout(() => {
+        console.log('[v0] Calling onSuccess callback');
         onSuccess();
-      }, 500);
+      }, 800);
     } catch (err: any) {
       console.error('[v0] Error in product form submission:', err);
+      console.error('[v0] Error details:', err.message);
       setError(err.message || 'Failed to save product');
       setUploadProgress(0);
     } finally {
