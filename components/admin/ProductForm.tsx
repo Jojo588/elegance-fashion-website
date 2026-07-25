@@ -85,30 +85,45 @@ export default function ProductForm({
       
       let imageUrl = initialProduct?.image || '';
 
-      // For new products, image is required
-      if (!initialProduct?.id && !imageFile && !imageUrl) {
-        throw new Error('Product image is required for new products');
-      }
-
       // Upload image if new one is selected
       if (imageFile) {
         console.log('[v0] Uploading image to Firebase Storage:', imageFile.name);
+        
+        if (!storage) {
+          throw new Error('Firebase Storage is not initialized. Please check your Firebase configuration.');
+        }
+        
         setUploadProgress(25);
-        const storageRef = ref(
-          storage,
-          `products/${Date.now()}-${imageFile.name}`
-        );
-        console.log('[v0] Uploading to path:', `products/${Date.now()}-${imageFile.name}`);
-        await uploadBytes(storageRef, imageFile);
-        console.log('[v0] Image uploaded successfully');
-        setUploadProgress(75);
-        imageUrl = await getDownloadURL(storageRef);
-        console.log('[v0] Image URL obtained:', imageUrl.substring(0, 50) + '...');
-        setUploadProgress(90);
+        const storagePath = `products/${Date.now()}-${imageFile.name}`;
+        console.log('[v0] Uploading to path:', storagePath);
+        
+        try {
+          const storageRef = ref(storage, storagePath);
+          console.log('[v0] Storage reference created, uploading...');
+          
+          // Add timeout for upload
+          const uploadPromise = uploadBytes(storageRef, imageFile);
+          const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Image upload timeout - taking too long')), 30000)
+          );
+          
+          await Promise.race([uploadPromise, timeoutPromise]);
+          console.log('[v0] Image uploaded successfully');
+          setUploadProgress(75);
+          
+          imageUrl = await getDownloadURL(storageRef);
+          console.log('[v0] Image URL obtained:', imageUrl.substring(0, 50) + '...');
+          setUploadProgress(90);
+        } catch (uploadErr: any) {
+          console.error('[v0] Image upload failed:', uploadErr);
+          throw new Error(`Image upload failed: ${uploadErr.message}`);
+        }
       }
 
+      // Use placeholder image if no image provided
       if (!imageUrl) {
-        throw new Error('Failed to upload image or get image URL');
+        imageUrl = 'https://via.placeholder.com/400x500?text=' + encodeURIComponent(formData.name);
+        console.log('[v0] Using placeholder image:', imageUrl);
       }
 
       const productData = {

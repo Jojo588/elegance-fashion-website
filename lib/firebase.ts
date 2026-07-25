@@ -22,24 +22,21 @@ let storage: any = null;
 
 // Only initialize Firebase if all environment variables are present
 if (isFirebaseConfigured) {
-  if (getApps().length === 0) {
-    app = initializeApp(firebaseConfig);
-  } else {
-    app = getApps()[0];
+  try {
+    if (getApps().length === 0) {
+      app = initializeApp(firebaseConfig);
+    } else {
+      app = getApps()[0];
+    }
+    
+    auth = getAuth(app);
+    db = getFirestore(app);
+    storage = getStorage(app);
+  } catch (error) {
+    console.error('[v0] Firebase initialization error:', error);
   }
-  
-  auth = getAuth(app);
-  db = getFirestore(app);
-  storage = getStorage(app);
 } else {
-  // Create dummy objects for build time
-  if (typeof window === 'undefined') {
-    // Server-side: create placeholder objects
-    auth = {};
-    db = {};
-    storage = {};
-    app = {};
-  }
+  console.warn('[v0] Firebase is not properly configured. Missing environment variables.');
 }
 
 export { auth, db, storage };
