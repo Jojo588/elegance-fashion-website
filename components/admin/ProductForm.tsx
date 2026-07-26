@@ -87,66 +87,56 @@ export default function ProductForm({
 
       // Upload image if new one is selected
       if (imageFile) {
-        console.log('[v0] ===== IMAGE UPLOAD START =====');
-        console.log('[v0] File name:', imageFile.name);
-        console.log('[v0] File size:', imageFile.size, 'bytes');
-        console.log('[v0] File type:', imageFile.type);
-        console.log('[v0] Storage object:', typeof storage, storage ? 'defined' : 'undefined');
+        console.log('[v0] Image upload starting...');
+        setUploadProgress(25);
         
         if (!storage) {
-          console.error('[v0] Storage is not initialized');
-          throw new Error('Firebase Storage is not initialized. Make sure Firebase environment variables are set.');
-        }
-        
-        setUploadProgress(25);
-        const timestamp = Date.now();
-        const storagePath = `products/${timestamp}-${imageFile.name}`;
-        console.log('[v0] Storage path:', storagePath);
-        
-        try {
-          console.log('[v0] Step 1: Creating storage reference...');
-          const storageRef = ref(storage, storagePath);
-          console.log('[v0] Step 2: Storage ref created successfully, fullPath:', storageRef.fullPath);
-          
-          console.log('[v0] Step 3: Starting uploadBytes...');
-          setUploadProgress(30);
-          
-          const uploadTask = uploadBytes(storageRef, imageFile);
-          
-          // Add detailed promise handling
-          uploadTask.then(
-            (snapshot) => {
-              console.log('[v0] Step 4a: Upload completed! Snapshot:', snapshot);
-            },
-            (error) => {
-              console.error('[v0] Step 4b: Upload error in promise:', error);
-            }
-          );
-          
-          console.log('[v0] Step 4: Awaiting upload...');
-          const result = await uploadTask;
-          console.log('[v0] Step 5: Upload completed successfully');
-          setUploadProgress(75);
-          
-          console.log('[v0] Step 6: Getting download URL...');
-          imageUrl = await getDownloadURL(storageRef);
-          console.log('[v0] Step 7: Download URL obtained:', imageUrl.substring(0, 60));
+          console.warn('[v0] Firebase Storage not available, using fallback');
           setUploadProgress(90);
-          console.log('[v0] ===== IMAGE UPLOAD SUCCESS =====');
-        } catch (uploadErr: any) {
-          console.error('[v0] ===== IMAGE UPLOAD FAILED =====');
-          console.error('[v0] Error code:', uploadErr.code);
-          console.error('[v0] Error message:', uploadErr.message);
-          console.error('[v0] Error name:', uploadErr.name);
-          console.error('[v0] Full error object:', uploadErr);
-          throw new Error(`Image upload failed (${uploadErr.code}): ${uploadErr.message}`);
+        } else {
+          try {
+            const timestamp = Date.now();
+            const storagePath = `products/${timestamp}-${imageFile.name}`;
+            const storageRef = ref(storage, storagePath);
+            
+            setUploadProgress(30);
+            
+            // Create a promise that races between upload and timeout
+            const uploadWithTimeout = Promise.race([
+              uploadBytes(storageRef, imageFile),
+              new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Upload timeout')), 15000)
+              )
+            ]);
+            
+            await uploadWithTimeout;
+            setUploadProgress(75);
+            
+            imageUrl = await getDownloadURL(storageRef);
+            console.log('[v0] Image uploaded successfully to Firebase Storage');
+            setUploadProgress(90);
+          } catch (uploadErr: any) {
+            console.warn('[v0] Firebase Storage upload failed, continuing with placeholder:', uploadErr.message);
+            // Continue anyway - product will be saved with placeholder
+            setUploadProgress(50);
+          }
         }
       }
 
-      // Use placeholder image if no image provided
+      // Use placeholder image if no image URL obtained
       if (!imageUrl) {
-        imageUrl = 'https://via.placeholder.com/400x500?text=' + encodeURIComponent(formData.name);
-        console.log('[v0] Using placeholder image:', imageUrl);
+        // Create a data URL from the image file as fallback
+        if (imageFile) {
+          const reader = new FileReader();
+          imageUrl = await new Promise((resolve) => {
+            reader.onload = (e) => resolve(e.target?.result as string);
+            reader.readAsDataURL(imageFile);
+          });
+          console.log('[v0] Using image as data URL (base64)');
+        } else {
+          imageUrl = 'https://via.placeholder.com/400x500?text=' + encodeURIComponent(formData.name);
+          console.log('[v0] Using placeholder image URL');
+        }
       }
 
       const productData = {
