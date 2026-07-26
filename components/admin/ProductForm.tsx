@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import { addProduct, updateProduct, Product } from '@/lib/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '@/lib/firebase';
 import { X } from 'lucide-react';
 
 interface ProductFormProps {
@@ -85,58 +83,25 @@ export default function ProductForm({
       
       let imageUrl = initialProduct?.image || '';
 
-      // Upload image if new one is selected
+      // Process image - convert to data URL
       if (imageFile) {
-        console.log('[v0] Image upload starting...');
-        setUploadProgress(25);
-        
-        if (!storage) {
-          console.warn('[v0] Firebase Storage not available, using fallback');
-          setUploadProgress(90);
-        } else {
-          try {
-            const timestamp = Date.now();
-            const storagePath = `products/${timestamp}-${imageFile.name}`;
-            const storageRef = ref(storage, storagePath);
-            
-            setUploadProgress(30);
-            
-            // Create a promise that races between upload and timeout
-            const uploadWithTimeout = Promise.race([
-              uploadBytes(storageRef, imageFile),
-              new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Upload timeout')), 15000)
-              )
-            ]);
-            
-            await uploadWithTimeout;
-            setUploadProgress(75);
-            
-            imageUrl = await getDownloadURL(storageRef);
-            console.log('[v0] Image uploaded successfully to Firebase Storage');
-            setUploadProgress(90);
-          } catch (uploadErr: any) {
-            console.warn('[v0] Firebase Storage upload failed, continuing with placeholder:', uploadErr.message);
-            // Continue anyway - product will be saved with placeholder
-            setUploadProgress(50);
-          }
-        }
-      }
-
-      // Use placeholder image if no image URL obtained
-      if (!imageUrl) {
-        // Create a data URL from the image file as fallback
-        if (imageFile) {
+        console.log('[v0] Converting image to base64...');
+        setUploadProgress(50);
+        imageUrl = await new Promise<string>((resolve) => {
           const reader = new FileReader();
-          imageUrl = await new Promise((resolve) => {
-            reader.onload = (e) => resolve(e.target?.result as string);
-            reader.readAsDataURL(imageFile);
-          });
-          console.log('[v0] Using image as data URL (base64)');
-        } else {
-          imageUrl = 'https://via.placeholder.com/400x500?text=' + encodeURIComponent(formData.name);
-          console.log('[v0] Using placeholder image URL');
-        }
+          reader.onload = (e) => {
+            const result = e.target?.result as string;
+            console.log('[v0] Image converted to base64');
+            resolve(result);
+          };
+          reader.readAsDataURL(imageFile);
+        });
+        setUploadProgress(90);
+      } else if (!imageUrl) {
+        // Use placeholder if no image
+        imageUrl = 'https://via.placeholder.com/400x500?text=' + encodeURIComponent(formData.name);
+        console.log('[v0] Using placeholder image');
+        setUploadProgress(90);
       }
 
       const productData = {
