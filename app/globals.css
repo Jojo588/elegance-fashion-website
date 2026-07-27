@@ -188,15 +188,15 @@
   }
 
   .btn-primary {
-    @apply px-6 py-3 bg-primary text-white rounded-lg font-medium transition-smooth hover:opacity-90 active:scale-95;
+    @apply px-6 py-3 bg-primary text-white rounded-lg font-medium transition-all duration-300 ease-in-out hover:opacity-90 active:scale-95;
   }
 
   .btn-secondary {
-    @apply px-6 py-3 bg-secondary text-primary rounded-lg font-medium transition-smooth hover:bg-accent hover:text-foreground;
+    @apply px-6 py-3 bg-secondary text-primary rounded-lg font-medium transition-all duration-300 ease-in-out hover:bg-accent hover:text-foreground;
   }
 
   .btn-outline {
-    @apply px-6 py-3 border-2 border-primary text-primary rounded-lg font-medium transition-smooth hover:bg-primary hover:text-white;
+    @apply px-6 py-3 border-2 border-primary text-primary rounded-lg font-medium transition-all duration-300 ease-in-out hover:bg-primary hover:text-white;
   }
 
   .text-balance {
