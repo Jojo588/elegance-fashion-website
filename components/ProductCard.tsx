@@ -134,13 +134,13 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Action Buttons */}
         <div className="flex gap-2 pt-2">
           <Link
-            href={`/products/${product.id}`}
+            href={`/product-view/${product.id}`}
             className="flex-1 px-3 py-2 bg-secondary text-primary rounded-lg font-medium text-center transition-all duration-300 ease-in-out hover:bg-accent hover:text-foreground"
           >
             View
           </Link>
           <Link
-            href={`/purchase?id=${product.id}`}
+            href={`/purchase-confirm/${product.id}`}
             className="flex-1 px-3 py-2 bg-primary text-white rounded-lg font-medium text-center transition-all duration-300 ease-in-out hover:opacity-90 flex items-center justify-center gap-2"
           >
             <ShoppingBag className="w-4 h-4" />
