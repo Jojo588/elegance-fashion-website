@@ -55,59 +55,47 @@ export interface Order {
 // Get all products
 export const getAllProducts = async (): Promise<Product[]> => {
   try {
-    if (!db || typeof db !== 'object' || !db._key) {
-      console.log('[v0] Reading products from localStorage fallback');
-      const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-      return products as Product[];
-    }
-    
+    console.log('[v0] Fetching all products from Firestore');
     const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
+    const products = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     })) as Product[];
+    console.log('[v0] Retrieved', products.length, 'products from Firestore');
+    return products;
   } catch (error) {
-    console.warn('[v0] Error reading from Firestore, using localStorage:', error);
-    const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-    return products as Product[];
+    console.error('[v0] Error fetching products from Firestore:', error);
+    throw error;
   }
 };
 
 // Get product by ID
 export const getProductById = async (productId: string): Promise<Product | null> => {
   try {
-    if (!db || typeof db !== 'object' || !db._key) {
-      console.log('[v0] Reading product from localStorage:', productId);
-      const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-      return products.find((p: Product) => p.id === productId) || null;
-    }
-    
+    console.log('[v0] Fetching product:', productId);
     const docRef = doc(db, 'products', productId);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      return {
+      const product = {
         id: docSnap.id,
         ...docSnap.data(),
       } as Product;
+      console.log('[v0] Product found:', productId);
+      return product;
     }
+    console.log('[v0] Product not found:', productId);
     return null;
   } catch (error) {
-    console.warn('[v0] Error reading product from Firestore, checking localStorage:', error);
-    const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-    return products.find((p: Product) => p.id === productId) || null;
+    console.error('[v0] Error fetching product:', error);
+    throw error;
   }
 };
 
 // Get featured products
 export const getFeaturedProducts = async (limitCount = 6): Promise<Product[]> => {
   try {
-    if (!db || typeof db !== 'object' || !db._key) {
-      console.log('[v0] Reading featured products from localStorage');
-      const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-      return products.filter((p: Product) => p.isFeatured).slice(0, limitCount);
-    }
-    
+    console.log('[v0] Fetching featured products');
     const constraints: QueryConstraint[] = [
       where('isFeatured', '==', true),
       orderBy('createdAt', 'desc'),
@@ -115,26 +103,22 @@ export const getFeaturedProducts = async (limitCount = 6): Promise<Product[]> =>
     ];
     const q = query(collection(db, 'products'), ...constraints);
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
+    const products = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     })) as Product[];
+    console.log('[v0] Retrieved', products.length, 'featured products');
+    return products;
   } catch (error) {
-    console.warn('[v0] Error reading featured products, using localStorage:', error);
-    const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-    return products.filter((p: Product) => p.isFeatured).slice(0, limitCount);
+    console.error('[v0] Error fetching featured products:', error);
+    throw error;
   }
 };
 
 // Get new arrivals
 export const getNewArrivals = async (limitCount = 6): Promise<Product[]> => {
   try {
-    if (!db || typeof db !== 'object' || !db._key) {
-      console.log('[v0] Reading new arrivals from localStorage');
-      const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-      return products.filter((p: Product) => p.isNew).slice(0, limitCount);
-    }
-    
+    console.log('[v0] Fetching new arrivals');
     const constraints: QueryConstraint[] = [
       where('isNew', '==', true),
       orderBy('createdAt', 'desc'),
@@ -142,26 +126,22 @@ export const getNewArrivals = async (limitCount = 6): Promise<Product[]> => {
     ];
     const q = query(collection(db, 'products'), ...constraints);
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
+    const products = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     })) as Product[];
+    console.log('[v0] Retrieved', products.length, 'new arrival products');
+    return products;
   } catch (error) {
-    console.warn('[v0] Error reading new arrivals, using localStorage:', error);
-    const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-    return products.filter((p: Product) => p.isNew).slice(0, limitCount);
+    console.error('[v0] Error fetching new arrivals:', error);
+    throw error;
   }
 };
 
 // Get best sellers
 export const getBestSellers = async (limitCount = 6): Promise<Product[]> => {
   try {
-    if (!db || typeof db !== 'object' || !db._key) {
-      console.log('[v0] Reading best sellers from localStorage');
-      const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-      return products.filter((p: Product) => p.isBestSeller).slice(0, limitCount);
-    }
-    
+    console.log('[v0] Fetching best sellers');
     const constraints: QueryConstraint[] = [
       where('isBestSeller', '==', true),
       orderBy('createdAt', 'desc'),
@@ -169,89 +149,39 @@ export const getBestSellers = async (limitCount = 6): Promise<Product[]> => {
     ];
     const q = query(collection(db, 'products'), ...constraints);
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
+    const products = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     })) as Product[];
+    console.log('[v0] Retrieved', products.length, 'best seller products');
+    return products;
   } catch (error) {
-    console.warn('[v0] Error reading best sellers, using localStorage:', error);
-    const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-    return products.filter((p: Product) => p.isBestSeller).slice(0, limitCount);
+    console.error('[v0] Error fetching best sellers:', error);
+    throw error;
   }
 };
 
 // Add product
 export const addProduct = async (product: Omit<Product, 'id'>): Promise<string> => {
   try {
-    console.log('[v0] Adding product:', product.name);
-    
-    // Check if Firebase is properly initialized
-    if (!db || typeof db !== 'object' || !db._key) {
-      console.warn('[v0] Firebase not initialized, using localStorage fallback');
-      
-      // Use localStorage as fallback
-      const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-      const newId = 'product_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-      const newProduct = {
-        id: newId,
-        ...product,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      };
-      products.push(newProduct);
-      localStorage.setItem('elegance_products', JSON.stringify(products));
-      console.log('[v0] Product saved to localStorage with ID:', newId);
-      return newId;
-    }
-    
+    console.log('[v0] Adding product to Firebase:', product.name);
     const docRef = await addDoc(collection(db, 'products'), {
       ...product,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });
-    console.log('[v0] Product saved successfully with ID:', docRef.id);
+    console.log('[v0] Product saved successfully to Firebase with ID:', docRef.id);
     return docRef.id;
   } catch (error) {
-    console.error('[v0] Error adding product:', error);
-    
-    // Fallback to localStorage on any error
-    console.log('[v0] Falling back to localStorage due to error');
-    const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-    const newId = 'product_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    const newProduct = {
-      id: newId,
-      ...product,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-    products.push(newProduct);
-    localStorage.setItem('elegance_products', JSON.stringify(products));
-    console.log('[v0] Product saved to localStorage fallback with ID:', newId);
-    return newId;
+    console.error('[v0] Error adding product to Firebase:', error);
+    throw error;
   }
 };
 
 // Update product
 export const updateProduct = async (productId: string, product: Partial<Product>): Promise<void> => {
   try {
-    console.log('[v0] Updating product:', productId);
-    
-    if (!db || typeof db !== 'object' || !db._key) {
-      console.log('[v0] Updating product in localStorage');
-      const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-      const index = products.findIndex((p: Product) => p.id === productId);
-      if (index !== -1) {
-        products[index] = {
-          ...products[index],
-          ...product,
-          updatedAt: Date.now(),
-        };
-        localStorage.setItem('elegance_products', JSON.stringify(products));
-        console.log('[v0] Product updated in localStorage:', productId);
-      }
-      return;
-    }
-    
+    console.log('[v0] Updating product in Firebase:', productId);
     const docRef = doc(db, 'products', productId);
     await updateDoc(docRef, {
       ...product,
@@ -260,42 +190,19 @@ export const updateProduct = async (productId: string, product: Partial<Product>
     console.log('[v0] Product updated successfully:', productId);
   } catch (error) {
     console.error('[v0] Error updating product:', error);
-    // Fallback to localStorage
-    const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-    const index = products.findIndex((p: Product) => p.id === productId);
-    if (index !== -1) {
-      products[index] = {
-        ...products[index],
-        ...product,
-        updatedAt: Date.now(),
-      };
-      localStorage.setItem('elegance_products', JSON.stringify(products));
-    }
+    throw error;
   }
 };
 
 // Delete product
 export const deleteProduct = async (productId: string): Promise<void> => {
   try {
-    console.log('[v0] Deleting product:', productId);
-    
-    if (!db || typeof db !== 'object' || !db._key) {
-      console.log('[v0] Deleting product from localStorage');
-      const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-      const filtered = products.filter((p: Product) => p.id !== productId);
-      localStorage.setItem('elegance_products', JSON.stringify(filtered));
-      console.log('[v0] Product deleted from localStorage:', productId);
-      return;
-    }
-    
+    console.log('[v0] Deleting product from Firebase:', productId);
     await deleteDoc(doc(db, 'products', productId));
     console.log('[v0] Product deleted successfully:', productId);
   } catch (error) {
     console.error('[v0] Error deleting product:', error);
-    // Fallback to localStorage deletion
-    const products = JSON.parse(localStorage.getItem('elegance_products') || '[]');
-    const filtered = products.filter((p: Product) => p.id !== productId);
-    localStorage.setItem('elegance_products', JSON.stringify(filtered));
+    throw error;
   }
 };
 
