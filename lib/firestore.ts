@@ -206,6 +206,28 @@ export const deleteProduct = async (productId: string): Promise<void> => {
   }
 };
 
+// Get products by category
+export const getProductsByCategory = async (categoryName: string): Promise<Product[]> => {
+  try {
+    console.log('[v0] Fetching products by category:', categoryName);
+    const constraints: QueryConstraint[] = [
+      where('category', '==', categoryName),
+      orderBy('createdAt', 'desc'),
+    ];
+    const q = query(collection(db, 'products'), ...constraints);
+    const querySnapshot = await getDocs(q);
+    const products = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Product[];
+    console.log('[v0] Retrieved', products.length, 'products from category:', categoryName);
+    return products;
+  } catch (error) {
+    console.error('[v0] Error fetching products by category:', error);
+    throw error;
+  }
+};
+
 // Add order
 export const addOrder = async (order: Omit<Order, 'id'>): Promise<string> => {
   const docRef = await addDoc(collection(db, 'orders'), {

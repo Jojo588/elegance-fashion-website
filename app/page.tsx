@@ -2,7 +2,6 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import ProductGrid from "@/components/ProductGrid";
 import Footer from "@/components/Footer";
-import { products } from "@/data/products";
 
 export const metadata = {
   title: "Elegance Fashion - Discover Premium Dresses",
@@ -10,9 +9,6 @@ export const metadata = {
 };
 
 export default function HomePage() {
-  const featuredProducts = products.filter((p) => p.isFeatured).slice(0, 6);
-  const newArrivals = products.filter((p) => p.isNew).slice(0, 6);
-  const bestSellers = products.filter((p) => p.isBestSeller).slice(0, 6);
 
   return (
     <main className="bg-white">

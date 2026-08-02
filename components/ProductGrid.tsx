@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { Search, Filter } from "lucide-react";
-import { Product, getAllProducts, getFeaturedProducts, getNewArrivals, getBestSellers } from "@/lib/firestore";
+import { Product, getAllProducts, getFeaturedProducts, getNewArrivals, getBestSellers, getProductsByCategory } from "@/lib/firestore";
 import ProductCard from "./ProductCard";
 
 interface ProductGridProps {
@@ -10,6 +10,7 @@ interface ProductGridProps {
   subtitle?: string;
   showFilters?: boolean;
   initialFilter?: "featured" | "new" | "bestsellers" | "all";
+  category?: string;
 }
 
 export default function ProductGrid({
@@ -17,6 +18,7 @@ export default function ProductGrid({
   subtitle = "Discover our beautiful collection",
   showFilters = true,
   initialFilter = "all",
+  category,
 }: ProductGridProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +34,9 @@ export default function ProductGrid({
       try {
         let data: Product[] = [];
         
-        if (initialFilter === "featured") {
+        if (category) {
+          data = await getProductsByCategory(category);
+        } else if (initialFilter === "featured") {
           data = await getFeaturedProducts();
         } else if (initialFilter === "new") {
           data = await getNewArrivals();
@@ -51,7 +55,7 @@ export default function ProductGrid({
     };
 
     fetchProducts();
-  }, [initialFilter]);
+  }, [initialFilter, category]);
 
   // Get categories
   const categories = useMemo(() => {

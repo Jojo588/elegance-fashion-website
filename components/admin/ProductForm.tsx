@@ -226,11 +226,14 @@ export default function ProductForm({
                 onChange={handleInputChange}
                 className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
               >
+                <option>Dresses</option>
+                <option>Tops</option>
+                <option>Shoes</option>
+                <option>Bags</option>
+                <option>Accessories</option>
                 <option>Casual</option>
                 <option>Evening</option>
                 <option>Party</option>
-                <option>Summer</option>
-                <option>Winter</option>
               </select>
             </div>
           </div>
