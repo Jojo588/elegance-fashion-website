@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import { addProduct, updateProduct, Product } from '@/lib/firestore';
-import { storage } from '@/lib/firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { X } from 'lucide-react';
 
 interface ProductFormProps {
@@ -85,28 +83,34 @@ export default function ProductForm({
       
       let imageUrl = initialProduct?.image || '';
 
-      // Upload image to Firebase Storage
+      // Upload image to Cloudinary
       if (imageFile) {
         try {
-          console.log('[v0] Uploading image to Firebase Storage:', imageFile.name);
+          console.log('[v0] Uploading image to Cloudinary:', imageFile.name);
           setUploadProgress(30);
           
-          const timestamp = Date.now();
-          const fileName = `${timestamp}-${imageFile.name}`;
-          const storageRef = ref(storage, `products/${fileName}`);
+          const formDataUpload = new FormData();
+          formDataUpload.append('file', imageFile);
+          formDataUpload.append('upload_preset', 'elegance_products');
           
-          console.log('[v0] Uploading file:', fileName);
+          console.log('[v0] Uploading to Cloudinary');
           setUploadProgress(50);
           
-          const uploadTask = await uploadBytes(storageRef, imageFile);
-          console.log('[v0] Upload complete, getting download URL');
-          setUploadProgress(75);
+          const response = await fetch('https://api.cloudinary.com/v1_1/doxvafydj/image/upload', {
+            method: 'POST',
+            body: formDataUpload,
+          });
           
-          imageUrl = await getDownloadURL(storageRef);
-          console.log('[v0] Download URL obtained:', imageUrl.substring(0, 60) + '...');
+          if (!response.ok) {
+            throw new Error(`Cloudinary upload failed: ${response.statusText}`);
+          }
+          
+          const data = await response.json();
+          imageUrl = data.secure_url;
+          console.log('[v0] Image uploaded to Cloudinary:', imageUrl.substring(0, 60) + '...');
           setUploadProgress(90);
         } catch (uploadErr: any) {
-          console.error('[v0] Firebase Storage upload failed:', uploadErr);
+          console.error('[v0] Cloudinary upload failed:', uploadErr);
           throw new Error(`Failed to upload image: ${uploadErr.message}`);
         }
       } else if (!imageUrl) {
