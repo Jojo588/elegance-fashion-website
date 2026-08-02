@@ -103,21 +103,6 @@ export default function ProductForm({
         console.log('[v0] Using placeholder image');
         setUploadProgress(90);
       }
-          
-          const data = await response.json();
-          imageUrl = data.secure_url;
-          console.log('[v0] Image uploaded to Cloudinary:', imageUrl.substring(0, 60) + '...');
-          setUploadProgress(90);
-        } catch (uploadErr: any) {
-          console.error('[v0] Cloudinary upload failed:', uploadErr);
-          throw new Error(`Failed to upload image: ${uploadErr.message}`);
-        }
-      } else if (!imageUrl) {
-        // Use placeholder if no image
-        imageUrl = 'https://via.placeholder.com/400x500?text=' + encodeURIComponent(formData.name);
-        console.log('[v0] Using placeholder image');
-        setUploadProgress(90);
-      }
 
       const productData = {
         ...formData,
