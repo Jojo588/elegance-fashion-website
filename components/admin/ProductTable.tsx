@@ -1,6 +1,6 @@
 'use client';
 
-import { Product, deleteProduct } from '@/lib/firestore';
+import { Product, deleteProduct } from '@/lib/supabase/db';
 import { Edit2, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';

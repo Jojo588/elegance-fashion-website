@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { addProduct, updateProduct, Product } from '@/lib/firestore';
+import { addProduct, updateProduct, Product } from '@/lib/supabase/db';
+import { uploadProductImage, deleteProductImage } from '@/lib/supabase/storage';
 import { X } from 'lucide-react';
 
 interface ProductFormProps {
@@ -83,27 +84,25 @@ export default function ProductForm({
       
       let imageUrl = initialProduct?.image || '';
 
-      // Upload image to Cloudinary
+      // Upload image to Supabase Storage
       if (imageFile) {
         try {
-          console.log('[v0] Uploading image to Cloudinary:', imageFile.name);
+          console.log('[v0] Uploading image to Supabase Storage:', imageFile.name);
           setUploadProgress(30);
           
-          const formDataUpload = new FormData();
-          formDataUpload.append('file', imageFile);
-          formDataUpload.append('upload_preset', 'elegance_products');
-          
-          console.log('[v0] Uploading to Cloudinary');
-          setUploadProgress(50);
-          
-          const response = await fetch('https://api.cloudinary.com/v1_1/doxvafydj/image/upload', {
-            method: 'POST',
-            body: formDataUpload,
-          });
-          
-          if (!response.ok) {
-            throw new Error(`Cloudinary upload failed: ${response.statusText}`);
-          }
+          imageUrl = await uploadProductImage(imageFile);
+          console.log('[v0] Image uploaded successfully');
+          setUploadProgress(90);
+        } catch (uploadErr: any) {
+          console.error('[v0] Supabase Storage upload failed:', uploadErr);
+          throw new Error(`Failed to upload image: ${uploadErr.message}`);
+        }
+      } else if (!imageUrl) {
+        // Use placeholder if no image
+        imageUrl = 'https://via.placeholder.com/400x500?text=' + encodeURIComponent(formData.name);
+        console.log('[v0] Using placeholder image');
+        setUploadProgress(90);
+      }
           
           const data = await response.json();
           imageUrl = data.secure_url;

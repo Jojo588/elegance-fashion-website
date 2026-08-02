@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { Search, Filter } from "lucide-react";
-import { Product, getAllProducts, getFeaturedProducts, getNewArrivals, getBestSellers, getProductsByCategory } from "@/lib/firestore";
+import { Product, getAllProducts, getFeaturedProducts, getNewArrivals, getBestSellers, getProductsByCategory } from "@/lib/supabase/db";
 import ProductCard from "./ProductCard";
 
 interface ProductGridProps {
