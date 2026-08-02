@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { addProduct, updateProduct, Product } from '@/lib/firestore';
+import { storage } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { X } from 'lucide-react';
 
 interface ProductFormProps {
@@ -83,20 +85,30 @@ export default function ProductForm({
       
       let imageUrl = initialProduct?.image || '';
 
-      // Process image - convert to data URL
+      // Upload image to Firebase Storage
       if (imageFile) {
-        console.log('[v0] Converting image to base64...');
-        setUploadProgress(50);
-        imageUrl = await new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const result = e.target?.result as string;
-            console.log('[v0] Image converted to base64');
-            resolve(result);
-          };
-          reader.readAsDataURL(imageFile);
-        });
-        setUploadProgress(90);
+        try {
+          console.log('[v0] Uploading image to Firebase Storage:', imageFile.name);
+          setUploadProgress(30);
+          
+          const timestamp = Date.now();
+          const fileName = `${timestamp}-${imageFile.name}`;
+          const storageRef = ref(storage, `products/${fileName}`);
+          
+          console.log('[v0] Uploading file:', fileName);
+          setUploadProgress(50);
+          
+          const uploadTask = await uploadBytes(storageRef, imageFile);
+          console.log('[v0] Upload complete, getting download URL');
+          setUploadProgress(75);
+          
+          imageUrl = await getDownloadURL(storageRef);
+          console.log('[v0] Download URL obtained:', imageUrl.substring(0, 60) + '...');
+          setUploadProgress(90);
+        } catch (uploadErr: any) {
+          console.error('[v0] Firebase Storage upload failed:', uploadErr);
+          throw new Error(`Failed to upload image: ${uploadErr.message}`);
+        }
       } else if (!imageUrl) {
         // Use placeholder if no image
         imageUrl = 'https://via.placeholder.com/400x500?text=' + encodeURIComponent(formData.name);
