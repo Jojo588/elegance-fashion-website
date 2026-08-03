@@ -3,8 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
@@ -23,10 +22,21 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push('/admin/dashboard');
+      const supabase = createClient();
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        setError(signInError.message || 'Failed to login. Please check your credentials.');
+        return;
+      }
+
+      router.push('/admin/dashboard/products');
     } catch (err: any) {
-      setError(err.message || 'Failed to login. Please check your credentials.');
+      setError('An error occurred. Please try again.');
+      console.error('[v0] Login error:', err);
     } finally {
       setLoading(false);
     }
