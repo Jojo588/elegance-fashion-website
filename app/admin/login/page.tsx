@@ -23,20 +23,36 @@ export default function AdminLoginPage() {
 
     try {
       const supabase = createClient();
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      console.log('[v0] Attempting login with:', email);
+      console.log('[v0] Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+      
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
+      console.log('[v0] Login response:', { data, error: signInError });
+
       if (signInError) {
-        setError(signInError.message || 'Failed to login. Please check your credentials.');
+        console.error('[v0] Sign in error:', signInError.message, signInError.status);
+        // Handle specific error cases
+        if (signInError.message === 'Email not confirmed') {
+          setError('Please confirm your email before logging in. Check your inbox for the confirmation link.');
+        } else if (signInError.message.includes('Invalid login credentials')) {
+          setError('Invalid email or password. Please check and try again.');
+        } else {
+          setError(signInError.message || 'Failed to login. Please check your credentials.');
+        }
         return;
       }
 
-      router.push('/admin/dashboard/products');
+      if (data.user) {
+        console.log('[v0] Login successful for user:', data.user.email);
+        router.push('/admin/dashboard/products');
+      }
     } catch (err: any) {
-      setError('An error occurred. Please try again.');
-      console.error('[v0] Login error:', err);
+      console.error('[v0] Unexpected login error:', err);
+      setError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
