@@ -1,5 +1,20 @@
 import { createClient } from '@/lib/supabase/client';
-import { createClient as createServerClient } from '@/lib/supabase/server';
+
+const mapProduct = (row: Record<string, unknown>): Product => ({
+  id: String(row.id),
+  name: String(row.name ?? ''),
+  price: Number(row.price ?? 0),
+  description: String(row.description ?? ''),
+  category: String(row.category ?? ''),
+  image: String(row.image ?? ''),
+  sizes: (row.sizes as string[] | null) ?? [],
+  colors: (row.colors as string[] | null) ?? [],
+  isFeatured: Boolean(row.isfeatured ?? row.isFeatured),
+  isNew: Boolean(row.isnew ?? row.isNew),
+  isBestSeller: Boolean(row.isbestseller ?? row.isBestSeller),
+  createdAt: Number(row.createdat ?? row.createdAt ?? 0),
+  updatedAt: Number(row.updatedat ?? row.updatedAt ?? 0),
+});
 
 export interface Product {
   id: string;
@@ -24,10 +39,10 @@ export const getAllProducts = async (): Promise<Product[]> => {
     const { data, error } = await supabase
       .from('products')
       .select('*')
-      .order('createdAt', { ascending: false });
+      .order('createdat', { ascending: false });
 
     if (error) throw error;
-    return data as Product[];
+    return (data ?? []).map((row) => mapProduct(row as Record<string, unknown>));
   } catch (error) {
     console.error('[v0] Error fetching products:', error);
     throw error;
@@ -44,7 +59,7 @@ export const getProductById = async (productId: string): Promise<Product | null>
       .single();
 
     if (error) throw error;
-    return data as Product;
+    return data ? mapProduct(data as Record<string, unknown>) : null;
   } catch (error) {
     console.error('[v0] Error fetching product:', error);
     throw error;
@@ -58,10 +73,10 @@ export const getProductsByCategory = async (category: string): Promise<Product[]
       .from('products')
       .select('*')
       .eq('category', category)
-      .order('createdAt', { ascending: false });
+      .order('createdat', { ascending: false });
 
     if (error) throw error;
-    return data as Product[];
+    return (data ?? []).map((row) => mapProduct(row as Record<string, unknown>));
   } catch (error) {
     console.error('[v0] Error fetching products by category:', error);
     throw error;
@@ -75,11 +90,11 @@ export const getFeaturedProducts = async (limit = 6): Promise<Product[]> => {
       .from('products')
       .select('*')
       .eq('isFeatured', true)
-      .order('createdAt', { ascending: false })
+      .order('createdat', { ascending: false })
       .limit(limit);
 
     if (error) throw error;
-    return data as Product[];
+    return (data ?? []).map((row) => mapProduct(row as Record<string, unknown>));
   } catch (error) {
     console.error('[v0] Error fetching featured products:', error);
     throw error;
@@ -93,11 +108,11 @@ export const getNewArrivals = async (limit = 6): Promise<Product[]> => {
       .from('products')
       .select('*')
       .eq('isNew', true)
-      .order('createdAt', { ascending: false })
+      .order('createdat', { ascending: false })
       .limit(limit);
 
     if (error) throw error;
-    return data as Product[];
+    return (data ?? []).map((row) => mapProduct(row as Record<string, unknown>));
   } catch (error) {
     console.error('[v0] Error fetching new arrivals:', error);
     throw error;
@@ -111,11 +126,11 @@ export const getBestSellers = async (limit = 6): Promise<Product[]> => {
       .from('products')
       .select('*')
       .eq('isBestSeller', true)
-      .order('createdAt', { ascending: false })
+      .order('createdat', { ascending: false })
       .limit(limit);
 
     if (error) throw error;
-    return data as Product[];
+    return (data ?? []).map((row) => mapProduct(row as Record<string, unknown>));
   } catch (error) {
     console.error('[v0] Error fetching best sellers:', error);
     throw error;
@@ -129,9 +144,18 @@ export const addProduct = async (product: Omit<Product, 'id' | 'createdAt' | 'up
       .from('products')
       .insert([
         {
-          ...product,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
+          name: product.name,
+          price: product.price,
+          description: product.description,
+          category: product.category,
+          image: product.image,
+          sizes: product.sizes,
+          colors: product.colors,
+          isfeatured: product.isFeatured,
+          isnew: product.isNew,
+          isbestseller: product.isBestSeller,
+          createdat: Date.now(),
+          updatedat: Date.now(),
         },
       ])
       .select()
@@ -154,8 +178,17 @@ export const updateProduct = async (
     const { error } = await supabase
       .from('products')
       .update({
-        ...updates,
-        updatedAt: Date.now(),
+        ...(updates.name !== undefined && { name: updates.name }),
+        ...(updates.price !== undefined && { price: updates.price }),
+        ...(updates.description !== undefined && { description: updates.description }),
+        ...(updates.category !== undefined && { category: updates.category }),
+        ...(updates.image !== undefined && { image: updates.image }),
+        ...(updates.sizes !== undefined && { sizes: updates.sizes }),
+        ...(updates.colors !== undefined && { colors: updates.colors }),
+        ...(updates.isFeatured !== undefined && { isfeatured: updates.isFeatured }),
+        ...(updates.isNew !== undefined && { isnew: updates.isNew }),
+        ...(updates.isBestSeller !== undefined && { isbestseller: updates.isBestSeller }),
+        updatedat: Date.now(),
       })
       .eq('id', productId);
 
@@ -202,7 +235,22 @@ export interface Order {
 export const addOrder = async (order: Omit<Order, 'id'>): Promise<string> => {
   const { data, error } = await createClient()
     .from('orders')
-    .insert({ ...order, createdAt: Date.now() })
+    .insert({
+      product_id: order.productId,
+      product_name: order.productName,
+      product_image: order.productImage,
+      size: order.size,
+      color: order.color,
+      quantity: order.quantity,
+      price: order.price,
+      total_price: order.totalPrice,
+      customer_name: order.customerName,
+      customer_location: order.customerLocation,
+      phone_number: order.phoneNumber,
+      status: order.status,
+      whatsapp_sent: order.whatsappSent,
+      created_at: Date.now(),
+    })
     .select('id')
     .single();
   if (error) throw error;
@@ -213,9 +261,25 @@ export const getAllOrders = async (): Promise<Order[]> => {
   const { data, error } = await createClient()
     .from('orders')
     .select('*')
-    .order('createdAt', { ascending: false });
+    .order('created_at', { ascending: false });
   if (error) throw error;
-  return (data ?? []) as Order[];
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    productId: row.product_id,
+    productName: row.product_name,
+    productImage: row.product_image,
+    size: row.size,
+    color: row.color,
+    quantity: row.quantity,
+    price: Number(row.price),
+    totalPrice: Number(row.total_price),
+    customerName: row.customer_name,
+    customerLocation: row.customer_location,
+    phoneNumber: row.phone_number,
+    status: row.status,
+    whatsappSent: row.whatsapp_sent,
+    createdAt: Number(row.created_at),
+  })) as Order[];
 };
 
 export const updateOrderStatus = async (orderId: string, status: Order['status']) => {
