@@ -23,18 +23,12 @@ export default function AdminLoginPage() {
 
     try {
       const supabase = createClient();
-      console.log('[v0] Attempting login with:', email);
-      console.log('[v0] Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
-      
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      console.log('[v0] Login response:', { data, error: signInError });
-
       if (signInError) {
-        console.error('[v0] Sign in error:', signInError.message, signInError.status);
         // Handle specific error cases
         if (signInError.message === 'Email not confirmed') {
           setError('Please confirm your email before logging in. Check your inbox for the confirmation link.');
@@ -47,12 +41,10 @@ export default function AdminLoginPage() {
       }
 
       if (data.user) {
-        console.log('[v0] Login successful for user:', data.user.email);
         router.push('/admin/dashboard/products');
       }
-    } catch (err: any) {
-      console.error('[v0] Unexpected login error:', err);
-      setError('An unexpected error occurred. Please try again.');
+    } catch {
+      setError('Unable to connect to authentication. Please try again.');
     } finally {
       setLoading(false);
     }
