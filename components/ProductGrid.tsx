@@ -28,7 +28,7 @@ export default function ProductGrid({
   const [sortBy, setSortBy] = useState("newest");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  // Fetch products from Firebase
+  // Fetch products from Supabase
   useEffect(() => {
     const fetchProducts = async () => {
       try {

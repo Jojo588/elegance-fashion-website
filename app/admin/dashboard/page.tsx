@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
-import { getAllProducts, getAllOrders, Product, Order } from '@/lib/firestore';
+import { getAllProducts, getAllOrders, Product, Order } from '@/lib/supabase/db';
 import { Package, ShoppingCart, TrendingUp, Clock } from 'lucide-react';
 import Link from 'next/link';
 

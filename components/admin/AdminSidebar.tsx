@@ -2,8 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { createClient } from '@/lib/supabase/client';
 import { Package, ShoppingCart, Settings, LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
@@ -13,8 +12,8 @@ export default function AdminSidebar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = async () => {
-    await signOut(auth);
-    router.push('/admin/login');
+    await createClient().auth.signOut();
+    router.replace('/admin/login');
   };
 
   const navItems = [

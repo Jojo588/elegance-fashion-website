@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, MessageCircle } from "lucide-react";
-import { getProductById, addOrder, Product } from "@/lib/firestore";
+import { getProductById, addOrder, Product } from "@/lib/supabase/db";
 import { openWhatsAppChat, OrderDetails } from "@/lib/whatsapp";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -24,7 +24,7 @@ function PurchasePageContent() {
   const [customerLocation, setCustomerLocation] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch product from Firebase
+  // Fetch product from Supabase
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -95,7 +95,7 @@ function PurchasePageContent() {
     try {
       const totalPrice = product.price * quantity;
 
-      // Save order to Firebase
+      // Save order to Supabase
       await addOrder({
         productId: product.id || "",
         productName: product.name,

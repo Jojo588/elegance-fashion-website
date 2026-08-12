@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronLeft, Download } from 'lucide-react';
-import { getProductById, Product } from '@/lib/firestore';
+import { getProductById, Product } from '@/lib/supabase/db';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 

@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
-import { getAllOrders, Order, updateOrderStatus } from '@/lib/firestore';
+import { getAllOrders, Order, updateOrderStatus } from '@/lib/supabase/db';
 import OrdersTable from '@/components/admin/OrdersTable';
 
 export default function OrdersManagementPage() {

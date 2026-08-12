@@ -1,6 +1,6 @@
 'use client';
 
-import { Order } from '@/lib/firestore';
+import { Order } from '@/lib/supabase/db';
 import Image from 'next/image';
 import { MessageCircle } from 'lucide-react';
 

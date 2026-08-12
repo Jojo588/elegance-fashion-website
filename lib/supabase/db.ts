@@ -180,3 +180,45 @@ export const deleteProduct = async (productId: string): Promise<void> => {
     throw error;
   }
 };
+
+export interface Order {
+  id?: string;
+  productId: string;
+  productName: string;
+  productImage: string;
+  size: string;
+  color: string;
+  quantity: number;
+  price: number;
+  totalPrice: number;
+  customerName?: string;
+  customerLocation?: string;
+  phoneNumber?: string;
+  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+  whatsappSent: boolean;
+  createdAt: number;
+}
+
+export const addOrder = async (order: Omit<Order, 'id'>): Promise<string> => {
+  const { data, error } = await createClient()
+    .from('orders')
+    .insert({ ...order, createdAt: Date.now() })
+    .select('id')
+    .single();
+  if (error) throw error;
+  return data.id;
+};
+
+export const getAllOrders = async (): Promise<Order[]> => {
+  const { data, error } = await createClient()
+    .from('orders')
+    .select('*')
+    .order('createdAt', { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as Order[];
+};
+
+export const updateOrderStatus = async (orderId: string, status: Order['status']) => {
+  const { error } = await createClient().from('orders').update({ status }).eq('id', orderId);
+  if (error) throw error;
+};

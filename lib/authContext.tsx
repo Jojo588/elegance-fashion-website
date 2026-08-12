@@ -15,19 +15,34 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
 
-    void supabase.auth.getUser().then(({ data }) => {
+    const loadUser = async () => {
+      const { data } = await supabase.auth.getUser();
       setUser(data.user);
+      if (data.user) {
+        const { data: admin } = await supabase
+          .from('admins')
+          .select('is_admin')
+          .eq('id', data.user.id)
+          .maybeSingle();
+        setIsAdmin(admin?.is_admin === true);
+      } else {
+        setIsAdmin(false);
+      }
       setLoading(false);
-    });
+    };
+
+    void loadUser();
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (!session?.user) setIsAdmin(false);
       setLoading(false);
     });
 
@@ -37,7 +52,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const value = {
     user,
     loading,
-    isAdmin: user !== null,
+    isAdmin,
   };
 
   return (

@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, CheckCircle, AlertCircle } from 'lucide-react';
-import { getProductById, Product } from '@/lib/firestore';
+import { getProductById, Product } from '@/lib/supabase/db';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
