@@ -24,12 +24,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { data } = await supabase.auth.getUser();
       setUser(data.user);
       if (data.user) {
-        const { data: admin } = await supabase
+        const { data: admin, error } = await supabase
           .from('admins')
-          .select('is_admin')
+          .select('id')
           .eq('id', data.user.id)
           .maybeSingle();
-        setIsAdmin(admin?.is_admin === true);
+        setIsAdmin(!error && admin !== null);
       } else {
         setIsAdmin(false);
       }
@@ -42,8 +42,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      if (!session?.user) setIsAdmin(false);
-      setLoading(false);
+      if (session?.user) {
+        void loadUser();
+      } else {
+        setIsAdmin(false);
+        setLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
