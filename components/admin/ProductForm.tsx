@@ -72,8 +72,6 @@ export default function ProductForm({
     setUploadProgress(0);
 
     try {
-      console.log('[v0] Form submission started');
-      
       // Validation: Check required fields
       if (!formData.name.trim()) {
         throw new Error('Product name is required');
@@ -116,10 +114,7 @@ export default function ProductForm({
         setSuccess('Product updated successfully!');
       } else {
         console.log('[v0] Adding new product:', formData.name);
-        const newProductId = await addProduct({
-          ...productData,
-          images: [imageUrl],
-        });
+        const newProductId =         await addProduct(productData);
         console.log('[v0] Product added successfully with ID:', newProductId);
         setSuccess('Product added successfully!');
       }

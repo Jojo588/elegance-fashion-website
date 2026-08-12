@@ -89,7 +89,7 @@ export const getFeaturedProducts = async (limit = 6): Promise<Product[]> => {
     const { data, error } = await supabase
       .from('products')
       .select('*')
-      .eq('isFeatured', true)
+      .eq('isfeatured', true)
       .order('createdat', { ascending: false })
       .limit(limit);
 
@@ -107,7 +107,7 @@ export const getNewArrivals = async (limit = 6): Promise<Product[]> => {
     const { data, error } = await supabase
       .from('products')
       .select('*')
-      .eq('isNew', true)
+      .eq('isnew', true)
       .order('createdat', { ascending: false })
       .limit(limit);
 
@@ -125,7 +125,7 @@ export const getBestSellers = async (limit = 6): Promise<Product[]> => {
     const { data, error } = await supabase
       .from('products')
       .select('*')
-      .eq('isBestSeller', true)
+      .eq('isbestseller', true)
       .order('createdat', { ascending: false })
       .limit(limit);
 
