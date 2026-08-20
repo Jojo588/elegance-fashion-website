@@ -41,7 +41,19 @@ export default function AdminLoginPage() {
       }
 
       if (data.user) {
-        router.push('/admin/dashboard/products');
+        const { data: admin, error: adminError } = await supabase
+          .from('admins')
+          .select('id')
+          .eq('id', data.user.id)
+          .maybeSingle();
+
+        if (adminError || !admin) {
+          await supabase.auth.signOut();
+          setError('Your Supabase authentication account is valid, but it is not registered as an admin. Add this user ID to public.admins before signing in.');
+          return;
+        }
+
+        router.replace('/admin/dashboard/products');
       }
     } catch {
       setError('Unable to connect to authentication. Please try again.');
