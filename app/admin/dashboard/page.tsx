@@ -32,7 +32,7 @@ export default function AdminDashboardPage() {
   }, []);
 
   const totalRevenue = orders
-    .filter((o) => o.status !== 'cancelled')
+    .filter((o) => o.status === 'delivered')
     .reduce((sum, o) => sum + o.totalPrice, 0);
 
   const pendingOrders = orders.filter((o) => o.status === 'pending').length;
