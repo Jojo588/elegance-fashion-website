@@ -3,7 +3,8 @@
 import { Product, deleteProduct } from '@/lib/supabase/db';
 import { Edit2, Trash2 } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { Search } from 'lucide-react';
 
 interface ProductTableProps {
   products: Product[];
@@ -17,6 +18,12 @@ export default function ProductTable({
   onProductDeleted,
 }: ProductTableProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const filteredProducts = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    if (!term) return products;
+    return products.filter((product) => product.id.toLowerCase().includes(term));
+  }, [products, search]);
 
   const handleDelete = async (id: string | undefined) => {
     if (!id) return;
@@ -36,6 +43,19 @@ export default function ProductTable({
 
   return (
     <div className="bg-white rounded-lg shadow-elegant overflow-hidden">
+      <div className="flex items-center gap-3 border-b border-border p-4">
+        <Search className="size-4 text-muted-foreground" aria-hidden="true" />
+        <label htmlFor="product-id-search" className="sr-only">Search products by ID</label>
+        <input
+          id="product-id-search"
+          type="search"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          placeholder="Search by product ID"
+          className="min-w-0 flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary"
+        />
+        <span className="text-sm text-muted-foreground">{filteredProducts.length} results</span>
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-muted border-b border-border">
@@ -58,7 +78,7 @@ export default function ProductTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <tr key={product.id} className="hover:bg-muted/50 transition-colors">
                 {/* Product Info */}
                 <td className="px-6 py-4">
@@ -141,9 +161,11 @@ export default function ProductTable({
         </table>
       </div>
 
-      {products.length === 0 && (
+      {filteredProducts.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">No products found</p>
+          <p className="text-muted-foreground">
+            {products.length === 0 ? 'No products found' : 'No products match that ID'}
+          </p>
         </div>
       )}
     </div>

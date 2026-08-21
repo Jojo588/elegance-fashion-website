@@ -2,7 +2,8 @@
 
 import { Order } from '@/lib/supabase/db';
 import Image from 'next/image';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 interface OrdersTableProps {
   orders: Order[];
@@ -23,6 +24,13 @@ export default function OrdersTable({
   orders,
   onStatusChange,
 }: OrdersTableProps) {
+  const [search, setSearch] = useState('');
+  const filteredOrders = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    if (!term) return orders;
+    return orders.filter((order) => order.productId.toLowerCase().includes(term));
+  }, [orders, search]);
+
   const handleWhatsapp = (order: Order) => {
     const message = `Order Confirmation\n\nProduct: ${order.productName}\nSize: ${order.size}\nColor: ${order.color}\nQuantity: ${order.quantity}\nTotal: GHS ${order.totalPrice}`;
     const link = `https://wa.me/?text=${encodeURIComponent(message)}`;
@@ -31,6 +39,19 @@ export default function OrdersTable({
 
   return (
     <div className="bg-white rounded-lg shadow-elegant overflow-hidden">
+      <div className="flex items-center gap-3 border-b border-border p-4">
+        <Search className="size-4 text-muted-foreground" aria-hidden="true" />
+        <label htmlFor="order-product-id-search" className="sr-only">Search orders by product ID</label>
+        <input
+          id="order-product-id-search"
+          type="search"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          placeholder="Search orders by product ID"
+          className="min-w-0 flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary"
+        />
+        <span className="text-sm text-muted-foreground">{filteredOrders.length} results</span>
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-muted border-b border-border">
@@ -56,7 +77,7 @@ export default function OrdersTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {orders.map((order) => (
+            {filteredOrders.map((order) => (
               <tr key={order.id} className="hover:bg-muted/50 transition-colors">
                 {/* Product */}
                 <td className="px-6 py-4">
@@ -140,9 +161,11 @@ export default function OrdersTable({
         </table>
       </div>
 
-      {orders.length === 0 && (
+      {filteredOrders.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">No orders found</p>
+          <p className="text-muted-foreground">
+            {orders.length === 0 ? 'No orders found' : 'No orders match that product ID'}
+          </p>
         </div>
       )}
     </div>
