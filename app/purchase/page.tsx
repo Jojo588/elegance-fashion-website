@@ -95,7 +95,22 @@ function PurchasePageContent() {
     try {
       const totalPrice = product.price * quantity;
 
-      // Save order to Supabase
+      const orderDetails: OrderDetails = {
+        productId: product.id || "",
+        productName: product.name,
+        size: selectedSize,
+        color: selectedColor,
+        quantity,
+        price: totalPrice,
+        imageUrl: product.image,
+        customerName: customerName || undefined,
+        customerLocation: customerLocation || undefined,
+      };
+
+      // Open immediately from the click handler so browsers do not block the new tab.
+      openWhatsAppChat(orderDetails);
+
+      // Save the order after opening WhatsApp; a database delay must not prevent messaging.
       await addOrder({
         productId: product.id || "",
         productName: product.name,
@@ -109,25 +124,11 @@ function PurchasePageContent() {
         customerLocation: customerLocation || undefined,
         status: "pending",
         whatsappSent: true,
+        createdAt: Date.now(),
       });
-
-      const orderDetails: OrderDetails = {
-        productId: product.id || "",
-        productName: product.name,
-        size: selectedSize,
-        color: selectedColor,
-        quantity,
-        price: totalPrice,
-        imageUrl: product.image,
-        customerName: customerName || undefined,
-        customerLocation: customerLocation || undefined,
-      };
-
-      // Open WhatsApp with order details
-      openWhatsAppChat(orderDetails);
     } catch (error) {
-      console.error("Failed to save order:", error);
-      alert("Failed to process order. Please try again.");
+      console.error("Failed to save order after opening WhatsApp:", error);
+      alert("WhatsApp was opened, but we could not save your order. Please send the message and try again if needed.");
     } finally {
       setIsSubmitting(false);
     }

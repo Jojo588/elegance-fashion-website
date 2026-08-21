@@ -39,20 +39,19 @@ Thank you!`;
 export function generateWhatsAppLink(order: OrderDetails): string {
   const message = generateWhatsAppMessage(order);
   const encodedMessage = encodeURIComponent(message);
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+  return `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodedMessage}`;
 }
 
-export function openWhatsAppChat(order: OrderDetails): void {
+export function openWhatsAppChat(order: OrderDetails): boolean {
+  if (typeof window === "undefined") return false;
+
   const link = generateWhatsAppLink(order);
-  
-  // Check if we're in an iframe
-  if (typeof window !== "undefined") {
-    if (window.self !== window.top) {
-      // We're in an iframe, open in a new tab
-      window.open(link, "_blank");
-    } else {
-      // We're not in an iframe, redirect current tab
-      window.location.href = link;
-    }
+  const popup = window.open(link, "_blank", "noopener,noreferrer");
+
+  // Browsers can block a new tab from an iframe. Fall back to the current tab.
+  if (!popup) {
+    window.location.assign(link);
   }
+
+  return true;
 }
