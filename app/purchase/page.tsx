@@ -102,7 +102,6 @@ function PurchasePageContent() {
         color: selectedColor,
         quantity,
         price: totalPrice,
-        imageUrl: product.image,
         customerName: customerName || undefined,
         customerLocation: customerLocation || undefined,
       };

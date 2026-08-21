@@ -5,7 +5,6 @@ export interface OrderDetails {
   color: string;
   quantity: number;
   price: number;
-  imageUrl: string;
   customerName?: string;
   customerLocation?: string;
 }
@@ -24,9 +23,6 @@ I would like to order the following dress from Elegance Fashion.
 • Color: ${order.color}
 • Quantity: ${order.quantity}
 • Price: GHS ${order.price}
-
-*Product Image:*
-${order.imageUrl}
 
 ${order.customerName ? `*Customer Name:* ${order.customerName}\n` : ""}${order.customerLocation ? `*Location:* ${order.customerLocation}\n` : ""}
 Please let me know the available payment and delivery options.
