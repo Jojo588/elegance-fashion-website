@@ -232,29 +232,26 @@ export interface Order {
   createdAt: number;
 }
 
-export const addOrder = async (order: Omit<Order, 'id'>): Promise<string> => {
-  const { data, error } = await createClient()
-    .from('orders')
-    .insert({
-      product_id: order.productId,
-      product_name: order.productName,
-      product_image: order.productImage,
-      size: order.size,
-      color: order.color,
-      quantity: order.quantity,
-      price: order.price,
-      total_price: order.totalPrice,
-      customer_name: order.customerName,
-      customer_location: order.customerLocation,
-      phone_number: order.phoneNumber,
-      status: order.status,
-      whatsapp_sent: order.whatsappSent,
-      created_at: Date.now(),
-    })
-    .select('id')
-    .single();
+export const addOrder = async (order: Omit<Order, 'id'>): Promise<void> => {
+  // Do not request the inserted row here: anonymous customers may INSERT
+  // orders but are intentionally not allowed to SELECT admin order data.
+  const { error } = await createClient().from('orders').insert({
+    product_id: order.productId,
+    product_name: order.productName,
+    product_image: order.productImage,
+    size: order.size,
+    color: order.color,
+    quantity: order.quantity,
+    price: order.price,
+    total_price: order.totalPrice,
+    customer_name: order.customerName,
+    customer_location: order.customerLocation,
+    phone_number: order.phoneNumber,
+    status: order.status,
+    whatsapp_sent: order.whatsappSent,
+    created_at: Date.now(),
+  });
   if (error) throw error;
-  return data.id;
 };
 
 export const getAllOrders = async (): Promise<Order[]> => {
