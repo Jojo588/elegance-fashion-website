@@ -12,6 +12,7 @@ const mapProduct = (row: Record<string, unknown>): Product => ({
   isFeatured: Boolean(row.isfeatured ?? row.isFeatured),
   isNew: Boolean(row.isnew ?? row.isNew),
   isBestSeller: Boolean(row.isbestseller ?? row.isBestSeller),
+  isSold: Boolean(row.is_sold ?? row.isSold),
   createdAt: Number(row.createdat ?? row.createdAt ?? 0),
   updatedAt: Number(row.updatedat ?? row.updatedAt ?? 0),
 });
@@ -28,6 +29,7 @@ export interface Product {
   isFeatured: boolean;
   isNew: boolean;
   isBestSeller: boolean;
+  isSold: boolean;
   createdAt: number;
   updatedAt: number;
 }
@@ -137,7 +139,7 @@ export const getBestSellers = async (limit = 6): Promise<Product[]> => {
   }
 };
 
-export const addProduct = async (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
+export const addProduct = async (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'isSold'>): Promise<string> => {
   try {
     const supabase = createClient();
     const { data, error } = await supabase
@@ -280,6 +282,27 @@ export const getAllOrders = async (): Promise<Order[]> => {
 };
 
 export const updateOrderStatus = async (orderId: string, status: Order['status']) => {
-  const { error } = await createClient().from('orders').update({ status }).eq('id', orderId);
+  const supabase = createClient();
+  const { data: order, error: orderLookupError } = await supabase
+    .from('orders')
+    .select('product_id')
+    .eq('id', orderId)
+    .single();
+  if (orderLookupError) throw orderLookupError;
+
+  const { error } = await supabase.from('orders').update({ status }).eq('id', orderId);
   if (error) throw error;
+
+  const { data: deliveredOrders, error: deliveredOrdersError } = await supabase
+    .from('orders')
+    .select('id')
+    .eq('product_id', order.product_id)
+    .eq('status', 'delivered');
+  if (deliveredOrdersError) throw deliveredOrdersError;
+
+  const { error: productError } = await supabase
+    .from('products')
+    .update({ is_sold: (deliveredOrders?.length ?? 0) > 0, updatedat: Date.now() })
+    .eq('id', order.product_id);
+  if (productError) throw productError;
 };

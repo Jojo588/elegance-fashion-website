@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingBag } from "lucide-react";
-import { Product } from "@/data/products";
+import { Product } from "@/lib/supabase/db";
 import { useState } from "react";
 
 interface ProductCardProps {
@@ -19,6 +19,13 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Image Container */}
       <div className="relative w-full aspect-[2/3] overflow-hidden bg-muted">
         {/* Badge */}
+        {product.isSold && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-foreground/35">
+            <span className="rounded-full bg-foreground px-5 py-2 text-sm font-bold uppercase tracking-widest text-background shadow-elegant">
+              Sold
+            </span>
+          </div>
+        )}
         {(product.isNew || product.isBestSeller) && (
           <div className="absolute top-4 left-4 z-10">
             {product.isNew && (
