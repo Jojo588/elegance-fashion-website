@@ -84,7 +84,7 @@ export default function ProductGrid({
       return matchesSearch && matchesCategory && matchesPrice;
     });
 
-    // Sort
+    // Sort products using the selected option first.
     filtered.sort((a, b) => {
       switch (sortBy) {
         case "price-low":
@@ -99,7 +99,12 @@ export default function ProductGrid({
       }
     });
 
-    return filtered;
+    // Keep sold products in the queue: available products always appear first,
+    // while sold products retain their selected sort order at the end.
+    const availableProducts = filtered.filter((product) => !product.isSold);
+    const soldProducts = filtered.filter((product) => product.isSold);
+
+    return [...availableProducts, ...soldProducts];
   }, [products, searchQuery, selectedCategory, priceRange, sortBy]);
 
   const visibleProducts = filteredProducts.slice(0, visibleCount);
