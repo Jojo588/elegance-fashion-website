@@ -6,7 +6,8 @@ const mapProduct = (row: Record<string, unknown>): Product => ({
   price: Number(row.price ?? 0),
   description: String(row.description ?? ''),
   category: String(row.category ?? ''),
-  image: String(row.image ?? ''),
+  image: String(row.image ?? (Array.isArray(row.images) ? row.images[0] : '') ?? ''),
+  images: Array.isArray(row.images) ? (row.images as string[]) : String(row.image ?? '') ? [String(row.image)] : [],
   sizes: (row.sizes as string[] | null) ?? [],
   colors: (row.colors as string[] | null) ?? [],
   isFeatured: Boolean(row.isfeatured ?? row.isFeatured),
@@ -24,6 +25,7 @@ export interface Product {
   description: string;
   category: string;
   image: string;
+  images: string[];
   sizes: string[];
   colors: string[];
   isFeatured: boolean;
@@ -151,6 +153,7 @@ export const addProduct = async (product: Omit<Product, 'id' | 'createdAt' | 'up
           description: product.description,
           category: product.category,
           image: product.image,
+          images: product.images,
           sizes: product.sizes,
           colors: product.colors,
           isfeatured: product.isFeatured,
@@ -185,6 +188,7 @@ export const updateProduct = async (
         ...(updates.description !== undefined && { description: updates.description }),
         ...(updates.category !== undefined && { category: updates.category }),
         ...(updates.image !== undefined && { image: updates.image }),
+        ...(updates.images !== undefined && { images: updates.images }),
         ...(updates.sizes !== undefined && { sizes: updates.sizes }),
         ...(updates.colors !== undefined && { colors: updates.colors }),
         ...(updates.isFeatured !== undefined && { isfeatured: updates.isFeatured }),

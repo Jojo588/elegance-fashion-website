@@ -16,6 +16,7 @@ export default function ProductViewPage() {
   const productId = params.id as string;
 
   const [product, setProduct] = useState<Product | null>(null);
+  const [selectedImage, setSelectedImage] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,6 +25,7 @@ export default function ProductViewPage() {
         if (productId) {
           const data = await getProductById(productId);
           setProduct(data);
+          setSelectedImage(data?.images?.[0] || data?.image || '');
         }
       } catch (error) {
         console.error('Failed to fetch product:', error);
@@ -101,13 +103,22 @@ export default function ProductViewPage() {
           <div className="flex flex-col items-center">
             <div className="relative w-full aspect-square bg-muted rounded-lg overflow-hidden mb-4">
               <Image
-                src={product.image}
+                src={selectedImage || product.image}
                 alt={product.name}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
+            {(product.images?.length ?? 0) > 1 && (
+              <div className="flex flex-wrap gap-3 mb-4" aria-label="Product images">
+                {product.images.map((image, index) => (
+                  <button key={`${image}-${index}`} type="button" onClick={() => setSelectedImage(image)} className={`relative size-20 overflow-hidden rounded-lg border-2 ${selectedImage === image ? 'border-primary' : 'border-border'}`} aria-label={`View product image ${index + 1}`}>
+                    <Image src={image} alt={`${product.name} thumbnail ${index + 1}`} fill className="object-cover" sizes="80px" />
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Download Button */}
             <button

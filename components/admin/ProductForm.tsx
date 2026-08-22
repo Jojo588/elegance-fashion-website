@@ -20,8 +20,8 @@ export default function ProductForm({
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState(initialProduct?.image || '');
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>(initialProduct?.images?.length ? initialProduct.images : initialProduct?.image ? [initialProduct.image] : []);
   const [formData, setFormData] = useState({
     name: initialProduct?.name || '',
     price: initialProduct?.price || 0,
@@ -53,15 +53,10 @@ export default function ProductForm({
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setImagePreview(event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    setImageFiles(files);
+    setImagePreviews(files.map((file) => URL.createObjectURL(file)));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -80,32 +75,17 @@ export default function ProductForm({
         throw new Error('Price must be greater than 0');
       }
       
-      let imageUrl = initialProduct?.image || '';
-
-      // Upload image to Supabase Storage
-      if (imageFile) {
-        try {
-          console.log('[v0] Uploading image to Supabase Storage:', imageFile.name);
-          setUploadProgress(30);
-          
-          imageUrl = await uploadProductImage(imageFile);
-          console.log('[v0] Image uploaded successfully');
-          setUploadProgress(90);
-        } catch (uploadErr: any) {
-          console.error('[v0] Supabase Storage upload failed:', uploadErr);
-          throw new Error(`Failed to upload image: ${uploadErr.message}`);
-        }
-      } else if (!imageUrl) {
-        // Use placeholder if no image
-        imageUrl = 'https://via.placeholder.com/400x500?text=' + encodeURIComponent(formData.name);
-        console.log('[v0] Using placeholder image');
+      let imageUrls = initialProduct?.images?.length ? initialProduct.images : initialProduct?.image ? [initialProduct.image] : [];
+      if (imageFiles.length) {
+        setUploadProgress(30);
+        imageUrls = await Promise.all(imageFiles.map(uploadProductImage));
+        setUploadProgress(90);
+      } else if (!imageUrls.length) {
+        imageUrls = ['https://via.placeholder.com/400x500?text=' + encodeURIComponent(formData.name)];
         setUploadProgress(90);
       }
 
-      const productData = {
-        ...formData,
-        image: imageUrl,
-      };
+      const productData = { ...formData, image: imageUrls[0], images: imageUrls };
 
       if (initialProduct?.id) {
         console.log('[v0] Updating existing product:', initialProduct.id);
@@ -161,16 +141,15 @@ export default function ProductForm({
               Product Image
             </label>
             <div className="flex gap-4">
-              {imagePreview && (
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="w-20 h-20 object-cover rounded-lg"
-                />
-              )}
+              <div className="flex flex-wrap gap-2">
+                {imagePreviews.map((preview, index) => (
+                  <img key={`${preview}-${index}`} src={preview} alt={`Product preview ${index + 1}`} className="w-20 h-20 object-cover rounded-lg" />
+                ))}
+              </div>
               <input
                 type="file"
                 accept="image/*"
+                multiple
                 onChange={handleImageChange}
                 className="flex-1 px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
               />
