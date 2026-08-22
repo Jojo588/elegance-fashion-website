@@ -80,11 +80,11 @@ export default function HomePage() {
         />
       </section>
 
-      {/* All Dresses Section */}
-      <section id="dresses" className="bg-white">
+      {/* All Products Section */}
+      <section id="products" className="bg-white">
         <ProductGrid
-          title="Browse All Dresses"
-          subtitle="Find your perfect dress"
+          title="Browse All Products"
+          subtitle="Shop dresses, shoes, accessories, and more"
           showFilters={true}
         />
       </section>
@@ -99,7 +99,7 @@ export default function HomePage() {
             Browse our stunning collection and place your order directly through WhatsApp. We&apos;ll help you with everything you need.
           </p>
           <a
-            href="#dresses"
+            href="#products"
             className="inline-block px-8 py-4 bg-white text-primary font-semibold rounded-lg hover:opacity-90 transition-all duration-300 ease-in-out"
           >
             Shop Now

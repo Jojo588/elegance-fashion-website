@@ -14,7 +14,7 @@ interface ProductGridProps {
 }
 
 export default function ProductGrid({
-  title = "Our Dresses",
+  title = "Our Products",
   subtitle = "Discover our beautiful collection",
   showFilters = true,
   initialFilter = "all",
@@ -27,6 +27,7 @@ export default function ProductGrid({
   const [priceRange, setPriceRange] = useState([0, 500]);
   const [sortBy, setSortBy] = useState("newest");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(9);
 
   // Fetch products from Supabase
   useEffect(() => {
@@ -59,9 +60,13 @@ export default function ProductGrid({
 
   // Get categories
   const categories = useMemo(() => {
-    const cats = new Set(products.map((p) => p.category));
+    const cats = new Set(products.map((p) => p.category).filter(Boolean));
     return Array.from(cats).sort();
-  }, []);
+  }, [products]);
+
+  useEffect(() => {
+    setVisibleCount(9);
+  }, [searchQuery, selectedCategory, priceRange, sortBy, initialFilter, category]);
 
   // Filter and sort products
   const filteredProducts = useMemo(() => {
@@ -97,6 +102,9 @@ export default function ProductGrid({
     return filtered;
   }, [products, searchQuery, selectedCategory, priceRange, sortBy]);
 
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
+  const hasMoreProducts = visibleCount < filteredProducts.length;
+
   return (
     <section className="w-full py-12 md:py-16 lg:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -115,7 +123,7 @@ export default function ProductGrid({
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Search dresses..."
+                placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-lg focus:outline-none focus:border-primary transition-colors bg-white"
@@ -202,23 +210,59 @@ export default function ProductGrid({
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-foreground">Loading dresses...</p>
+              <p className="text-foreground">Loading products...</p>
             </div>
           </div>
         ) : (
           <>
             {/* Results Count */}
-            <p className="text-sm text-muted-foreground mb-6">
-              Showing {filteredProducts.length} dresses
-            </p>
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm text-muted-foreground">
+                Showing {visibleProducts.length} of {filteredProducts.length} products
+              </p>
+              {categories.length > 0 && (
+                <div className="flex flex-wrap gap-2" aria-label="Product categories">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCategory("all")}
+                    className={`rounded-full border px-4 py-2 text-sm transition-colors ${selectedCategory === "all" ? "border-primary bg-primary text-primary-foreground" : "border-border text-foreground hover:border-primary"}`}
+                  >
+                    All Products
+                  </button>
+                  {categories.map((cat) => (
+                    <button
+                      type="button"
+                      key={cat}
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`rounded-full border px-4 py-2 text-sm transition-colors ${selectedCategory === cat ? "border-primary bg-primary text-primary-foreground" : "border-border text-foreground hover:border-primary"}`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Product Grid */}
             {filteredProducts.length > 0 ? (
+          <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {filteredProducts.map((product) => (
+            {visibleProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
+          {hasMoreProducts && (
+            <div className="mt-10 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setVisibleCount((count) => count + 9)}
+                className="rounded-lg border-2 border-primary px-6 py-3 font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+              >
+                Show More Products
+              </button>
+            </div>
+          )}
+          </>
             ) : (
               <div className="text-center py-12">
                 <p className="text-lg text-muted-foreground">
