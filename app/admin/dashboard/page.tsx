@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getAllProducts, getAllOrders, Product, Order } from '@/lib/supabase/db';
 import { Package, ShoppingCart, TrendingUp, Clock } from 'lucide-react';
 import Link from 'next/link';
@@ -36,6 +36,22 @@ export default function AdminDashboardPage() {
     .reduce((sum, o) => sum + o.totalPrice, 0);
 
   const pendingOrders = orders.filter((o) => o.status === 'pending').length;
+  const [showRevenueBreakdown, setShowRevenueBreakdown] = useState(false);
+
+  const monthlyRevenue = useMemo(() => {
+    const totals = new Map<string, number>();
+
+    orders
+      .filter((order) => order.status === 'delivered')
+      .forEach((order) => {
+        const date = new Date(order.createdAt);
+        if (Number.isNaN(date.getTime())) return;
+        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        totals.set(key, (totals.get(key) ?? 0) + order.totalPrice);
+      });
+
+    return Array.from(totals.entries()).sort(([a], [b]) => b.localeCompare(a));
+  }, [orders]);
 
   if (loading) {
     return (
@@ -85,17 +101,25 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Total Revenue */}
-        <div className="bg-white rounded-lg shadow-elegant p-6">
+        <button
+          type="button"
+          onClick={() => setShowRevenueBreakdown((visible) => !visible)}
+          aria-expanded={showRevenueBreakdown}
+          className="bg-white rounded-lg shadow-elegant p-6 text-left transition-shadow hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-muted-foreground text-sm">Total Revenue</p>
               <p className="text-3xl font-bold text-foreground mt-2">GHS {totalRevenue.toFixed(2)}</p>
+              <p className="text-xs text-muted-foreground mt-2">
+                {showRevenueBreakdown ? 'Hide monthly breakdown' : 'Click to view monthly revenue'}
+              </p>
             </div>
             <div className="bg-green-100 p-3 rounded-lg">
               <TrendingUp className="w-8 h-8 text-green-600" />
             </div>
           </div>
-        </div>
+        </button>
 
         {/* Pending Orders */}
         <div className="bg-white rounded-lg shadow-elegant p-6">
@@ -110,6 +134,33 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       </div>
+
+      {showRevenueBreakdown && (
+        <section className="bg-white rounded-lg shadow-elegant overflow-hidden" aria-label="Monthly revenue breakdown">
+          <div className="p-6 border-b border-border">
+            <h2 className="text-xl font-bold text-foreground">Monthly Revenue</h2>
+            <p className="text-sm text-muted-foreground mt-1">Revenue from delivered orders since the app started</p>
+          </div>
+          <div className="divide-y divide-border">
+            {monthlyRevenue.length > 0 ? (
+              monthlyRevenue.map(([month, revenue]) => (
+                <div key={month} className="flex items-center justify-between p-4">
+                  <span className="font-medium text-foreground">
+                    {new Date(`${month}-01T00:00:00`).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  </span>
+                  <span className="font-semibold text-foreground">GHS {revenue.toFixed(2)}</span>
+                </div>
+              ))
+            ) : (
+              <p className="p-6 text-sm text-muted-foreground">No delivered revenue has been recorded yet.</p>
+            )}
+          </div>
+          <div className="flex items-center justify-between p-5 border-t border-border bg-muted">
+            <span className="font-bold text-foreground">Total generated</span>
+            <span className="text-lg font-bold text-primary">GHS {totalRevenue.toFixed(2)}</span>
+          </div>
+        </section>
+      )}
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
