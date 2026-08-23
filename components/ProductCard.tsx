@@ -17,7 +17,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const isWishlisted = isFavorite(product.id);
 
   return (
-    <div className="group bg-white rounded-lg overflow-hidden shadow-elegant hover:shadow-hover transition-all duration-500">
+    <div className="group overflow-hidden rounded-lg bg-background shadow-elegant transition-all duration-500 hover:shadow-hover">
       {/* Image Container */}
       <div className="relative w-full aspect-[2/3] overflow-hidden bg-muted">
         {/* Badge */}
@@ -80,14 +80,14 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-3">
+      <div className="flex flex-col gap-2 p-3 sm:gap-3 sm:p-4">
         {/* Category */}
         <p className="text-xs font-semibold text-primary uppercase tracking-wider">
           {product.category}
         </p>
 
         {/* Name */}
-        <h3 className="text-lg font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 className="line-clamp-2 text-sm font-semibold text-foreground transition-colors group-hover:text-primary sm:text-lg">
           {product.name}
         </h3>
 
@@ -142,7 +142,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Price and Buttons */}
         <div className="flex items-center justify-between pt-3 border-t border-border">
           <div>
-            <p className="text-2xl font-bold text-primary">GHS {product.price}</p>
+            <p className="text-lg font-bold text-primary sm:text-2xl">GHS {product.price}</p>
           </div>
         </div>
 
@@ -150,7 +150,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="flex gap-2 pt-2">
           <Link
             href={`/product-view/${product.id}`}
-            className="flex-1 px-3 py-2 bg-secondary text-primary rounded-lg font-medium text-center transition-all duration-300 ease-in-out hover:bg-accent hover:text-foreground"
+            className="flex-1 rounded-lg bg-secondary px-2 py-2 text-center text-xs font-medium text-primary transition-all duration-300 ease-in-out hover:bg-accent hover:text-foreground sm:px-3 sm:text-sm"
           >
             View
           </Link>

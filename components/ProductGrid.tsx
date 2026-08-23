@@ -111,14 +111,14 @@ export default function ProductGrid({
   const hasMoreProducts = visibleCount < filteredProducts.length;
 
   return (
-    <section className="w-full py-12 md:py-16 lg:py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="w-full bg-background px-4 py-10 sm:px-6 sm:py-12 md:py-16 lg:py-20">
+      <div className="mx-auto w-full max-w-7xl">
         {/* Header */}
-        <div className="text-center mb-10 md:mb-14">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-2">
+        <div className="mx-auto mb-8 max-w-2xl text-center sm:mb-10 md:mb-14">
+          <h2 className="text-balance text-2xl font-bold text-foreground sm:text-3xl md:text-4xl lg:text-5xl">
             {title}
           </h2>
-          <p className="text-lg text-muted-foreground">{subtitle}</p>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">{subtitle}</p>
         </div>
 
         {showFilters && (
@@ -131,7 +131,7 @@ export default function ProductGrid({
                 placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-lg focus:outline-none focus:border-primary transition-colors bg-white"
+                className="w-full rounded-lg border-2 border-border bg-background py-3 pl-12 pr-4 text-sm transition-colors focus:border-primary focus:outline-none sm:text-base"
               />
             </div>
 
@@ -160,7 +160,7 @@ export default function ProductGrid({
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="px-4 py-2 border-2 border-border rounded-lg focus:outline-none focus:border-primary transition-colors bg-white"
+                    className="w-full rounded-lg border-2 border-border bg-background px-3 py-2 text-sm transition-colors focus:border-primary focus:outline-none sm:w-auto sm:px-4"
                   >
                     <option value="all">All Categories</option>
                     {categories.map((cat) => (
@@ -197,7 +197,7 @@ export default function ProductGrid({
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="px-4 py-2 border-2 border-border rounded-lg focus:outline-none focus:border-primary transition-colors bg-white"
+                    className="w-full rounded-lg border-2 border-border bg-background px-3 py-2 text-sm transition-colors focus:border-primary focus:outline-none sm:w-auto sm:px-4"
                   >
                     <option value="newest">Newest</option>
                     <option value="price-low">Price: Low to High</option>
@@ -251,7 +251,7 @@ export default function ProductGrid({
             {/* Product Grid */}
             {filteredProducts.length > 0 ? (
           <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 lg:gap-8">
             {visibleProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
