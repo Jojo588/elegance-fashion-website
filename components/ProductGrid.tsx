@@ -271,7 +271,7 @@ export default function ProductGrid({
             ) : (
               <div className="text-center py-12">
                 <p className="text-lg text-muted-foreground">
-                  No dresses found. Try adjusting your filters.
+                  No products found. Try adjusting your filters.
                 </p>
               </div>
             )}

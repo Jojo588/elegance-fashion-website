@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
         <div className="bg-white rounded-lg shadow-elegant p-8 space-y-8">
           {/* Header */}
           <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-foreground">Elegance Fashion</h1>
+            <h1 className="text-3xl font-bold text-foreground">Niella&apos;s FashionHub</h1>
             <p className="text-muted-foreground">Admin Portal</p>
           </div>
 
@@ -86,7 +86,7 @@ export default function AdminLoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@elegance.com"
+                  placeholder="admin@niellasfashionhub.com"
                   className="w-full pl-10 pr-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                   required
                 />

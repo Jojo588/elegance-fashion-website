@@ -4,8 +4,8 @@ import ProductGrid from "@/components/ProductGrid";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "Elegance Fashion - Discover Premium Dresses",
-  description: "Browse our beautiful collection of elegant dresses perfect for any occasion. Shop now and order via WhatsApp.",
+  title: "Niella's FashionHub - Fashion, Beauty & Lifestyle",
+  description: "Shop clothes, bags, shoes, accessories, jewelry, cosmetics, room decor, and more at Niella's FashionHub.",
 };
 
 export default function HomePage() {
@@ -93,7 +93,7 @@ export default function HomePage() {
       <section className="bg-gradient-to-r from-primary to-accent py-16 md:py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <h2 className="text-3xl md:text-5xl font-bold text-white">
-            Ready to find your elegance?
+            Ready to find your next favorite?
           </h2>
           <p className="text-lg text-white/90 max-w-2xl mx-auto">
             Browse our stunning collection and place your order directly through WhatsApp. We&apos;ll help you with everything you need.

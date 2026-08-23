@@ -69,7 +69,7 @@ export default function AdminDashboardPage() {
       {/* Header */}
       <div>
         <h1 className="text-4xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground mt-2">Welcome to your Elegance Fashion admin portal</p>
+        <p className="text-muted-foreground mt-2">Welcome to your Niella&apos;s FashionHub admin portal</p>
       </div>
 
       {/* Stats Grid */}

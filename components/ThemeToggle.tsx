@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Moon, Sun } from 'lucide-react'
 
-const THEME_KEY = 'elegance-theme'
+const THEME_KEY = 'niellas-fashionhub-theme'
 
 type Theme = 'light' | 'dark'
 

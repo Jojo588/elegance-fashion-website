@@ -15,10 +15,10 @@ export default function Footer() {
               <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                 <Heart className="w-6 h-6 text-white fill-white" />
               </div>
-              <span className="text-xl font-bold">Elegance Fashion</span>
+              <span className="text-xl font-bold">Niella&apos;s FashionHub</span>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
-              Discover premium dresses and timeless elegance. We celebrate the beauty in every woman.
+              Discover fashion, beauty, and lifestyle essentials—from statement pieces to everyday favorites.
             </p>
           </div>
 
@@ -32,7 +32,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/#dresses" className="hover:text-primary transition-colors">
+                <Link href="/#products" className="hover:text-primary transition-colors">
                   Shop
                 </Link>
               </li>
@@ -90,11 +90,11 @@ export default function Footer() {
                 <span>+233 248 993 067</span>
               </a>
               <a
-                href="mailto:hello@elegancefashion.com"
+                href="mailto:hello@niellasfashionhub.com"
                 className="flex items-center gap-2 hover:text-primary transition-colors"
               >
                 <Mail className="w-4 h-4" />
-                <span>hello@elegancefashion.com</span>
+                <span>hello@niellasfashionhub.com</span>
               </a>
               <p className="pt-2">Available on WhatsApp for instant support</p>
             </div>
@@ -104,7 +104,7 @@ export default function Footer() {
         {/* Divider */}
         <div className="border-t border-gray-700 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-            <p>&copy; {currentYear} Elegance Fashion. All rights reserved.</p>
+            <p>&copy; {currentYear} Niella&apos;s FashionHub. All rights reserved.</p>
             <div className="flex gap-4 mt-4 md:mt-0">
               <a href="#" className="hover:text-primary transition-colors">
                 Facebook

@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 import ProductGrid from "@/components/ProductGrid";
 
 export const metadata = {
-  title: "Category - Elegance Fashion",
+  title: "Category - Niella's FashionHub",
   description: "Browse products in this category",
 };
 

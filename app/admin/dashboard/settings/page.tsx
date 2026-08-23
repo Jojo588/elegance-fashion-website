@@ -7,7 +7,7 @@ import { Bell, User, Phone } from 'lucide-react';
 
 export default function SettingsPage() {
   const [whatsappNumber, setWhatsappNumber] = useState('+233248993067');
-  const [storeName, setStoreName] = useState('Elegance Fashion');
+  const [storeName, setStoreName] = useState("Niella's FashionHub");
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {

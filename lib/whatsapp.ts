@@ -14,7 +14,7 @@ const WHATSAPP_NUMBER = "233248993067";
 export function generateWhatsAppMessage(order: OrderDetails): string {
   const message = `Hello,
 
-I would like to order the following dress from Elegance Fashion.
+I would like to order the following product from Niella's FashionHub.
 
 *Product Details:*
 • Product ID: ${order.productId}

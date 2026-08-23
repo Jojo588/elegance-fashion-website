@@ -17,13 +17,13 @@ export default function Navbar() {
               <Heart className="size-6 fill-primary-foreground text-primary-foreground" />
             </div>
             <span className="hidden text-2xl font-bold text-foreground sm:inline">
-              Elegance<span className="text-primary">.</span>
+              Niella&apos;s <span className="text-primary">FashionHub</span>
             </span>
           </Link>
 
           <div className="hidden items-center gap-8 md:flex">
             <Link href="/" className="font-medium text-foreground transition-colors hover:text-primary">Home</Link>
-            <Link href="/#dresses" className="font-medium text-foreground transition-colors hover:text-primary">Shop</Link>
+            <Link href="/#products" className="font-medium text-foreground transition-colors hover:text-primary">Shop</Link>
             <Link href="/#new-arrivals" className="font-medium text-foreground transition-colors hover:text-primary">New Arrivals</Link>
             <Link href="/#best-sellers" className="font-medium text-foreground transition-colors hover:text-primary">Best Sellers</Link>
             <ThemeToggle />

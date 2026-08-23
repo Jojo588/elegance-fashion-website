@@ -32,7 +32,7 @@ export default function AdminSidebar() {
         <div className="flex h-full flex-col">
           <div className="flex items-start justify-between border-b border-border p-6">
             <div>
-              <Link href="/admin/dashboard" className="text-2xl font-bold text-primary">Elegance</Link>
+              <Link href="/admin/dashboard" className="text-2xl font-bold text-primary">Niella&apos;s FashionHub</Link>
               <p className="mt-1 text-xs text-muted-foreground">Admin Portal</p>
             </div>
             <ThemeToggle />

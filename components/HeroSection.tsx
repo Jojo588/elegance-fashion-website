@@ -13,18 +13,18 @@ export default function HeroSection() {
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground text-balance">
             Discover Your
             <br />
-            <span className="gradient-text">Elegance</span>
+            <span className="gradient-text">Style Hub</span>
           </h1>
 
           {/* Subheading */}
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto text-balance">
-            Step into sophistication with our curated collection of stunning dresses. Each piece is carefully selected to bring out your natural beauty and confidence.
+            Explore a curated world of fashion, beauty, and lifestyle finds—from clothes, bags, and shoes to jewelry, cosmetics, room decor, and more.
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
             <Link
-              href="/#dresses"
+              href="/#products"
               className="btn-primary"
             >
               Shop Now
@@ -41,7 +41,7 @@ export default function HeroSection() {
           <div className="grid grid-cols-3 gap-4 max-w-md mx-auto pt-8 md:pt-12">
             <div className="text-center">
               <p className="text-3xl md:text-4xl font-bold text-primary">500+</p>
-              <p className="text-sm text-muted-foreground">Dresses</p>
+              <p className="text-sm text-muted-foreground">Products</p>
             </div>
             <div className="text-center">
               <p className="text-3xl md:text-4xl font-bold text-primary">10K+</p>
