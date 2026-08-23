@@ -5,7 +5,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-foreground text-white">
+    <footer className="bg-foreground text-white dark:text-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
         <div className="py-12 md:py-16 grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -17,7 +17,7 @@ export default function Footer() {
               </div>
               <span className="text-xl font-bold">Niella&apos;s FashionHub</span>
             </div>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <p className="text-gray-300 dark:text-black text-sm leading-relaxed">
               Discover fashion, beauty, and lifestyle essentials—from statement pieces to everyday favorites.
             </p>
           </div>
@@ -25,7 +25,7 @@ export default function Footer() {
           {/* Quick Links */}
           <div>
             <h4 className="font-semibold mb-4 text-lg">Quick Links</h4>
-            <ul className="space-y-2 text-sm text-gray-300">
+            <ul className="space-y-2 text-sm text-gray-300 dark:text-black">
               <li>
                 <Link href="/" className="hover:text-primary transition-colors">
                   Home
@@ -52,7 +52,7 @@ export default function Footer() {
           {/* Information */}
           <div>
             <h4 className="font-semibold mb-4 text-lg">Information</h4>
-            <ul className="space-y-2 text-sm text-gray-300">
+            <ul className="space-y-2 text-sm text-gray-300 dark:text-black">
               <li>
                 <a href="#" className="hover:text-primary transition-colors">
                   About Us
@@ -79,7 +79,7 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h4 className="font-semibold mb-4 text-lg">Contact Us</h4>
-            <div className="space-y-3 text-sm text-gray-300">
+            <div className="space-y-3 text-sm text-gray-300 dark:text-black">
               <a
                 href="https://wa.me/233248993067"
                 target="_blank"

@@ -36,7 +36,7 @@ export default function HomePage() {
               <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
                 Premium
               </div>
-              <p className="text-foreground text-lg">
+              <p className="text-foreground text-lg dark:text-black">
                 High-quality fabrics and craftsmanship
               </p>
             </div>
@@ -44,7 +44,7 @@ export default function HomePage() {
               <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
                 Affordable
               </div>
-              <p className="text-foreground text-lg">
+              <p className="text-foreground text-lg dark:text-black">
                 Luxury doesn&apos;t have to break the bank
               </p>
             </div>
@@ -52,7 +52,7 @@ export default function HomePage() {
               <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
                 Instant
               </div>
-              <p className="text-foreground text-lg">
+              <p className="text-foreground text-lg dark:text-black">
                 Order via WhatsApp for quick service
               </p>
             </div>
