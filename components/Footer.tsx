@@ -10,7 +10,7 @@ export default function Footer() {
         {/* Main Footer Content */}
         <div className="py-12 md:py-16 grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
-          <div className="space-y-4">
+          <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                 <Heart className="w-6 h-6 text-white fill-white" />
@@ -79,24 +79,24 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h4 className="font-semibold mb-4 text-lg">Contact Us</h4>
-            <div className="space-y-3 text-sm text-gray-300 dark:text-black">
+            <div className="flex flex-col gap-3 text-sm text-gray-300 dark:text-black">
               <a
                 href="https://wa.me/233248993067"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 hover:text-primary transition-colors"
+                className="flex items-start gap-2 hover:text-primary transition-colors"
               >
-                <Phone className="w-4 h-4" />
-                <span>+233 248 993 067</span>
+                <Phone className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                <span className="leading-5">+233 248 993 067</span>
               </a>
               <a
                 href="mailto:hello@niellasfashionhub.com"
-                className="flex items-center gap-2 hover:text-primary transition-colors"
+                className="flex items-start gap-2 hover:text-primary transition-colors"
               >
-                <Mail className="w-4 h-4" />
-                <span>hello@niellasfashionhub.com</span>
+                <Mail className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                <span className="break-all leading-5">hello@niellasfashionhub.com</span>
               </a>
-              <p className="pt-2">Available on WhatsApp for instant support</p>
+              <p className="pl-6 leading-5">Available on WhatsApp for instant support</p>
             </div>
           </div>
         </div>
