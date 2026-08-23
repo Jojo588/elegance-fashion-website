@@ -5,14 +5,16 @@ import Link from "next/link";
 import { Heart, ShoppingBag } from "lucide-react";
 import { Product } from "@/lib/supabase/db";
 import { useState } from "react";
+import { useFavorites } from "@/lib/favorites";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
   const [isImageLoading, setIsImageLoading] = useState(true);
+  const isWishlisted = isFavorite(product.id);
 
   return (
     <div className="group bg-white rounded-lg overflow-hidden shadow-elegant hover:shadow-hover transition-all duration-500">
@@ -55,8 +57,14 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Wishlist Button */}
         <button
-          onClick={() => setIsWishlisted(!isWishlisted)}
-          className="absolute top-4 right-4 z-20 bg-white rounded-full p-2 shadow-elegant hover:shadow-hover transition-all duration-300 ease-in-out"
+          type="button"
+          aria-label={isWishlisted ? `Remove ${product.name} from favourites` : `Add ${product.name} to favourites`}
+          aria-pressed={isWishlisted}
+          onClick={(event) => {
+            event.preventDefault();
+            toggleFavorite(product.id);
+          }}
+          className="absolute right-4 top-4 z-20 rounded-full bg-background p-2 text-foreground shadow-elegant transition-all duration-300 ease-in-out hover:shadow-hover"
         >
           <Heart
             className={`w-5 h-5 transition-all duration-300 ease-in-out ${

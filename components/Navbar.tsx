@@ -4,9 +4,11 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, X, Heart } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
+import { useFavorites } from '@/lib/favorites'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const { favoriteIds } = useFavorites()
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-background shadow-elegant">
@@ -26,6 +28,9 @@ export default function Navbar() {
             <Link href="/#products" className="font-medium text-foreground transition-colors hover:text-primary">Shop</Link>
             <Link href="/#new-arrivals" className="font-medium text-foreground transition-colors hover:text-primary">New Arrivals</Link>
             <Link href="/#best-sellers" className="font-medium text-foreground transition-colors hover:text-primary">Best Sellers</Link>
+            <Link href="/favorites" className="flex items-center gap-2 font-medium text-foreground transition-colors hover:text-primary">
+              <Heart className="size-4" /> Favourites{favoriteIds.length > 0 && <span className="text-xs text-primary">({favoriteIds.length})</span>}
+            </Link>
             <ThemeToggle />
           </div>
 
@@ -47,6 +52,9 @@ export default function Navbar() {
             ].map(([href, label]) => (
               <Link key={href} href={href} className="rounded-md px-4 py-2 text-foreground transition-colors hover:bg-muted hover:text-primary" onClick={() => setIsOpen(false)}>{label}</Link>
             ))}
+            <Link href="/favorites" className="flex items-center gap-2 rounded-md px-4 py-2 text-foreground transition-colors hover:bg-muted hover:text-primary" onClick={() => setIsOpen(false)}>
+              <Heart className="size-4" /> Favourites{favoriteIds.length > 0 && <span className="text-xs text-primary">({favoriteIds.length})</span>}
+            </Link>
           </div>
         )}
       </div>

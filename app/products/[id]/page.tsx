@@ -10,14 +10,16 @@ import { ChevronLeft, ShoppingBag, Heart } from "lucide-react";
 import { products } from "@/data/products";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useFavorites } from "@/lib/favorites";
 
 export default function ProductDetailsPage() {
   const params = useParams();
   const productId = params.id as string;
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const product = products.find((p) => p.id === productId);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const isWishlisted = isFavorite(productId);
   const [imageLoading, setImageLoading] = useState(true);
 
   if (!product) {
@@ -206,7 +208,10 @@ export default function ProductDetailsPage() {
                 Buy Now
               </Link>
               <button
-                onClick={() => setIsWishlisted(!isWishlisted)}
+                type="button"
+                aria-label={isWishlisted ? `Remove ${product.name} from favourites` : `Add ${product.name} to favourites`}
+                aria-pressed={isWishlisted}
+                onClick={() => toggleFavorite(productId)}
                 className={`px-6 py-3 rounded-lg font-medium transition-smooth border-2 ${
                   isWishlisted
                     ? "bg-primary/10 border-primary text-primary"
