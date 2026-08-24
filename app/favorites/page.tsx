@@ -5,14 +5,16 @@ import { Heart } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
-import { products } from "@/data/products";
+import useSWR from "swr";
+import { getAllProducts, type Product } from "@/lib/supabase/db";
 import { useFavorites } from "@/lib/favorites";
 
 export default function FavoritesPage() {
   const { favoriteIds } = useFavorites();
+  const { data: products = [], isLoading } = useSWR<Product[]>("/favorites/products", getAllProducts);
   const favoriteProducts = favoriteIds
     .map((id) => products.find((product) => product.id === id))
-    .filter((product): product is (typeof products)[number] => Boolean(product));
+    .filter((product): product is Product => Boolean(product));
 
   return (
     <main className="min-h-screen bg-background text-foreground">
