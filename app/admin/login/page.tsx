@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
@@ -63,14 +64,16 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center px-4">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-8 text-foreground">
       <div className="w-full max-w-md">
-        {/* Card */}
-        <div className="bg-white rounded-lg shadow-elegant p-8 space-y-8">
-          {/* Header */}
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-foreground">Niella&apos;s FashionHub</h1>
-            <p className="text-muted-foreground">Admin Portal</p>
+        <div className="mb-4 flex justify-end">
+          <ThemeToggle />
+        </div>
+        <div className="space-y-8 rounded-2xl border border-border bg-card p-6 shadow-elegant sm:p-8">
+          <div className="space-y-2 text-center">
+            <p className="font-mono text-xs font-semibold uppercase tracking-[0.24em] text-primary">Niella&apos;s FashionHub</p>
+            <h1 className="font-heading text-3xl font-semibold text-card-foreground sm:text-4xl">Admin Portal</h1>
+            <p className="text-muted-foreground">Manage your fashion and lifestyle collection</p>
           </div>
 
           {/* Form */}
@@ -87,7 +90,7 @@ export default function AdminLoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@niellasfashionhub.com"
-                  className="w-full pl-10 pr-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                  className="w-full rounded-lg border border-input bg-background pl-10 pr-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                   required
                 />
               </div>
@@ -124,7 +127,7 @@ export default function AdminLoginPage() {
 
             {/* Error Message */}
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3">
                 <p className="text-sm text-red-600">{error}</p>
               </div>
             )}

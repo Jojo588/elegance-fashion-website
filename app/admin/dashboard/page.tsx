@@ -84,7 +84,7 @@ export default function AdminDashboardPage() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Total Products */}
-        <div className="bg-white rounded-lg shadow-elegant p-6">
+        <div className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-elegant">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-muted-foreground text-sm">Total Products</p>
@@ -97,7 +97,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Total Orders */}
-        <div className="bg-white rounded-lg shadow-elegant p-6">
+        <div className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-elegant">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-muted-foreground text-sm">Total Orders</p>
@@ -131,7 +131,7 @@ export default function AdminDashboardPage() {
         </button>
 
         {/* Pending Orders */}
-        <div className="bg-white rounded-lg shadow-elegant p-6">
+        <div className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-elegant">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-muted-foreground text-sm">Pending Orders</p>
@@ -145,7 +145,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {showRevenueBreakdown && (
-        <section className="bg-white rounded-lg shadow-elegant overflow-hidden" aria-label="Monthly revenue breakdown">
+        <section className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-elegant" aria-label="Monthly revenue breakdown">
           <div className="p-6 border-b border-border">
             <h2 className="text-xl font-bold text-foreground">Monthly Revenue</h2>
             <p className="text-sm text-muted-foreground mt-1">Revenue from delivered orders since the app started</p>
@@ -174,7 +174,7 @@ export default function AdminDashboardPage() {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Recent Orders */}
-        <div className="bg-white rounded-lg shadow-elegant overflow-hidden">
+        <div className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-elegant">
           <div className="p-6 border-b border-border">
             <h2 className="text-xl font-bold text-foreground">Recent Orders</h2>
           </div>
@@ -214,7 +214,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Featured Products */}
-        <div className="bg-white rounded-lg shadow-elegant overflow-hidden">
+        <div className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-elegant">
           <div className="p-6 border-b border-border">
             <h2 className="text-xl font-bold text-foreground">Featured Products</h2>
           </div>
