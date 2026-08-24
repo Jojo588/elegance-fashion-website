@@ -28,7 +28,7 @@ export default function AdminSidebar() {
       <button type="button" onClick={() => setIsOpen(!isOpen)} aria-label={isOpen ? 'Close navigation' : 'Open navigation'} className="fixed bottom-4 right-4 z-50 rounded-full bg-primary p-3 text-primary-foreground shadow-lg md:hidden">
         {isOpen ? <X className="size-6" /> : <Menu className="size-6" />}
       </button>
-      <aside className={`fixed z-40 h-screen w-64 border-r border-border bg-sidebar shadow-elegant transition-all duration-300 md:relative ${isOpen ? 'left-0' : '-left-64 md:left-0'}`}>
+      <aside className={`fixed inset-y-0 left-0 z-40 h-screen w-64 border-r border-border bg-sidebar shadow-elegant transition-all duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="flex h-full flex-col">
           <div className="flex items-start justify-between border-b border-border p-6">
             <div>

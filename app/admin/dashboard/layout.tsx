@@ -10,9 +10,9 @@ export default function AdminLayout({
 }) {
   return (
     <ProtectedRoute>
-      <div className="flex min-h-screen bg-muted">
+      <div className="min-h-screen bg-muted">
         <AdminSidebar />
-        <main className="flex-1 overflow-auto">
+        <main className="min-h-screen overflow-auto md:ml-64">
           <div className="p-4 md:p-8">{children}</div>
         </main>
       </div>
