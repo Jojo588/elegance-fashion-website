@@ -3,24 +3,27 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useMemo, useState } from 'react';
-import { getAllProducts, getAllOrders, Product, Order } from '@/lib/supabase/db';
+import { getAllProducts, getAllOrders, getRevenueRecords, Product, Order, RevenueRecord } from '@/lib/supabase/db';
 import { Package, ShoppingCart, TrendingUp, Clock } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminDashboardPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [revenueRecords, setRevenueRecords] = useState<RevenueRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [productsData, ordersData] = await Promise.all([
+        const [productsData, ordersData, revenueData] = await Promise.all([
           getAllProducts(),
           getAllOrders(),
+          getRevenueRecords(),
         ]);
         setProducts(productsData);
         setOrders(ordersData);
+        setRevenueRecords(revenueData);
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error);
       } finally {
@@ -31,9 +34,10 @@ export default function AdminDashboardPage() {
     fetchData();
   }, []);
 
-  const totalRevenue = orders
-    .filter((o) => o.status === 'delivered')
-    .reduce((sum, o) => sum + o.totalPrice, 0);
+  const totalRevenue = useMemo(() => (
+    revenueRecords.reduce((sum, record) => sum + record.totalPrice, 0) +
+    orders.filter((order) => order.status === 'delivered').reduce((sum, order) => sum + order.totalPrice, 0)
+  ), [orders, revenueRecords]);
 
   const pendingOrders = orders.filter((o) => o.status === 'pending').length;
   const [showRevenueBreakdown, setShowRevenueBreakdown] = useState(false);
@@ -41,17 +45,22 @@ export default function AdminDashboardPage() {
   const monthlyRevenue = useMemo(() => {
     const totals = new Map<string, number>();
 
-    orders
-      .filter((order) => order.status === 'delivered')
-      .forEach((order) => {
-        const date = new Date(order.createdAt);
-        if (Number.isNaN(date.getTime())) return;
-        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-        totals.set(key, (totals.get(key) ?? 0) + order.totalPrice);
-      });
+    revenueRecords.forEach((record) => {
+      const date = new Date(record.orderCreatedAt);
+      if (Number.isNaN(date.getTime())) return;
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      totals.set(key, (totals.get(key) ?? 0) + record.totalPrice);
+    });
+
+    orders.filter((order) => order.status === 'delivered').forEach((order) => {
+      const date = new Date(order.createdAt);
+      if (Number.isNaN(date.getTime())) return;
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      totals.set(key, (totals.get(key) ?? 0) + order.totalPrice);
+    });
 
     return Array.from(totals.entries()).sort(([a], [b]) => b.localeCompare(a));
-  }, [orders]);
+  }, [orders, revenueRecords]);
 
   if (loading) {
     return (

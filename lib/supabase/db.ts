@@ -285,18 +285,50 @@ export const getAllOrders = async (): Promise<Order[]> => {
   })) as Order[];
 };
 
+export interface RevenueRecord {
+  id: string;
+  orderId: string;
+  productName: string;
+  totalPrice: number;
+  orderCreatedAt: number;
+  deliveredAt: string;
+}
+
+export const getRevenueRecords = async (): Promise<RevenueRecord[]> => {
+  const { data, error } = await createClient()
+    .from('revenue_records')
+    .select('*')
+    .order('delivered_at', { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    orderId: row.order_id,
+    productName: row.product_name,
+    totalPrice: Number(row.total_price),
+    orderCreatedAt: Number(row.order_created_at),
+    deliveredAt: row.delivered_at,
+  }));
+};
+
 export const updateOrderStatus = async (orderId: string, status: Order['status']) => {
   const supabase = createClient();
   const { data: order, error: orderLookupError } = await supabase
     .from('orders')
-    .select('product_id')
+    .select('id, product_id, product_name, total_price, created_at')
     .eq('id', orderId)
     .single();
   if (orderLookupError) throw orderLookupError;
 
   if (status === 'delivered') {
-    // Delivered orders are fulfilled records: remove the order and its product
-    // so neither remains available in the admin queues or storefront.
+    // Record collected revenue before removing the fulfilled order and product.
+    const { error: revenueError } = await supabase.from('revenue_records').upsert({
+      order_id: order.id,
+      product_name: order.product_name,
+      total_price: order.total_price,
+      order_created_at: order.created_at,
+    }, { onConflict: 'order_id' });
+    if (revenueError) throw revenueError;
+
     const { error: orderDeleteError } = await supabase
       .from('orders')
       .delete()
