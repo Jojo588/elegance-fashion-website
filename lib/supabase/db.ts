@@ -294,19 +294,23 @@ export const updateOrderStatus = async (orderId: string, status: Order['status']
     .single();
   if (orderLookupError) throw orderLookupError;
 
+  if (status === 'delivered') {
+    // Delivered orders are fulfilled records: remove the order and its product
+    // so neither remains available in the admin queues or storefront.
+    const { error: orderDeleteError } = await supabase
+      .from('orders')
+      .delete()
+      .eq('id', orderId);
+    if (orderDeleteError) throw orderDeleteError;
+
+    const { error: productDeleteError } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', order.product_id);
+    if (productDeleteError) throw productDeleteError;
+    return;
+  }
+
   const { error } = await supabase.from('orders').update({ status }).eq('id', orderId);
   if (error) throw error;
-
-  const { data: deliveredOrders, error: deliveredOrdersError } = await supabase
-    .from('orders')
-    .select('id')
-    .eq('product_id', order.product_id)
-    .eq('status', 'delivered');
-  if (deliveredOrdersError) throw deliveredOrdersError;
-
-  const { error: productError } = await supabase
-    .from('products')
-    .update({ is_sold: (deliveredOrders?.length ?? 0) > 0, updatedat: Date.now() })
-    .eq('id', order.product_id);
-  if (productError) throw productError;
 };
