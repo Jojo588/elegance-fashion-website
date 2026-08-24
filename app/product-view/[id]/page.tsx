@@ -167,20 +167,6 @@ export default function ProductViewPage() {
               <p className="text-foreground/80 leading-relaxed">{product.description}</p>
             </div>
 
-            {/* Sizes */}
-            {product.sizes && product.sizes.length > 0 && (
-              <div>
-                <h2 className="text-lg font-semibold text-foreground mb-3">Available Sizes</h2>
-                <div className="flex flex-wrap gap-2">
-                  {product.sizes.map((size) => (
-                    <div key={size} className="px-4 py-2 border-2 border-primary rounded-lg text-primary font-medium">
-                      {size}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Colors */}
             {product.colors && product.colors.length > 0 && (
               <div>

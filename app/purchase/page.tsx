@@ -249,63 +249,6 @@ function PurchasePageContent() {
                 </div>
               </div>
 
-              {/* Color Selection */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-foreground">
-                  Select Color <span className="text-primary">*</span>
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {product.colors.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={`flex items-center gap-3 p-4 rounded-lg border-2 transition-all ${
-                        selectedColor === color
-                          ? "bg-primary/10 border-primary"
-                          : "border-border hover:border-primary"
-                      }`}
-                    >
-                      <div
-                        className="w-6 h-6 rounded-full border-2 border-gray-400"
-                        style={{
-                          backgroundColor:
-                            color === "Pink"
-                              ? "#e74c8c"
-                              : color === "White"
-                              ? "#ffffff"
-                              : color === "Black"
-                              ? "#2d2d2d"
-                              : color === "Beige"
-                              ? "#d4af9b"
-                              : color === "Navy"
-                              ? "#001f3f"
-                              : color === "Burgundy"
-                              ? "#800020"
-                              : color === "Cream"
-                              ? "#fffdd0"
-                              : color === "Blush"
-                              ? "#f5a3c7"
-                              : color === "Ivory"
-                              ? "#fffff0"
-                              : color === "Rose"
-                              ? "#ff007f"
-                              : color === "Mauve"
-                              ? "#ae6b9d"
-                              : color === "Gray"
-                              ? "#999999"
-                              : color === "Floral"
-                              ? "#e74c8c"
-                              : color === "Pastel"
-                              ? "#c8b4d8"
-                              : "#e8ddd9",
-                        }}
-                      />
-                      <span className="font-medium">{color}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Quantity */}
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold text-foreground">
