@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
-import { getAllOrders, Order, updateOrderStatus } from '@/lib/supabase/db';
+import { deleteOrder, getAllOrders, Order, updateOrderStatus } from '@/lib/supabase/db';
 import OrdersTable from '@/components/admin/OrdersTable';
 
 export default function OrdersManagementPage() {
@@ -28,9 +28,18 @@ export default function OrdersManagementPage() {
   const handleStatusChange = async (orderId: string, status: Order['status']) => {
     try {
       await updateOrderStatus(orderId, status);
-      fetchOrders();
+      await fetchOrders();
     } catch (error) {
       console.error('Failed to update order status:', error);
+    }
+  };
+
+  const handleDelete = async (orderId: string) => {
+    try {
+      await deleteOrder(orderId);
+      await fetchOrders();
+    } catch (error) {
+      console.error('Failed to delete order:', error);
     }
   };
 
@@ -54,6 +63,7 @@ export default function OrdersManagementPage() {
         <OrdersTable
           orders={orders}
           onStatusChange={handleStatusChange}
+          onDelete={handleDelete}
         />
       )}
     </div>

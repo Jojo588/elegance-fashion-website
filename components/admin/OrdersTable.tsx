@@ -2,7 +2,7 @@
 
 import { Order } from '@/lib/supabase/db';
 import Image from 'next/image';
-import { MessageCircle, Search } from 'lucide-react';
+import { MessageCircle, Search, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 function DeliveryCountdown({ deleteAfter }: { deleteAfter?: string }) {
@@ -30,6 +30,7 @@ function DeliveryCountdown({ deleteAfter }: { deleteAfter?: string }) {
 interface OrdersTableProps {
   orders: Order[];
   onStatusChange: (orderId: string, status: Order['status']) => void;
+  onDelete: (orderId: string) => void;
 }
 
 const statusOptions: Order['status'][] = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
@@ -45,6 +46,7 @@ const statusColors = {
 export default function OrdersTable({
   orders,
   onStatusChange,
+  onDelete,
 }: OrdersTableProps) {
   const [search, setSearch] = useState('');
   const filteredOrders = useMemo(() => {
@@ -153,7 +155,7 @@ export default function OrdersTable({
                     onChange={(e) =>
                       onStatusChange(order.id || '', e.target.value as Order['status'])
                     }
-                    className={`px-3 py-1 rounded text-sm font-medium border-0 cursor-pointer ${
+                    className={`min-w-28 appearance-none px-3 py-1.5 rounded-md text-sm font-medium border border-border cursor-pointer outline-none focus:ring-2 focus:ring-primary ${
                       statusColors[order.status]
                     }`}
                   >
@@ -173,10 +175,21 @@ export default function OrdersTable({
                   <div className="flex items-center justify-end gap-2">
                     <button
                       onClick={() => handleWhatsapp(order)}
-                      className="p-2 hover:bg-green-50 rounded-lg transition-colors"
+                      className="rounded-lg p-2 transition-colors hover:bg-green-50 dark:hover:bg-green-500/10"
                       title="Send WhatsApp"
+                      aria-label={`Send ${order.productName} order on WhatsApp`}
                     >
-                      <MessageCircle className="w-4 h-4 text-green-600" />
+                      <MessageCircle className="size-4 text-green-600" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (order.id && window.confirm('Delete this order permanently?')) onDelete(order.id);
+                      }}
+                      className="rounded-lg p-2 text-destructive transition-colors hover:bg-destructive/10"
+                      title="Delete order"
+                      aria-label={`Delete ${order.productName} order`}
+                    >
+                      <Trash2 className="size-4" />
                     </button>
                   </div>
                 </td>

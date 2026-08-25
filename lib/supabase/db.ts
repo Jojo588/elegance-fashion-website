@@ -330,6 +330,11 @@ export const resetRevenue = async (scope: 'month' | 'all'): Promise<void> => {
   if (error) throw error;
 };
 
+export const deleteOrder = async (orderId: string): Promise<void> => {
+  const { error } = await createClient().from('orders').delete().eq('id', orderId);
+  if (error) throw error;
+};
+
 export const updateOrderStatus = async (orderId: string, status: Order['status']) => {
   const supabase = createClient();
   const { data: order, error: orderLookupError } = await supabase
