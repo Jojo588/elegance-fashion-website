@@ -236,6 +236,8 @@ export interface Order {
   status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
   whatsappSent: boolean;
   createdAt: number;
+  deliveredAt?: string;
+  deleteAfter?: string;
 }
 
 export const addOrder = async (order: Omit<Order, 'id'>): Promise<void> => {
@@ -282,6 +284,8 @@ export const getAllOrders = async (): Promise<Order[]> => {
     status: row.status,
     whatsappSent: row.whatsapp_sent,
     createdAt: Number(row.created_at),
+    deliveredAt: row.delivered_at ?? undefined,
+    deleteAfter: row.delete_after ?? undefined,
   })) as Order[];
 };
 
@@ -336,29 +340,34 @@ export const updateOrderStatus = async (orderId: string, status: Order['status']
   if (orderLookupError) throw orderLookupError;
 
   if (status === 'delivered') {
-    // Record collected revenue before removing the fulfilled order and product.
+    // Preserve collected revenue, then keep the order/product visible for 24 hours.
+    const deliveredAt = new Date();
+    const deleteAfter = new Date(deliveredAt.getTime() + 24 * 60 * 60 * 1000);
     const { error: revenueError } = await supabase.from('revenue_records').upsert({
       order_id: order.id,
       product_name: order.product_name,
       total_price: order.total_price,
       order_created_at: order.created_at,
+      delivered_at: deliveredAt.toISOString(),
     }, { onConflict: 'order_id' });
     if (revenueError) throw revenueError;
 
-    const { error: orderDeleteError } = await supabase
+    const { error: deliveredError } = await supabase
       .from('orders')
-      .delete()
+      .update({
+        status,
+        delivered_at: deliveredAt.toISOString(),
+        delete_after: deleteAfter.toISOString(),
+      })
       .eq('id', orderId);
-    if (orderDeleteError) throw orderDeleteError;
-
-    const { error: productDeleteError } = await supabase
-      .from('products')
-      .delete()
-      .eq('id', order.product_id);
-    if (productDeleteError) throw productDeleteError;
+    if (deliveredError) throw deliveredError;
     return;
   }
 
-  const { error } = await supabase.from('orders').update({ status }).eq('id', orderId);
+  const { error } = await supabase.from('orders').update({
+    status,
+    delivered_at: null,
+    delete_after: null,
+  }).eq('id', orderId);
   if (error) throw error;
 };

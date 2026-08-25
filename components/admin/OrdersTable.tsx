@@ -3,7 +3,29 @@
 import { Order } from '@/lib/supabase/db';
 import Image from 'next/image';
 import { MessageCircle, Search } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+
+function DeliveryCountdown({ deleteAfter }: { deleteAfter?: string }) {
+  const [remaining, setRemaining] = useState(() => Math.max(0, new Date(deleteAfter ?? 0).getTime() - Date.now()));
+
+  useEffect(() => {
+    const update = () => setRemaining(Math.max(0, new Date(deleteAfter ?? 0).getTime() - Date.now()));
+    update();
+    const timer = window.setInterval(update, 1000);
+    return () => window.clearInterval(timer);
+  }, [deleteAfter]);
+
+  if (!deleteAfter || remaining <= 0) return null;
+  const hours = Math.floor(remaining / 3_600_000);
+  const minutes = Math.floor((remaining % 3_600_000) / 60_000);
+  const seconds = Math.floor((remaining % 60_000) / 1_000);
+
+  return (
+    <span className="mt-1 block text-xs text-muted-foreground" aria-live="polite">
+      Removes in {hours}h {minutes}m {seconds}s
+    </span>
+  );
+}
 
 interface OrdersTableProps {
   orders: Order[];
@@ -141,6 +163,9 @@ export default function OrdersTable({
                       </option>
                     ))}
                   </select>
+                  {order.status === 'delivered' && (
+                    <DeliveryCountdown deleteAfter={order.deleteAfter} />
+                  )}
                 </td>
 
                 {/* Actions */}
