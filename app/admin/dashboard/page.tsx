@@ -3,8 +3,8 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useMemo, useState } from 'react';
-import { getAllProducts, getAllOrders, getRevenueRecords, Product, Order, RevenueRecord } from '@/lib/supabase/db';
-import { Package, ShoppingCart, TrendingUp, Clock } from 'lucide-react';
+import { getAllProducts, getAllOrders, getRevenueRecords, resetRevenue, Product, Order, RevenueRecord } from '@/lib/supabase/db';
+import { Package, ShoppingCart, TrendingUp, Clock, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminDashboardPage() {
@@ -41,6 +41,26 @@ export default function AdminDashboardPage() {
 
   const pendingOrders = orders.filter((o) => o.status === 'pending').length;
   const [showRevenueBreakdown, setShowRevenueBreakdown] = useState(false);
+  const [resettingRevenue, setResettingRevenue] = useState<'month' | 'all' | null>(null);
+
+  const handleRevenueReset = async (scope: 'month' | 'all') => {
+    const message = scope === 'month'
+      ? 'Reset this month\'s revenue to zero? This cannot be undone.'
+      : 'Reset all recorded revenue to zero? This cannot be undone.';
+    if (!window.confirm(message)) return;
+
+    setResettingRevenue(scope);
+    try {
+      await resetRevenue(scope);
+      const updatedRevenue = await getRevenueRecords();
+      setRevenueRecords(updatedRevenue);
+    } catch (error) {
+      console.error('[v0] Failed to reset revenue:', error);
+      window.alert('Revenue could not be reset. Please try again.');
+    } finally {
+      setResettingRevenue(null);
+    }
+  };
 
   const monthlyRevenue = useMemo(() => {
     const totals = new Map<string, number>();
@@ -164,9 +184,31 @@ export default function AdminDashboardPage() {
               <p className="p-6 text-sm text-muted-foreground">No delivered revenue has been recorded yet.</p>
             )}
           </div>
-          <div className="flex items-center justify-between p-5 border-t border-border bg-muted">
-            <span className="font-bold text-foreground">Total generated</span>
-            <span className="text-lg font-bold text-primary">GHS {totalRevenue.toFixed(2)}</span>
+          <div className="flex flex-col gap-4 border-t border-border bg-muted p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-bold text-foreground">Total generated</p>
+              <p className="text-lg font-bold text-primary">GHS {totalRevenue.toFixed(2)}</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => handleRevenueReset('month')}
+                disabled={resettingRevenue !== null}
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-card disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <RotateCcw className="h-4 w-4" aria-hidden="true" />
+                {resettingRevenue === 'month' ? 'Resetting...' : 'Reset this month'}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleRevenueReset('all')}
+                disabled={resettingRevenue !== null}
+                className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <RotateCcw className="h-4 w-4" aria-hidden="true" />
+                {resettingRevenue === 'all' ? 'Resetting...' : 'Reset all revenue'}
+              </button>
+            </div>
           </div>
         </section>
       )}

@@ -310,6 +310,22 @@ export const getRevenueRecords = async (): Promise<RevenueRecord[]> => {
   }));
 };
 
+export const resetRevenue = async (scope: 'month' | 'all'): Promise<void> => {
+  const supabase = createClient();
+  let query = supabase.from('revenue_records').delete();
+
+  if (scope === 'month') {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    query = query.gte('delivered_at', startOfMonth);
+  } else {
+    query = query.gte('delivered_at', '1970-01-01T00:00:00.000Z');
+  }
+
+  const { error } = await query;
+  if (error) throw error;
+};
+
 export const updateOrderStatus = async (orderId: string, status: Order['status']) => {
   const supabase = createClient();
   const { data: order, error: orderLookupError } = await supabase
