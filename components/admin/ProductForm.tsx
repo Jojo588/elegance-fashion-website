@@ -119,7 +119,7 @@ export default function ProductForm({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-lg max-w-2xl w-full my-8">
+      <div className="bg-card text-card-foreground rounded-lg max-w-2xl w-full my-8 shadow-2xl">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-border">
           <h2 className="text-2xl font-bold text-foreground">
@@ -167,7 +167,7 @@ export default function ProductForm({
               value={formData.name}
               onChange={handleInputChange}
               placeholder="e.g., Floral Summer Dress"
-              className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
               required
             />
           </div>
@@ -184,7 +184,7 @@ export default function ProductForm({
                 value={formData.price}
                 onChange={handleInputChange}
                 placeholder="250"
-                className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                 required
               />
             </div>
@@ -198,7 +198,7 @@ export default function ProductForm({
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
               >
                 <option>Dresses</option>
                 <option>Tops</option>
@@ -223,7 +223,7 @@ export default function ProductForm({
               onChange={handleInputChange}
               placeholder="Enter product description"
               rows={3}
-              className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
               required
             />
           </div>

@@ -48,14 +48,14 @@ export default function ProductsManagementPage() {
     <div className="space-y-6">
       {/* Success Message */}
       {successMessage && (
-        <div className="fixed top-6 right-6 bg-green-50 border border-green-200 rounded-lg p-4 shadow-lg animate-in fade-in slide-in-from-top-4 z-50">
+        <div className="fixed top-6 right-6 bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 rounded-lg p-4 shadow-lg animate-in fade-in slide-in-from-top-4 z-50">
           <div className="flex items-center gap-3">
             <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
               <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <p className="text-sm font-medium text-green-700">{successMessage}</p>
+            <p className="text-sm font-medium text-green-700 dark:text-green-200">{successMessage}</p>
           </div>
         </div>
       )}

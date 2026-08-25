@@ -42,7 +42,7 @@ export default function ProductTable({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-elegant overflow-hidden">
+    <div className="bg-card text-card-foreground rounded-lg shadow-elegant overflow-hidden">
       <div className="flex items-center gap-3 border-b border-border p-4">
         <Search className="size-4 text-muted-foreground" aria-hidden="true" />
         <label htmlFor="product-id-search" className="sr-only">Search products by ID</label>
@@ -123,12 +123,12 @@ export default function ProductTable({
                       </span>
                     )}
                     {product.isNew && (
-                      <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">
+                      <span className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-200 text-xs rounded">
                         New
                       </span>
                     )}
                     {product.isBestSeller && (
-                      <span className="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded">
+                      <span className="px-2 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-200 text-xs rounded">
                         Best Seller
                       </span>
                     )}

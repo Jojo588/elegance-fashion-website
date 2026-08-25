@@ -28,7 +28,7 @@ export default function SettingsPage() {
       {/* Settings Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Store Information */}
-        <div className="bg-white rounded-lg shadow-elegant p-6 space-y-4">
+        <div className="bg-card rounded-lg shadow-elegant p-6 space-y-4">
           <div className="flex items-center gap-3 pb-4 border-b border-border">
             <div className="bg-primary/10 p-3 rounded-lg">
               <User className="w-6 h-6 text-primary" />
@@ -45,16 +45,16 @@ export default function SettingsPage() {
                 type="text"
                 value={storeName}
                 onChange={(e) => setStoreName(e.target.value)}
-                className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
               />
             </div>
           </div>
         </div>
 
         {/* WhatsApp Settings */}
-        <div className="bg-white rounded-lg shadow-elegant p-6 space-y-4">
+        <div className="bg-card rounded-lg shadow-elegant p-6 space-y-4">
           <div className="flex items-center gap-3 pb-4 border-b border-border">
-            <div className="bg-green-100 p-3 rounded-lg">
+            <div className="bg-green-100 dark:bg-green-500/20 p-3 rounded-lg">
               <Phone className="w-6 h-6 text-green-600" />
             </div>
             <h2 className="text-xl font-bold text-foreground">WhatsApp Number</h2>
@@ -69,7 +69,7 @@ export default function SettingsPage() {
               value={whatsappNumber}
               onChange={(e) => setWhatsappNumber(e.target.value)}
               placeholder="+233248993067"
-              className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
             <p className="text-xs text-muted-foreground">
               Include country code (e.g., +233 for Ghana)
@@ -79,9 +79,9 @@ export default function SettingsPage() {
       </div>
 
       {/* Notifications */}
-      <div className="bg-white rounded-lg shadow-elegant p-6 space-y-4">
+      <div className="bg-card rounded-lg shadow-elegant p-6 space-y-4">
         <div className="flex items-center gap-3 pb-4 border-b border-border">
-          <div className="bg-yellow-100 p-3 rounded-lg">
+          <div className="bg-yellow-100 dark:bg-yellow-500/20 p-3 rounded-lg">
             <Bell className="w-6 h-6 text-yellow-600" />
           </div>
           <h2 className="text-xl font-bold text-foreground">Notifications</h2>
@@ -106,7 +106,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Save Section */}
-      <div className="bg-white rounded-lg shadow-elegant p-6">
+      <div className="bg-card rounded-lg shadow-elegant p-6">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-bold text-foreground">Save Changes</h3>

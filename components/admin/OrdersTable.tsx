@@ -35,11 +35,11 @@ interface OrdersTableProps {
 const statusOptions: Order['status'][] = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
 
 const statusColors = {
-  pending: 'bg-yellow-100 text-yellow-700',
-  confirmed: 'bg-blue-100 text-blue-700',
-  shipped: 'bg-purple-100 text-purple-700',
-  delivered: 'bg-green-100 text-green-700',
-  cancelled: 'bg-red-100 text-red-700',
+  pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-200',
+  confirmed: 'bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-200',
+  shipped: 'bg-purple-100 text-purple-800 dark:bg-purple-500/20 dark:text-purple-200',
+  delivered: 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-200',
+  cancelled: 'bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-200',
 };
 
 export default function OrdersTable({
@@ -60,7 +60,7 @@ export default function OrdersTable({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-elegant overflow-hidden">
+    <div className="bg-card text-card-foreground rounded-lg shadow-elegant overflow-hidden">
       <div className="flex items-center gap-3 border-b border-border p-4">
         <Search className="size-4 text-muted-foreground" aria-hidden="true" />
         <label htmlFor="order-product-id-search" className="sr-only">Search orders by product ID</label>

@@ -144,7 +144,7 @@ export default function AdminDashboardPage() {
                 {showRevenueBreakdown ? 'Hide monthly breakdown' : 'Click to view monthly revenue'}
               </p>
             </div>
-            <div className="bg-green-100 p-3 rounded-lg">
+            <div className="bg-green-100 dark:bg-green-500/20 p-3 rounded-lg">
               <TrendingUp className="w-8 h-8 text-green-600" />
             </div>
           </div>
@@ -232,12 +232,12 @@ export default function AdminDashboardPage() {
                   </div>
                   <span className={`text-sm font-medium px-3 py-1 rounded-full ${
                     order.status === 'pending'
-                      ? 'bg-yellow-100 text-yellow-700'
+                      ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-200'
                       : order.status === 'confirmed'
-                      ? 'bg-blue-100 text-blue-700'
+                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-200'
                       : order.status === 'shipped'
-                      ? 'bg-purple-100 text-purple-700'
-                      : 'bg-green-100 text-green-700'
+                      ? 'bg-purple-100 text-purple-800 dark:bg-purple-500/20 dark:text-purple-200'
+                      : 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-200'
                   }`}>
                     {order.status}
                   </span>
