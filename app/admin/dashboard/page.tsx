@@ -94,7 +94,7 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 max-w-full space-y-8 overflow-x-hidden">
       {/* Header */}
       <div>
         <h1 className="text-4xl font-bold text-foreground">Dashboard</h1>
@@ -102,29 +102,29 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6 xl:grid-cols-4">
         {/* Total Products */}
-        <div className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-elegant">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-muted-foreground text-sm">Total Products</p>
-              <p className="text-3xl font-bold text-foreground mt-2">{products.length}</p>
+        <div className="min-w-0 rounded-xl border border-border bg-card p-4 text-card-foreground shadow-elegant sm:p-5 lg:p-6">
+          <div className="flex min-w-0 items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-sm text-muted-foreground">Total Products</p>
+              <p className="mt-2 text-2xl font-bold text-foreground sm:text-3xl">{products.length}</p>
             </div>
-            <div className="bg-primary/10 p-3 rounded-lg">
-              <Package className="w-8 h-8 text-primary" />
+            <div className="shrink-0 rounded-lg bg-primary/10 p-2 sm:p-3">
+              <Package className="h-6 w-6 text-primary sm:h-8 sm:w-8" />
             </div>
           </div>
         </div>
 
         {/* Total Orders */}
-        <div className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-elegant">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-muted-foreground text-sm">Total Orders</p>
-              <p className="text-3xl font-bold text-foreground mt-2">{orders.length}</p>
+        <div className="min-w-0 rounded-xl border border-border bg-card p-4 text-card-foreground shadow-elegant sm:p-5 lg:p-6">
+          <div className="flex min-w-0 items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-sm text-muted-foreground">Total Orders</p>
+              <p className="mt-2 text-2xl font-bold text-foreground sm:text-3xl">{orders.length}</p>
             </div>
-            <div className="bg-accent/10 p-3 rounded-lg">
-              <ShoppingCart className="w-8 h-8 text-accent" />
+            <div className="shrink-0 rounded-lg bg-accent/10 p-2 sm:p-3">
+              <ShoppingCart className="h-6 w-6 text-accent sm:h-8 sm:w-8" />
             </div>
           </div>
         </div>
@@ -134,12 +134,12 @@ export default function AdminDashboardPage() {
           type="button"
           onClick={() => setShowRevenueBreakdown((visible) => !visible)}
           aria-expanded={showRevenueBreakdown}
-          className="bg-white rounded-lg shadow-elegant p-6 text-left transition-shadow hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className="min-w-0 w-full rounded-xl border border-border bg-card p-4 text-left text-card-foreground shadow-elegant transition-shadow hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:p-5 lg:p-6"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-muted-foreground text-sm">Total Revenue</p>
-              <p className="text-3xl font-bold text-foreground mt-2">GHS {totalRevenue.toFixed(2)}</p>
+          <div className="flex min-w-0 items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-sm text-muted-foreground">Total Revenue</p>
+              <p className="mt-2 break-words text-2xl font-bold text-foreground sm:text-3xl">GHS {totalRevenue.toFixed(2)}</p>
               <p className="text-xs text-muted-foreground mt-2">
                 {showRevenueBreakdown ? 'Hide monthly breakdown' : 'Click to view monthly revenue'}
               </p>
@@ -151,14 +151,14 @@ export default function AdminDashboardPage() {
         </button>
 
         {/* Pending Orders */}
-        <div className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-elegant">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-muted-foreground text-sm">Pending Orders</p>
-              <p className="text-3xl font-bold text-foreground mt-2">{pendingOrders}</p>
+        <div className="min-w-0 rounded-xl border border-border bg-card p-4 text-card-foreground shadow-elegant sm:p-5 lg:p-6">
+          <div className="flex min-w-0 items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-sm text-muted-foreground">Pending Orders</p>
+              <p className="mt-2 text-2xl font-bold text-foreground sm:text-3xl">{pendingOrders}</p>
             </div>
-            <div className="bg-yellow-100 p-3 rounded-lg">
-              <Clock className="w-8 h-8 text-yellow-600" />
+            <div className="shrink-0 rounded-lg bg-yellow-100 p-2 sm:p-3">
+              <Clock className="h-6 w-6 text-yellow-600 sm:h-8 sm:w-8" />
             </div>
           </div>
         </div>
