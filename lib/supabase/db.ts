@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
+import { deleteProductImage } from '@/lib/supabase/storage';
 
 const mapProduct = (row: Record<string, unknown>): Product => ({
   id: String(row.id),
@@ -206,25 +207,35 @@ export const updateProduct = async (
 };
 
 export const deleteProduct = async (productId: string): Promise<void> => {
-  try {
-    const supabase = createClient();
+  const supabase = createClient();
+  const { data: product, error: lookupError } = await supabase
+    .from('products')
+    .select('id, image, images')
+    .eq('id', productId)
+    .maybeSingle();
+  if (lookupError) throw lookupError;
+  if (!product) throw new Error('Product was not found or is no longer available.');
 
-    // Remove dependent orders first so the product and both admin lists stay in sync.
-    const { error: ordersError } = await supabase
-      .from('orders')
-      .delete()
-      .eq('product_id', productId);
-    if (ordersError) throw ordersError;
+  const { error: ordersError } = await supabase
+    .from('orders')
+    .delete()
+    .eq('product_id', productId);
+  if (ordersError) throw ordersError;
 
-    const { error: productError } = await supabase
-      .from('products')
-      .delete()
-      .eq('id', productId);
-    if (productError) throw productError;
-  } catch (error) {
-    console.error('[v0] Error deleting product and related orders:', error);
-    throw error;
-  }
+  const { data: deletedProduct, error: productError } = await supabase
+    .from('products')
+    .delete()
+    .eq('id', productId)
+    .select('id, image, images')
+    .maybeSingle();
+  if (productError) throw productError;
+  if (!deletedProduct) throw new Error('Product could not be deleted. Check admin permissions.');
+
+  const imageUrls = Array.from(new Set([
+    deletedProduct.image,
+    ...(Array.isArray(deletedProduct.images) ? deletedProduct.images : []),
+  ].filter((value): value is string => Boolean(value))));
+  await Promise.all(imageUrls.map((imageUrl) => deleteProductImage(imageUrl)));
 };
 
 export interface Order {

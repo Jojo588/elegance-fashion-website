@@ -43,7 +43,7 @@ function PurchasePageContent() {
 
   if (loading) {
     return (
-      <main className="bg-white">
+      <main className="bg-background">
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
@@ -58,7 +58,7 @@ function PurchasePageContent() {
 
   if (!product) {
     return (
-      <main className="bg-white">
+      <main className="bg-background">
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
@@ -127,7 +127,7 @@ function PurchasePageContent() {
   const totalPrice = product.price * quantity;
 
   return (
-    <main className="bg-white">
+    <main className="bg-background">
       <Navbar />
 
       {/* Breadcrumb */}
@@ -172,7 +172,7 @@ function PurchasePageContent() {
               </div>
 
               {/* Product ID */}
-              <div className="p-3 bg-white rounded border-2 border-border">
+              <div className="p-3 bg-background rounded border-2 border-border">
                 <p className="text-xs text-muted-foreground mb-1">Product ID</p>
                 <p className="text-lg font-bold text-foreground font-mono">
                   {product.id}
@@ -306,7 +306,7 @@ export default function PurchasePage() {
   return (
     <Suspense
       fallback={
-        <main className="bg-white">
+        <main className="bg-background">
           <Navbar />
           <div className="min-h-screen flex items-center justify-center">
             <div className="text-center">

@@ -88,9 +88,6 @@ export default function OrdersTable({
                 Customer
               </th>
               <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
-                Details
-              </th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
                 Total
               </th>
               <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
@@ -133,13 +130,6 @@ export default function OrdersTable({
                       {order.customerLocation || 'N/A'}
                     </p>
                   </div>
-                </td>
-
-                {/* Details */}
-                <td className="px-6 py-4">
-                  <p className="text-sm text-foreground">
-                    {order.quantity}x - Size {order.size}, {order.color}
-                  </p>
                 </td>
 
                 {/* Total */}

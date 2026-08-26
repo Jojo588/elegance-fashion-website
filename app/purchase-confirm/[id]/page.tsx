@@ -60,7 +60,7 @@ export default function PurchaseConfirmPage() {
 
   if (loading) {
     return (
-      <main className="bg-white">
+      <main className="bg-background">
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
@@ -75,7 +75,7 @@ export default function PurchaseConfirmPage() {
 
   if (!product) {
     return (
-      <main className="bg-white">
+      <main className="bg-background">
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
@@ -94,7 +94,7 @@ export default function PurchaseConfirmPage() {
   const totalPrice = product.price * quantity;
 
   return (
-    <main className="bg-white">
+    <main className="bg-background">
       <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -148,7 +148,7 @@ export default function PurchaseConfirmPage() {
               <div className="border-t border-border pt-3">
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-foreground font-medium">Quantity:</span>
-                  <div className="flex items-center gap-3 bg-white border border-border rounded-lg">
+                  <div className="flex items-center gap-3 bg-background border border-border rounded-lg">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className="px-3 py-2 text-primary hover:bg-primary/10 transition-colors"

@@ -24,7 +24,7 @@ export default function ProductDetailsPage() {
 
   if (!product) {
     return (
-      <main className="bg-white">
+      <main className="min-h-screen bg-background text-foreground">
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
@@ -45,7 +45,7 @@ export default function ProductDetailsPage() {
   }
 
   return (
-    <main className="bg-white">
+    <main className="min-h-screen bg-background text-foreground">
       <Navbar />
 
       {/* Breadcrumb */}
@@ -127,77 +127,6 @@ export default function ProductDetailsPage() {
               {product.fullDescription}
             </p>
 
-            {/* Available Colors */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold text-foreground mb-3">
-                  Available Colors
-                </h3>
-                <div className="flex flex-wrap gap-3">
-                  {product.colors.map((color) => (
-                    <div
-                      key={color}
-                      className="flex items-center gap-2 px-4 py-2 border-2 border-border rounded-lg hover:border-primary transition-colors cursor-pointer"
-                    >
-                      <div
-                        className="w-6 h-6 rounded-full border-2 border-gray-400"
-                        style={{
-                          backgroundColor:
-                            color === "Pink"
-                              ? "#e74c8c"
-                              : color === "White"
-                              ? "#ffffff"
-                              : color === "Black"
-                              ? "#2d2d2d"
-                              : color === "Beige"
-                              ? "#d4af9b"
-                              : color === "Navy"
-                              ? "#001f3f"
-                              : color === "Burgundy"
-                              ? "#800020"
-                              : color === "Cream"
-                              ? "#fffdd0"
-                              : color === "Blush"
-                              ? "#f5a3c7"
-                              : color === "Ivory"
-                              ? "#fffff0"
-                              : color === "Rose"
-                              ? "#ff007f"
-                              : color === "Mauve"
-                              ? "#ae6b9d"
-                              : color === "Gray"
-                              ? "#999999"
-                              : color === "Floral"
-                              ? "#e74c8c"
-                              : color === "Pastel"
-                              ? "#c8b4d8"
-                              : "#e8ddd9",
-                        }}
-                      />
-                      <span className="font-medium text-foreground">{color}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Available Sizes */}
-              <div>
-                <h3 className="text-lg font-semibold text-foreground mb-3">
-                  Available Sizes
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {product.sizes.map((size) => (
-                    <button
-                      key={size}
-                      className="px-4 py-2 border-2 border-border rounded-lg font-semibold hover:border-primary hover:text-primary transition-colors"
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
             {/* Actions */}
             <div className="flex gap-3 pt-6 border-t border-border">
               <Link
@@ -240,12 +169,6 @@ export default function ProductDetailsPage() {
                   {product.category}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Sizes:</span>
-                <span className="font-semibold text-foreground">
-                  {product.sizes.join(", ")}
-                </span>
-              </div>
             </div>
           </div>
         </div>
@@ -271,7 +194,7 @@ export default function ProductDetailsPage() {
               <Link
                 key={relatedProduct.id}
                 href={`/products/${relatedProduct.id}`}
-                className="group bg-white rounded-lg overflow-hidden shadow-elegant hover:shadow-hover transition-smooth"
+                className="group bg-card text-card-foreground rounded-lg overflow-hidden shadow-elegant hover:shadow-hover transition-smooth"
               >
                 <div className="relative w-full aspect-[2/3] overflow-hidden bg-muted">
                   <Image

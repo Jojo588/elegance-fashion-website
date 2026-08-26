@@ -96,49 +96,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.description}
         </p>
 
-        {/* Colors Available */}
-        <div className="flex gap-2">
-          {product.colors.slice(0, 3).map((color) => (
-            <div
-              key={color}
-              className="w-5 h-5 rounded-full border-2 border-border hover:border-primary transition-colors"
-              title={color}
-              style={{
-                backgroundColor:
-                  color === "Pink"
-                    ? "#e74c8c"
-                    : color === "White"
-                    ? "#ffffff"
-                    : color === "Black"
-                    ? "#2d2d2d"
-                    : color === "Beige"
-                    ? "#d4af9b"
-                    : color === "Navy"
-                    ? "#001f3f"
-                    : color === "Burgundy"
-                    ? "#800020"
-                    : color === "Cream"
-                    ? "#fffdd0"
-                    : color === "Blush"
-                    ? "#f5a3c7"
-                    : color === "Ivory"
-                    ? "#fffff0"
-                    : color === "Rose"
-                    ? "#ff007f"
-                    : color === "Mauve"
-                    ? "#ae6b9d"
-                    : color === "Gray"
-                    ? "#999999"
-                    : color === "Floral"
-                    ? "#e74c8c"
-                    : color === "Pastel"
-                    ? "#c8b4d8"
-                    : "#e8ddd9",
-              }}
-            />
-          ))}
-        </div>
-
         {/* Price and Buttons */}
         <div className="flex items-center justify-between pt-3 border-t border-border">
           <div>
