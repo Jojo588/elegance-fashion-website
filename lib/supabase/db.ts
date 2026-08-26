@@ -208,14 +208,21 @@ export const updateProduct = async (
 export const deleteProduct = async (productId: string): Promise<void> => {
   try {
     const supabase = createClient();
-    const { error } = await supabase
+
+    // Remove dependent orders first so the product and both admin lists stay in sync.
+    const { error: ordersError } = await supabase
+      .from('orders')
+      .delete()
+      .eq('product_id', productId);
+    if (ordersError) throw ordersError;
+
+    const { error: productError } = await supabase
       .from('products')
       .delete()
       .eq('id', productId);
-
-    if (error) throw error;
+    if (productError) throw productError;
   } catch (error) {
-    console.error('[v0] Error deleting product:', error);
+    console.error('[v0] Error deleting product and related orders:', error);
     throw error;
   }
 };
@@ -331,8 +338,35 @@ export const resetRevenue = async (scope: 'month' | 'all'): Promise<void> => {
 };
 
 export const deleteOrder = async (orderId: string): Promise<void> => {
-  const { error } = await createClient().from('orders').delete().eq('id', orderId);
-  if (error) throw error;
+  const supabase = createClient();
+
+  const { data: order, error: lookupError } = await supabase
+    .from('orders')
+    .select('product_id')
+    .eq('id', orderId)
+    .single();
+  if (lookupError) throw lookupError;
+
+  const { error: orderError } = await supabase
+    .from('orders')
+    .delete()
+    .eq('id', orderId);
+  if (orderError) throw orderError;
+
+  // Remove the product too, but only when no other order still references it.
+  const { count, error: remainingError } = await supabase
+    .from('orders')
+    .select('id', { count: 'exact', head: true })
+    .eq('product_id', order.product_id);
+  if (remainingError) throw remainingError;
+
+  if (count === 0) {
+    const { error: productError } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', order.product_id);
+    if (productError) throw productError;
+  }
 };
 
 export const updateOrderStatus = async (orderId: string, status: Order['status']) => {
