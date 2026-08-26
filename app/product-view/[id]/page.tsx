@@ -39,7 +39,7 @@ export default function ProductViewPage() {
 
   if (loading) {
     return (
-      <main className="bg-white">
+      <main className="min-h-screen overflow-x-clip bg-background text-foreground">
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
@@ -54,7 +54,7 @@ export default function ProductViewPage() {
 
   if (!product) {
     return (
-      <main className="bg-white">
+      <main className="min-h-screen overflow-x-clip bg-background text-foreground">
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
@@ -88,7 +88,7 @@ export default function ProductViewPage() {
   };
 
   return (
-    <main className="bg-white">
+    <main className="min-h-screen overflow-x-clip bg-background text-foreground">
       <Navbar />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -131,7 +131,7 @@ export default function ProductViewPage() {
           </div>
 
           {/* Product Info Section */}
-          <div className="space-y-6">
+          <div className="min-w-0 space-y-6 rounded-lg bg-card p-6 text-card-foreground shadow-elegant md:p-8">
             {/* Product Name and ID */}
             <div>
               <p className="text-sm text-muted-foreground mb-1">Product ID: {product.id}</p>
@@ -145,17 +145,17 @@ export default function ProductViewPage() {
                 {product.category}
               </span>
               {product.isFeatured && (
-                <span className="px-3 py-1 bg-yellow-50 text-yellow-700 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-accent text-accent-foreground rounded-full text-sm font-medium">
                   Featured
                 </span>
               )}
               {product.isNew && (
-                <span className="px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm font-medium">
                   New Arrival
                 </span>
               )}
               {product.isBestSeller && (
-                <span className="px-3 py-1 bg-red-50 text-red-700 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-destructive/15 text-destructive rounded-full text-sm font-medium">
                   Best Seller
                 </span>
               )}

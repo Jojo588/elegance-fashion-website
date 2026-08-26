@@ -146,7 +146,7 @@ export default function OrdersTable({
                     onChange={(e) =>
                       onStatusChange(order.id || '', e.target.value as Order['status'])
                     }
-                    className={`min-w-28 appearance-none rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground [color-scheme:light] outline-none cursor-pointer focus:ring-2 focus:ring-primary dark:[color-scheme:dark] [&>option]:bg-card [&>option]:text-foreground ${
+                    className={`min-w-28 appearance-none rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground [color-scheme:dark] outline-none cursor-pointer focus:ring-2 focus:ring-primary [&>option]:bg-card [&>option]:text-foreground ${
                       statusColors[order.status]
                     }`}
                   >

@@ -43,7 +43,7 @@ function PurchasePageContent() {
 
   if (loading) {
     return (
-      <main className="bg-background">
+      <main className="min-h-screen overflow-x-clip bg-background text-foreground">
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
@@ -58,7 +58,7 @@ function PurchasePageContent() {
 
   if (!product) {
     return (
-      <main className="bg-background">
+      <main className="min-h-screen overflow-x-clip bg-background text-foreground">
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
@@ -127,7 +127,7 @@ function PurchasePageContent() {
   const totalPrice = product.price * quantity;
 
   return (
-    <main className="bg-background">
+    <main className="min-h-screen overflow-x-clip bg-background text-foreground">
       <Navbar />
 
       {/* Breadcrumb */}
@@ -146,7 +146,7 @@ function PurchasePageContent() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
           {/* Product Summary */}
           <div className="md:col-span-1">
-            <div className="sticky top-32 bg-muted/50 rounded-lg p-6 space-y-6">
+            <div className="sticky top-32 min-w-0 rounded-lg bg-card p-6 text-card-foreground shadow-elegant">
               {/* Product Image */}
               <div className="relative w-full aspect-[2/3] overflow-hidden rounded-lg">
                 <Image
@@ -228,7 +228,7 @@ function PurchasePageContent() {
                     onChange={(e) =>
                       setQuantity(Math.max(1, parseInt(e.target.value) || 1))
                     }
-                    className="w-20 text-center px-3 py-2 border-2 border-border rounded-lg focus:outline-none focus:border-primary"
+                    className="w-20 rounded-lg border-2 border-border bg-background px-3 py-2 text-center text-foreground focus:outline-none focus:border-primary"
                   />
                   <button
                     onClick={() => setQuantity(quantity + 1)}
@@ -240,7 +240,7 @@ function PurchasePageContent() {
               </div>
 
               {/* Optional Customer Info */}
-              <div className="space-y-4 bg-muted/50 p-6 rounded-lg">
+              <div className="rounded-lg bg-card p-6 text-card-foreground shadow-elegant">
                 <h3 className="text-lg font-semibold text-foreground">
                   Additional Information (Optional)
                 </h3>
@@ -254,7 +254,7 @@ function PurchasePageContent() {
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="Enter your name"
-                    className="w-full px-4 py-2 border-2 border-border rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full min-w-0 rounded-lg border-2 border-border bg-background px-4 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
                   />
                 </div>
 
@@ -267,7 +267,7 @@ function PurchasePageContent() {
                     value={customerLocation}
                     onChange={(e) => setCustomerLocation(e.target.value)}
                     placeholder="Enter your location"
-                    className="w-full px-4 py-2 border-2 border-border rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full min-w-0 rounded-lg border-2 border-border bg-background px-4 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
                   />
                 </div>
               </div>
@@ -306,7 +306,7 @@ export default function PurchasePage() {
   return (
     <Suspense
       fallback={
-        <main className="bg-background">
+        <main className="min-h-screen overflow-x-clip bg-background text-foreground">
           <Navbar />
           <div className="min-h-screen flex items-center justify-center">
             <div className="text-center">

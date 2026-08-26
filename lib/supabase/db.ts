@@ -216,6 +216,8 @@ export const deleteProduct = async (productId: string): Promise<void> => {
   if (lookupError) throw lookupError;
   if (!product) throw new Error('Product was not found or is no longer available.');
 
+  // Orders currently store one product per row. Remove only rows for this
+  // product so unrelated orders and their product references remain intact.
   const { error: ordersError } = await supabase
     .from('orders')
     .delete()

@@ -106,7 +106,7 @@ export default function ProductDetailsPage() {
           </div>
 
           {/* Product Info Section */}
-          <div className="space-y-6">
+          <div className="min-w-0 space-y-6 rounded-lg bg-card p-6 text-card-foreground shadow-elegant md:p-8">
             {/* Category & Title */}
             <div>
               <p className="text-sm font-semibold text-primary uppercase tracking-wider">
@@ -156,7 +156,7 @@ export default function ProductDetailsPage() {
             </div>
 
             {/* Product Details */}
-            <div className="bg-muted/50 p-6 rounded-lg space-y-4">
+            <div className="rounded-lg bg-muted p-6 text-card-foreground shadow-elegant">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Product ID:</span>
                 <span className="font-semibold text-foreground">
