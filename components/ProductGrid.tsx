@@ -111,8 +111,8 @@ export default function ProductGrid({
   const hasMoreProducts = visibleCount < filteredProducts.length;
 
   return (
-    <section className="w-full bg-background px-4 py-10 sm:px-6 sm:py-12 md:py-16 lg:py-20">
-      <div className="mx-auto w-full max-w-7xl">
+    <section className="w-full min-w-0 overflow-hidden bg-background px-4 py-10 sm:px-6 sm:py-12 md:py-16 lg:px-8 lg:py-20">
+      <div className="mx-auto w-full min-w-0 max-w-7xl">
         {/* Header */}
         <div className="mx-auto mb-8 max-w-2xl text-center sm:mb-10 md:mb-14">
           <h2 className="text-balance text-2xl font-bold text-foreground sm:text-3xl md:text-4xl lg:text-5xl">
@@ -172,7 +172,7 @@ export default function ProductGrid({
                 </div>
 
                 {/* Price Range */}
-                <div className="mb-4 md:mb-0 flex-1 min-w-max">
+                <div className="mb-4 min-w-0 flex-1 md:mb-0">
                   <label className="text-sm font-semibold text-foreground block mb-2">
                     Price: GHS {priceRange[0]} - GHS {priceRange[1]}
                   </label>

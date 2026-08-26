@@ -14,12 +14,12 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 border-b border-border bg-background shadow-elegant">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex size-10 items-center justify-center rounded-lg bg-primary">
-              <Heart className="size-6 fill-primary-foreground text-primary-foreground" />
-            </div>
-            <span className="hidden text-2xl font-bold text-foreground sm:inline">
+          <Link href="/" className="group min-w-0 shrink-0" aria-label="Niella's FashionHub home">
+            <span className="block truncate font-serif text-lg font-bold tracking-tight text-foreground transition-colors group-hover:text-primary sm:text-xl md:text-2xl">
               Niella&apos;s <span className="text-primary">FashionHub</span>
+            </span>
+            <span className="hidden text-[0.6rem] font-medium uppercase tracking-[0.28em] text-muted-foreground sm:block">
+              Fashion · Beauty · Lifestyle
             </span>
           </Link>
 

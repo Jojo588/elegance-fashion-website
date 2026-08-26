@@ -11,7 +11,7 @@ export const metadata = {
 export default function HomePage() {
 
   return (
-    <main className="bg-white">
+    <main className="min-w-0 overflow-x-hidden bg-background">
       {/* Navigation */}
       <Navbar />
 
@@ -19,7 +19,7 @@ export default function HomePage() {
       <HeroSection />
 
       {/* Featured Section */}
-      <section id="featured" className="bg-white">
+      <section id="featured" className="min-w-0 overflow-hidden bg-background">
         <ProductGrid
           title="Featured Collection"
           subtitle="Handpicked pieces for the elegant woman"
@@ -81,7 +81,7 @@ export default function HomePage() {
       </section>
 
       {/* All Products Section */}
-      <section id="products" className="bg-white">
+      <section id="products" className="min-w-0 overflow-hidden bg-background">
         <ProductGrid
           title="Browse All Products"
           subtitle="Shop dresses, shoes, accessories, and more"
