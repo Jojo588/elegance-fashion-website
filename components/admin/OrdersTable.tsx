@@ -49,6 +49,7 @@ export default function OrdersTable({
   onDelete,
 }: OrdersTableProps) {
   const [search, setSearch] = useState('');
+  const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null);
   const filteredOrders = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (!term) return orders;
@@ -182,14 +183,22 @@ export default function OrdersTable({
                       <MessageCircle className="size-4 text-green-600" />
                     </button>
                     <button
-                      onClick={() => {
-                        if (order.id && window.confirm('Delete this order permanently?')) onDelete(order.id);
+                      onClick={async () => {
+                        if (!order.id || deletingOrderId) return;
+                        if (!window.confirm('Delete this order permanently?')) return;
+                        setDeletingOrderId(order.id);
+                        try {
+                          await onDelete(order.id);
+                        } finally {
+                          setDeletingOrderId(null);
+                        }
                       }}
-                      className="rounded-lg p-2 text-destructive transition-colors hover:bg-destructive/10"
+                      disabled={deletingOrderId === order.id}
+                      className="rounded-lg p-2 text-destructive transition-colors hover:bg-destructive/10 disabled:cursor-not-allowed disabled:opacity-50"
                       title="Delete order"
                       aria-label={`Delete ${order.productName} order`}
                     >
-                      <Trash2 className="size-4" />
+                      <Trash2 className="size-4" aria-hidden="true" />
                     </button>
                   </div>
                 </td>
