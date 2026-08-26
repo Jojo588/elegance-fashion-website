@@ -123,6 +123,7 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    box-sizing: border-box;
   }
   html {
     @apply min-h-full bg-background font-sans;
@@ -131,7 +132,14 @@
   body {
     @apply min-h-screen bg-background text-foreground;
     background-color: var(--background);
+    overflow-x: clip;
     transition: background-color 240ms ease, color 240ms ease;
+  }
+  img, svg, video, canvas {
+    max-width: 100%;
+  }
+  button, a {
+    max-width: 100%;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold text-foreground;
@@ -151,15 +159,15 @@
   }
 
   .btn-primary {
-    @apply px-6 py-3 bg-primary text-white rounded-lg font-medium transition-all duration-300 ease-in-out hover:opacity-90 active:scale-95;
+    @apply max-w-full whitespace-normal break-words px-6 py-3 text-center bg-primary text-white rounded-lg font-medium transition-all duration-300 ease-in-out hover:opacity-90 active:scale-95;
   }
 
   .btn-secondary {
-    @apply px-6 py-3 bg-secondary text-primary rounded-lg font-medium transition-all duration-300 ease-in-out hover:bg-accent hover:text-foreground;
+    @apply max-w-full whitespace-normal break-words px-6 py-3 text-center bg-secondary text-primary rounded-lg font-medium transition-all duration-300 ease-in-out hover:bg-accent hover:text-foreground;
   }
 
   .btn-outline {
-    @apply px-6 py-3 border-2 border-primary text-primary rounded-lg font-medium transition-all duration-300 ease-in-out hover:bg-primary hover:text-white;
+    @apply max-w-full whitespace-normal break-words px-6 py-3 text-center border-2 border-primary text-primary rounded-lg font-medium transition-all duration-300 ease-in-out hover:bg-primary hover:text-white;
   }
 
   .text-balance {

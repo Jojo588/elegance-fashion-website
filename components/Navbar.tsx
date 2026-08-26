@@ -18,8 +18,8 @@ export default function Navbar() {
             <span className="block truncate font-serif text-lg font-bold tracking-tight text-foreground transition-colors group-hover:text-primary sm:text-xl md:text-2xl">
               Niella&apos;s <span className="text-primary">FashionHub</span>
             </span>
-            <span className="hidden text-[0.6rem] font-medium uppercase tracking-[0.28em] text-muted-foreground sm:block">
-              Fashion · Beauty · Lifestyle
+            <span className="hidden max-w-full text-[0.6rem] font-medium tracking-[0.2em] text-muted-foreground sm:block">
+              look good. feel good. be you
             </span>
           </Link>
 
