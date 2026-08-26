@@ -17,8 +17,6 @@ export default function PurchaseConfirmPage() {
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedSize, setSelectedSize] = useState<string>('');
-  const [selectedColor, setSelectedColor] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
@@ -27,12 +25,6 @@ export default function PurchaseConfirmPage() {
         if (productId) {
           const data = await getProductById(productId);
           setProduct(data);
-          if (data?.sizes && data.sizes.length > 0) {
-            setSelectedSize(data.sizes[0]);
-          }
-          if (data?.colors && data.colors.length > 0) {
-            setSelectedColor(data.colors[0]);
-          }
         }
       } catch (error) {
         console.error('Failed to fetch product:', error);
@@ -45,18 +37,13 @@ export default function PurchaseConfirmPage() {
   }, [productId]);
 
   const handleContinuePurchase = () => {
-    if (!selectedSize || !selectedColor) {
-      alert('Please select size and color');
-      return;
-    }
-
     const orderSummary = {
       productId: product?.id,
       productName: product?.name,
       price: product?.price,
       quantity,
-      size: selectedSize,
-      color: selectedColor,
+      size: 'Not applicable',
+      color: 'Not applicable',
       total: (product?.price || 0) * quantity,
     };
 
@@ -185,46 +172,6 @@ export default function PurchaseConfirmPage() {
                 </div>
               </div>
             </div>
-
-            {/* Size Selection */}
-            {product.sizes && product.sizes.length > 0 && (
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-3">
-                  Select Size <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={selectedSize}
-                  onChange={(e) => setSelectedSize(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-border rounded-lg text-foreground focus:outline-none focus:border-primary transition-colors bg-white"
-                >
-                  {product.sizes.map((size) => (
-                    <option key={size} value={size}>
-                      {size}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            {/* Color Selection */}
-            {product.colors && product.colors.length > 0 && (
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-3">
-                  Select Color <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={selectedColor}
-                  onChange={(e) => setSelectedColor(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-border rounded-lg text-foreground focus:outline-none focus:border-primary transition-colors bg-white"
-                >
-                  {product.colors.map((color) => (
-                    <option key={color} value={color}>
-                      {color}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
 
             {/* Action Buttons */}
             <div className="space-y-3 pt-4">

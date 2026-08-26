@@ -167,23 +167,6 @@ export default function ProductViewPage() {
               <p className="text-foreground/80 leading-relaxed">{product.description}</p>
             </div>
 
-            {/* Colors */}
-            {product.colors && product.colors.length > 0 && (
-              <div>
-                <h2 className="text-lg font-semibold text-foreground mb-3">Available Colors</h2>
-                <div className="flex flex-wrap gap-2">
-                  {product.colors.map((color) => (
-                    <div
-                      key={color}
-                      className="px-4 py-2 border-2 border-muted-foreground rounded-lg text-foreground font-medium"
-                    >
-                      {color}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Call to Action */}
             <div className="pt-6 border-t border-border">
               <p className="text-sm text-muted-foreground mb-4">

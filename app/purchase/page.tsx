@@ -17,8 +17,6 @@ function PurchasePageContent() {
   
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedSize, setSelectedSize] = useState("");
-  const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [customerName, setCustomerName] = useState("");
   const [customerLocation, setCustomerLocation] = useState("");
@@ -32,10 +30,6 @@ function PurchasePageContent() {
         if (productId) {
           const data = await getProductById(productId);
           setProduct(data);
-          if (data) {
-            setSelectedSize(data.sizes[0] || "");
-            setSelectedColor(data.colors[0] || "");
-          }
         }
       } catch (error) {
         console.error("Failed to fetch product:", error);
@@ -85,10 +79,7 @@ function PurchasePageContent() {
   }
 
   const handleOrderSubmit = async () => {
-    if (!product || !selectedSize || !selectedColor) {
-      alert("Please select size and color");
-      return;
-    }
+    if (!product) return;
 
     setIsSubmitting(true);
 
@@ -98,8 +89,8 @@ function PurchasePageContent() {
       const orderDetails: OrderDetails = {
         productId: product.id || "",
         productName: product.name,
-        size: selectedSize,
-        color: selectedColor,
+        size: "Not applicable",
+        color: "Not applicable",
         quantity,
         price: totalPrice,
         customerName: customerName || undefined,
@@ -114,8 +105,8 @@ function PurchasePageContent() {
         productId: product.id || "",
         productName: product.name,
         productImage: product.image,
-        size: selectedSize,
-        color: selectedColor,
+        size: "Not applicable",
+        color: "Not applicable",
         quantity,
         price: product.price,
         totalPrice,
@@ -188,19 +179,10 @@ function PurchasePageContent() {
                 </p>
               </div>
 
-              {/* Selection Summary */}
               <div className="space-y-2 border-t-2 border-border pt-6">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Size:</span>
-                  <span className="font-semibold">{selectedSize}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Color:</span>
-                  <span className="font-semibold">{selectedColor}</span>
-                </div>
-                <div className="flex justify-between">
                   <span className="text-muted-foreground">Quantity:</span>
-                  <span className="font-semibold">{quantity}</span>
+                  <span className="font-semibold text-foreground">{quantity}</span>
                 </div>
               </div>
 
@@ -227,28 +209,6 @@ function PurchasePageContent() {
 
             {/* Form */}
             <div className="space-y-8">
-              {/* Size Selection */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-foreground">
-                  Select Size <span className="text-primary">*</span>
-                </h3>
-                <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
-                  {product.sizes.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`py-3 px-2 sm:px-4 rounded-lg font-semibold transition-all border-2 ${
-                        selectedSize === size
-                          ? "bg-primary text-white border-primary"
-                          : "border-border hover:border-primary"
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Quantity */}
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold text-foreground">
