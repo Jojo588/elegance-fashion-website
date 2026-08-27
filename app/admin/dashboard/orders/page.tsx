@@ -44,7 +44,7 @@ export default function OrdersManagementPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 max-w-full space-y-6 overflow-x-hidden">
       {/* Header */}
       <div>
         <h1 className="text-4xl font-bold text-foreground">Orders</h1>

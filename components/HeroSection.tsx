@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function HeroSection() {
   return (
-    <section className="relative flex min-h-[680px] w-full items-center justify-center overflow-hidden bg-gradient-to-br from-secondary via-background to-accent-light px-4 py-20 sm:min-h-[720px] sm:px-6 md:min-h-[760px] md:py-24 lg:min-h-[820px] lg:px-8">
+    <section className="relative flex min-h-[620px] w-full min-w-0 items-center justify-center overflow-hidden bg-gradient-to-br from-secondary via-background to-accent-light px-4 py-20 sm:min-h-[680px] sm:px-6 md:min-h-[740px] md:py-24 lg:min-h-[820px] lg:px-8">
       {/* Decorative circles */}
       <div className="absolute top-10 right-10 w-32 h-32 bg-primary rounded-full opacity-20 blur-3xl" />
       <div className="absolute bottom-10 left-10 w-40 h-40 bg-accent rounded-full opacity-20 blur-3xl" />

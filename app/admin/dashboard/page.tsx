@@ -214,7 +214,7 @@ export default function AdminDashboardPage() {
       )}
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid min-w-0 grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2">
         {/* Recent Orders */}
         <div className="overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-elegant">
           <div className="p-6 border-b border-border">
@@ -223,7 +223,7 @@ export default function AdminDashboardPage() {
           <div className="divide-y divide-border max-h-96 overflow-y-auto">
             {orders.slice(0, 5).map((order) => (
               <div key={order.id} className="p-4 hover:bg-muted transition-colors">
-                <div className="flex justify-between items-start">
+                <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="font-medium text-foreground">{order.productName}</p>
                     <p className="text-sm text-muted-foreground">
@@ -263,7 +263,7 @@ export default function AdminDashboardPage() {
           <div className="divide-y divide-border max-h-96 overflow-y-auto">
             {products.filter((p) => p.isFeatured).slice(0, 5).map((product) => (
               <div key={product.id} className="p-4 hover:bg-muted transition-colors">
-                <div className="flex justify-between items-start">
+                <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="font-medium text-foreground">{product.name}</p>
                     <p className="text-sm text-muted-foreground">GHS {product.price}</p>

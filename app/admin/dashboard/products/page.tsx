@@ -61,7 +61,7 @@ export default function ProductsManagementPage() {
       )}
 
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-4xl font-bold text-foreground">Products</h1>
           <p className="text-muted-foreground mt-2">Manage your dress collection</p>

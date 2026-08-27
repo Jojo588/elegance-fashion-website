@@ -17,7 +17,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const isWishlisted = isFavorite(product.id);
 
   return (
-    <div className="group overflow-hidden rounded-lg bg-background shadow-elegant transition-all duration-500 hover:shadow-hover">
+    <div className="group flex min-w-0 max-w-full flex-col overflow-hidden rounded-lg bg-background shadow-elegant transition-all duration-500 hover:shadow-hover">
       {/* Image Container */}
       <div className="relative w-full aspect-[2/3] overflow-hidden bg-muted">
         {/* Badge */}
@@ -29,7 +29,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         )}
         {(product.isNew || product.isBestSeller) && (
-          <div className="absolute top-4 left-4 z-10">
+          <div className="absolute left-3 top-3 z-10 flex max-w-[calc(100%-4.5rem)] flex-wrap gap-1.5 sm:left-4 sm:top-4 sm:gap-2">
             {product.isNew && (
               <span className="inline-block bg-primary text-white px-3 py-1 text-sm font-semibold rounded-full">
                 New
@@ -104,7 +104,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-2 pt-2">
+        <div className="flex min-w-0 flex-col gap-2 pt-2 min-[420px]:flex-row">
           <Link
             href={`/product-view/${product.id}`}
             className="flex-1 rounded-lg bg-secondary px-2 py-2 text-center text-xs font-medium text-primary transition-all duration-300 ease-in-out hover:bg-accent hover:text-foreground sm:px-3 sm:text-sm"

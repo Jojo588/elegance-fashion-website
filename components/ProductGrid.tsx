@@ -160,7 +160,7 @@ export default function ProductGrid({
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full rounded-lg border-2 border-border bg-background px-3 py-2 text-sm transition-colors focus:border-primary focus:outline-none sm:w-auto sm:px-4"
+                    className="w-full max-w-full rounded-lg border-2 border-border bg-background px-3 py-2 text-sm transition-colors focus:border-primary focus:outline-none sm:w-auto sm:px-4"
                   >
                     <option value="all">All Categories</option>
                     {categories.map((cat) => (
@@ -197,7 +197,7 @@ export default function ProductGrid({
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full rounded-lg border-2 border-border bg-background px-3 py-2 text-sm transition-colors focus:border-primary focus:outline-none sm:w-auto sm:px-4"
+                    className="w-full max-w-full rounded-lg border-2 border-border bg-background px-3 py-2 text-sm transition-colors focus:border-primary focus:outline-none sm:w-auto sm:px-4"
                   >
                     <option value="newest">Newest</option>
                     <option value="price-low">Price: Low to High</option>
@@ -251,7 +251,7 @@ export default function ProductGrid({
             {/* Product Grid */}
             {filteredProducts.length > 0 ? (
           <>
-          <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 lg:gap-8">
+          <div className="grid min-w-0 grid-cols-1 gap-5 xs:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
             {visibleProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

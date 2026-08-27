@@ -121,6 +121,41 @@
 }
 
 @layer base {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  *,
+  *::before,
+  *::after {
+    min-width: 0;
+  }
+
+  img,
+  video,
+  svg,
+  canvas {
+    max-width: 100%;
+  }
+
+  button,
+  a {
+    overflow-wrap: anywhere;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  label {
+    overflow-wrap: anywhere;
+  }
   * {
     @apply border-border outline-ring/50;
     box-sizing: border-box;

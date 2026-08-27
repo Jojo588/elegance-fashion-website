@@ -18,7 +18,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   const displayName = categoryName.charAt(0).toUpperCase() + categoryName.slice(1);
 
   return (
-    <main className="bg-white">
+    <main className="min-w-0 overflow-x-hidden bg-background text-foreground">
       <Navbar />
       
       <section className="bg-white">
