@@ -12,8 +12,8 @@ export default function AdminLayout({
     <ProtectedRoute>
       <div className="min-h-screen bg-muted">
         <AdminSidebar />
-        <main className="min-h-screen overflow-auto md:ml-64">
-          <div className="p-4 md:p-8">{children}</div>
+        <main className="min-h-screen min-w-0 overflow-x-hidden md:ml-64">
+          <div className="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8">{children}</div>
         </main>
       </div>
     </ProtectedRoute>

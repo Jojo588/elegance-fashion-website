@@ -11,7 +11,7 @@ export const metadata = {
 export default function HomePage() {
 
   return (
-    <main className="min-w-0 overflow-x-hidden bg-background">
+    <main className="min-w-0 overflow-x-clip bg-background">
       {/* Navigation */}
       <Navbar />
 
@@ -30,8 +30,8 @@ export default function HomePage() {
 
       {/* Statistics Section */}
       <section className="bg-gradient-to-r from-primary/5 to-accent/5 py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-8">
             <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
                 Premium
@@ -91,7 +91,7 @@ export default function HomePage() {
 
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-primary to-accent py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+        <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-6 px-4 text-center sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-5xl font-bold text-white">
             Ready to find your next favorite?
           </h2>

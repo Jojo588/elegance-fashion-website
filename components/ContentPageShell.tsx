@@ -13,7 +13,7 @@ export default function ContentPageShell({ eyebrow, title, intro, children }: Co
   return (
     <div className="min-h-screen overflow-x-clip bg-background text-foreground">
       <Navbar />
-      <main className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
         <header className="max-w-3xl border-b border-border pb-8 sm:pb-10">
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.24em] text-primary sm:text-sm">{eyebrow}</p>
           <h1 className="font-serif text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">{title}</h1>

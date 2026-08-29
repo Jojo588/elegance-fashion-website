@@ -24,7 +24,7 @@ export default function Navbar() {
     <>
       <nav className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/95 shadow-elegant backdrop-blur supports-[backdrop-filter]:bg-background/85">
         <div className="mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8">
-          <div className="flex min-h-20 items-center justify-between gap-3 py-3">
+          <div className="flex min-h-20 items-center justify-between gap-4 py-3">
             <Link href="/" className="group min-w-0 max-w-[62vw] shrink-0" aria-label="Niella's FashionHub home">
               <span className="block truncate font-serif text-base font-bold tracking-tight text-foreground transition-colors group-hover:text-primary sm:text-xl md:text-2xl">
                 Niella&apos;s <span className="text-primary">FashionHub</span>
@@ -34,7 +34,7 @@ export default function Navbar() {
               </span>
             </Link>
 
-            <div className="hidden min-w-0 items-center gap-3 lg:flex xl:gap-6">
+            <div className="hidden min-w-0 items-center gap-2 lg:flex xl:gap-5">
               {links.map(([href, label]) => (
                 <Link key={href} href={href} className="whitespace-nowrap font-medium text-foreground transition-colors hover:text-primary">
                   {label}
