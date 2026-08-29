@@ -261,33 +261,33 @@ export interface Order {
 }
 
 export const addOrder = async (order: Omit<Order, 'id'>): Promise<void> => {
-  // Do not request the inserted row here: anonymous customers may INSERT
-  // orders but are intentionally not allowed to SELECT admin order data.
-  const { error } = await createClient().from('orders').insert({
-    product_id: order.productId,
-    product_name: order.productName,
-    product_image: order.productImage,
-    size: order.size,
-    color: order.color,
-    quantity: order.quantity,
-    price: order.price,
-    total_price: order.totalPrice,
-    customer_name: order.customerName,
-    customer_location: order.customerLocation,
-    phone_number: order.phoneNumber,
-    status: order.status,
-    whatsapp_sent: order.whatsappSent,
-    created_at: Date.now(),
+  const response = await fetch('/api/orders', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      product_id: order.productId,
+      product_name: order.productName,
+      product_image: order.productImage,
+      size: order.size,
+      color: order.color,
+      quantity: order.quantity,
+      price: order.price,
+      total_price: order.totalPrice,
+      customer_name: order.customerName,
+      customer_location: order.customerLocation,
+      phone_number: order.phoneNumber,
+      status: order.status,
+      whatsapp_sent: order.whatsappSent,
+      created_at: Date.now(),
+    }),
   });
-  if (error) throw error;
+  if (!response.ok) throw new Error('Unable to save order');
 };
 
 export const getAllOrders = async (): Promise<Order[]> => {
-  const { data, error } = await createClient()
-    .from('orders')
-    .select('*')
-    .order('created_at', { ascending: false });
-  if (error) throw error;
+  const response = await fetch('/api/orders', { cache: 'no-store' });
+  if (!response.ok) throw new Error('Unable to load orders');
+  const { data } = await response.json();
   return (data ?? []).map((row) => ({
     id: row.id,
     productId: row.product_id,
@@ -351,42 +351,8 @@ export const resetRevenue = async (scope: 'month' | 'all'): Promise<void> => {
 };
 
 export const deleteOrder = async (orderId: string): Promise<void> => {
-  const supabase = createClient();
-
-  const { data: order, error: lookupError } = await supabase
-    .from('orders')
-    .select('product_id')
-    .eq('id', orderId)
-    .single();
-  if (lookupError) throw lookupError;
-
-  const { data: product, error: productLookupError } = await supabase
-    .from('products')
-    .select('id, image, images')
-    .eq('id', order.product_id)
-    .maybeSingle();
-  if (productLookupError) throw productLookupError;
-
-  const { error: orderError } = await supabase
-    .from('orders')
-    .delete()
-    .eq('id', orderId);
-  if (orderError) throw orderError;
-
-  // An order owns the product shown in the order list. Remove both records.
-  const { error: productError } = await supabase
-    .from('products')
-    .delete()
-    .eq('id', order.product_id);
-  if (productError) throw productError;
-
-  if (product) {
-    const imageUrls = Array.from(new Set([
-      product.image,
-      ...(Array.isArray(product.images) ? product.images : []),
-    ].filter((value): value is string => Boolean(value))));
-    await Promise.all(imageUrls.map((imageUrl) => deleteProductImage(imageUrl)));
-  }
+  const response = await fetch(`/api/orders?id=${encodeURIComponent(orderId)}`, { method: 'DELETE' });
+  if (!response.ok) throw new Error('Unable to delete order');
 };
 
 export const updateOrderStatus = async (orderId: string, status: Order['status']) => {
