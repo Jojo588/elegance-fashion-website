@@ -64,7 +64,7 @@ export default function OrdersTable({
 
   return (
     <div className="bg-card text-card-foreground rounded-lg shadow-elegant overflow-hidden">
-      <div className="flex items-center gap-3 border-b border-border p-4">
+      <div className="flex flex-wrap items-center gap-3 border-b border-border p-3 sm:flex-nowrap sm:p-4">
         <Search className="size-4 text-muted-foreground" aria-hidden="true" />
         <label htmlFor="order-product-id-search" className="sr-only">Search orders by product ID</label>
         <input
@@ -77,11 +77,11 @@ export default function OrdersTable({
         />
         <span className="text-sm text-muted-foreground">{filteredOrders.length} results</span>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full">
+      <div className="w-full overflow-x-auto">
+        <table className="w-full min-w-[760px] table-fixed">
           <thead className="bg-muted border-b border-border">
             <tr>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
+              <th className="w-[30%] px-3 py-3 text-left text-sm font-semibold text-foreground sm:px-6 sm:py-4">
                 Product
               </th>
               <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
@@ -102,9 +102,9 @@ export default function OrdersTable({
             {filteredOrders.map((order) => (
               <tr key={order.id} className="hover:bg-muted/50 transition-colors">
                 {/* Product */}
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                <td className="px-3 py-3 align-middle sm:px-6 sm:py-4">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="relative size-10 shrink-0 overflow-hidden rounded-lg bg-muted">
                       <Image
                         src={order.productImage}
                         alt={order.productName}
@@ -112,8 +112,8 @@ export default function OrdersTable({
                         className="object-cover"
                       />
                     </div>
-                    <div>
-                      <p className="font-medium text-foreground text-sm">
+                    <div className="min-w-0 whitespace-nowrap">
+                      <p className="truncate font-medium text-foreground text-sm">
                         {order.productName}
                       </p>
                     </div>
@@ -133,8 +133,8 @@ export default function OrdersTable({
                 </td>
 
                 {/* Total */}
-                <td className="px-6 py-4">
-                  <p className="font-semibold text-foreground">
+                <td className="px-3 py-3 align-middle sm:px-6 sm:py-4">
+                  <p className="whitespace-nowrap font-semibold text-foreground">
                     GHS {order.totalPrice}
                   </p>
                 </td>
@@ -162,8 +162,8 @@ export default function OrdersTable({
                 </td>
 
                 {/* Actions */}
-                <td className="px-6 py-4">
-                  <div className="flex items-center justify-end gap-2">
+                <td className="px-3 py-3 align-middle sm:px-6 sm:py-4">
+                  <div className="flex items-center justify-end gap-1.5 sm:gap-2">
                     <button
                       onClick={() => handleWhatsapp(order)}
                       className="rounded-lg p-2 transition-colors hover:bg-green-50 dark:hover:bg-green-500/10"

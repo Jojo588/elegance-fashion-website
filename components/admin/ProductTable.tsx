@@ -43,7 +43,7 @@ export default function ProductTable({
 
   return (
     <div className="bg-card text-card-foreground rounded-lg shadow-elegant overflow-hidden">
-      <div className="flex items-center gap-3 border-b border-border p-4">
+      <div className="flex flex-wrap items-center gap-3 border-b border-border p-3 sm:flex-nowrap sm:p-4">
         <Search className="size-4 text-muted-foreground" aria-hidden="true" />
         <label htmlFor="product-id-search" className="sr-only">Search products by ID</label>
         <input
@@ -56,11 +56,11 @@ export default function ProductTable({
         />
         <span className="text-sm text-muted-foreground">{filteredProducts.length} results</span>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full">
+      <div className="w-full overflow-x-auto">
+        <table className="w-full min-w-[760px] table-fixed">
           <thead className="bg-muted border-b border-border">
             <tr>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
+              <th className="w-[34%] px-3 py-3 text-left text-sm font-semibold text-foreground sm:px-6 sm:py-4">
                 Product
               </th>
               <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
@@ -81,9 +81,9 @@ export default function ProductTable({
             {filteredProducts.map((product) => (
               <tr key={product.id} className="hover:bg-muted/50 transition-colors">
                 {/* Product Info */}
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-4">
-                    <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                <td className="px-3 py-3 align-middle sm:px-6 sm:py-4">
+                  <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+                    <div className="relative size-10 shrink-0 overflow-hidden rounded-lg bg-muted sm:size-12">
                       <Image
                         src={product.image}
                         alt={product.name}
@@ -91,9 +91,9 @@ export default function ProductTable({
                         className="object-cover"
                       />
                     </div>
-                    <div>
-                      <p className="font-medium text-foreground">{product.name}</p>
-                      <p className="text-xs text-muted-foreground">
+                    <div className="min-w-0 whitespace-nowrap">
+                      <p className="truncate font-medium text-foreground">{product.name}</p>
+                      <p className="truncate text-xs text-muted-foreground">
                         ID: {product.id}
                       </p>
                     </div>
@@ -101,8 +101,8 @@ export default function ProductTable({
                 </td>
 
                 {/* Price */}
-                <td className="px-6 py-4">
-                  <p className="font-medium text-foreground">
+                <td className="px-3 py-3 align-middle sm:px-6 sm:py-4">
+                  <p className="whitespace-nowrap font-medium text-foreground">
                     GHS {product.price}
                   </p>
                 </td>
@@ -136,8 +136,8 @@ export default function ProductTable({
                 </td>
 
                 {/* Actions */}
-                <td className="px-6 py-4">
-                  <div className="flex items-center justify-end gap-2">
+                <td className="px-3 py-3 align-middle sm:px-6 sm:py-4">
+                  <div className="flex items-center justify-end gap-1.5 sm:gap-2">
                     <button
                       onClick={() => onEdit(product)}
                       className="p-2 hover:bg-primary/10 rounded-lg transition-colors"
