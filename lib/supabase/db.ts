@@ -360,25 +360,32 @@ export const deleteOrder = async (orderId: string): Promise<void> => {
     .single();
   if (lookupError) throw lookupError;
 
+  const { data: product, error: productLookupError } = await supabase
+    .from('products')
+    .select('id, image, images')
+    .eq('id', order.product_id)
+    .maybeSingle();
+  if (productLookupError) throw productLookupError;
+
   const { error: orderError } = await supabase
     .from('orders')
     .delete()
     .eq('id', orderId);
   if (orderError) throw orderError;
 
-  // Remove the product too, but only when no other order still references it.
-  const { count, error: remainingError } = await supabase
-    .from('orders')
-    .select('id', { count: 'exact', head: true })
-    .eq('product_id', order.product_id);
-  if (remainingError) throw remainingError;
+  // An order owns the product shown in the order list. Remove both records.
+  const { error: productError } = await supabase
+    .from('products')
+    .delete()
+    .eq('id', order.product_id);
+  if (productError) throw productError;
 
-  if (count === 0) {
-    const { error: productError } = await supabase
-      .from('products')
-      .delete()
-      .eq('id', order.product_id);
-    if (productError) throw productError;
+  if (product) {
+    const imageUrls = Array.from(new Set([
+      product.image,
+      ...(Array.isArray(product.images) ? product.images : []),
+    ].filter((value): value is string => Boolean(value))));
+    await Promise.all(imageUrls.map((imageUrl) => deleteProductImage(imageUrl)));
   }
 };
 

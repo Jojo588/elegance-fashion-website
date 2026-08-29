@@ -4,6 +4,7 @@ import { Order } from '@/lib/supabase/db';
 import Image from 'next/image';
 import { MessageCircle, Search, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 function DeliveryCountdown({ deleteAfter }: { deleteAfter?: string }) {
   const [remaining, setRemaining] = useState(() => Math.max(0, new Date(deleteAfter ?? 0).getTime() - Date.now()));
@@ -50,6 +51,8 @@ export default function OrdersTable({
 }: OrdersTableProps) {
   const [search, setSearch] = useState('');
   const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null);
+  const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
+  const [orderToConfirm, setOrderToConfirm] = useState<{ order: Order; status: Order['status'] } | null>(null);
   const filteredOrders = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (!term) return orders;
@@ -143,9 +146,10 @@ export default function OrdersTable({
                 <td className="px-6 py-4">
                   <select
                     value={order.status}
-                    onChange={(e) =>
-                      onStatusChange(order.id || '', e.target.value as Order['status'])
-                    }
+                    onChange={(e) => {
+                      const status = e.target.value as Order['status'];
+                      if (status !== order.status) setOrderToConfirm({ order, status });
+                    }}
                     className={`min-w-28 appearance-none rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground [color-scheme:dark] outline-none cursor-pointer focus:ring-2 focus:ring-primary [&>option]:bg-card [&>option]:text-foreground ${
                       statusColors[order.status]
                     }`}
@@ -173,16 +177,7 @@ export default function OrdersTable({
                       <MessageCircle className="size-4 text-green-600" />
                     </button>
                     <button
-                      onClick={async () => {
-                        if (!order.id || deletingOrderId) return;
-                        if (!window.confirm('Delete this order permanently?')) return;
-                        setDeletingOrderId(order.id);
-                        try {
-                          await onDelete(order.id);
-                        } finally {
-                          setDeletingOrderId(null);
-                        }
-                      }}
+                      onClick={() => setOrderToDelete(order)}
                       disabled={deletingOrderId === order.id}
                       className="rounded-lg p-2 text-destructive transition-colors hover:bg-destructive/10 disabled:cursor-not-allowed disabled:opacity-50"
                       title="Delete order"
@@ -205,6 +200,39 @@ export default function OrdersTable({
           </p>
         </div>
       )}
+      <ConfirmDialog
+        open={orderToDelete !== null}
+        title="Delete order and product?"
+        description={orderToDelete ? `This permanently deletes the order for “${orderToDelete.productName}” and removes that product from the products list.` : ''}
+        confirmLabel="Delete permanently"
+        destructive
+        busy={deletingOrderId !== null}
+        onCancel={() => setOrderToDelete(null)}
+        onConfirm={async () => {
+          if (!orderToDelete?.id || deletingOrderId) return;
+          setDeletingOrderId(orderToDelete.id);
+          try { await onDelete(orderToDelete.id); } finally {
+            setDeletingOrderId(null);
+            setOrderToDelete(null);
+          }
+        }}
+      />
+      <ConfirmDialog
+        open={orderToConfirm !== null}
+        title="Confirm status change"
+        description={orderToConfirm ? `Change this order to “${orderToConfirm.status}”?` : ''}
+        confirmLabel="Confirm change"
+        busy={orderToConfirm !== null && deletingOrderId === orderToConfirm.order.id}
+        onCancel={() => setOrderToConfirm(null)}
+        onConfirm={async () => {
+          if (!orderToConfirm?.order.id) return;
+          setDeletingOrderId(orderToConfirm.order.id);
+          try { await onStatusChange(orderToConfirm.order.id, orderToConfirm.status); } finally {
+            setDeletingOrderId(null);
+            setOrderToConfirm(null);
+          }
+        }}
+      />
     </div>
   );
 }

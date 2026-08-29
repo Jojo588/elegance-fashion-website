@@ -5,6 +5,7 @@ import { Edit2, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 interface ProductTableProps {
   products: Product[];
@@ -18,6 +19,7 @@ export default function ProductTable({
   onProductDeleted,
 }: ProductTableProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [search, setSearch] = useState('');
   const filteredProducts = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -27,7 +29,6 @@ export default function ProductTable({
 
   const handleDelete = async (id: string | undefined) => {
     if (!id) return;
-    if (!confirm('Are you sure you want to delete this product?')) return;
 
     setDeletingId(id);
     try {
@@ -146,7 +147,7 @@ export default function ProductTable({
                       <Edit2 className="w-4 h-4 text-primary" />
                     </button>
                     <button
-                      onClick={() => handleDelete(product.id)}
+                      onClick={() => setProductToDelete(product)}
                       disabled={deletingId === product.id}
                       className="p-2 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                       title="Delete"
@@ -168,6 +169,20 @@ export default function ProductTable({
           </p>
         </div>
       )}
+      <ConfirmDialog
+        open={productToDelete !== null}
+        title="Delete product?"
+        description={productToDelete ? `Deleting “${productToDelete.name}” will permanently remove it from the products list and delete any matching orders.` : ''}
+        confirmLabel="Delete product"
+        destructive
+        busy={deletingId !== null}
+        onCancel={() => setProductToDelete(null)}
+        onConfirm={async () => {
+          if (!productToDelete) return;
+          await handleDelete(productToDelete.id);
+          setProductToDelete(null);
+        }}
+      />
     </div>
   );
 }
