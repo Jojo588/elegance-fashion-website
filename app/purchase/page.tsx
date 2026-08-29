@@ -180,15 +180,15 @@ function PurchasePageContent() {
               </div>
 
               <div className="space-y-2 border-t-2 border-border pt-6">
-                <div className="flex justify-between">
+                <div className="flex items-center justify-between gap-4 rounded-lg bg-muted p-3 text-foreground">
                   <span className="text-muted-foreground">Quantity:</span>
                   <span className="font-semibold text-foreground">{quantity}</span>
                 </div>
               </div>
 
               {/* Total Price */}
-              <div className="bg-primary/10 rounded p-4 border-2 border-primary">
-                <p className="text-muted-foreground text-sm mb-1">Total Price</p>
+              <div className="rounded-lg border-2 border-primary bg-primary/10 p-4 text-foreground">
+                <p className="mb-1 text-sm text-muted-foreground">Total Price</p>
                 <p className="text-3xl font-bold text-primary">
                   GHS {totalPrice}
                 </p>
@@ -217,7 +217,7 @@ function PurchasePageContent() {
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-4 py-2 border-2 border-border rounded-lg hover:border-primary transition-colors"
+                    className="rounded-lg border-2 border-border bg-background px-4 py-2 text-foreground transition-colors hover:border-primary"
                   >
                     -
                   </button>
@@ -232,7 +232,7 @@ function PurchasePageContent() {
                   />
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="px-4 py-2 border-2 border-border rounded-lg hover:border-primary transition-colors"
+                    className="rounded-lg border-2 border-border bg-background px-4 py-2 text-foreground transition-colors hover:border-primary"
                   >
                     +
                   </button>
