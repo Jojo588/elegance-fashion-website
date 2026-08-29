@@ -54,24 +54,24 @@ export default function Footer() {
             <h4 className="font-semibold mb-4 text-lg">Information</h4>
             <ul className="space-y-2 text-sm text-gray-300 dark:text-black">
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
+                <Link href="/about" className="hover:text-primary transition-colors">
                   About Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
+                <Link href="/contact" className="hover:text-primary transition-colors">
                   Contact Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
+                <Link href="/privacy-policy" className="hover:text-primary transition-colors">
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Terms & Conditions
-                </a>
+                <Link href="/terms-conditions" className="hover:text-primary transition-colors">
+                  Terms &amp; Conditions
+                </Link>
               </li>
             </ul>
           </div>
@@ -105,15 +105,15 @@ export default function Footer() {
         <div className="border-t border-gray-700 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
             <p>&copy; {currentYear} Niella&apos;s FashionHub. All rights reserved.</p>
-            <div className="flex gap-4 mt-4 md:mt-0">
-              <a href="#" className="hover:text-primary transition-colors">
-                Facebook
+            <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4 md:mt-0">
+              <a href="https://www.tiktok.com/@niella_fashionhub?_r=1&_t=ZS-99Dd6lxexIz" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                TikTok
               </a>
-              <a href="#" className="hover:text-primary transition-colors">
-                Instagram
+              <a href="https://snapchat.com/t/6bgJt3YN" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                Snapchat
               </a>
-              <a href="#" className="hover:text-primary transition-colors">
-                Twitter
+              <a href="https://wa.me/qr/55N25EB2OFFQL1" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                WhatsApp
               </a>
             </div>
           </div>

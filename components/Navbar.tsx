@@ -11,6 +11,8 @@ const links = [
   ['/#products', 'Shop'],
   ['/#new-arrivals', 'New Arrivals'],
   ['/#best-sellers', 'Best Sellers'],
+  ['/about', 'About'],
+  ['/contact', 'Contact'],
 ] as const
 
 export default function Navbar() {
@@ -32,7 +34,7 @@ export default function Navbar() {
               </span>
             </Link>
 
-            <div className="hidden min-w-0 items-center gap-5 lg:flex xl:gap-8">
+            <div className="hidden min-w-0 items-center gap-3 lg:flex xl:gap-6">
               {links.map(([href, label]) => (
                 <Link key={href} href={href} className="whitespace-nowrap font-medium text-foreground transition-colors hover:text-primary">
                   {label}
