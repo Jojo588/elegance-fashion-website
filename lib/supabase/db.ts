@@ -303,7 +303,7 @@ export const getAllOrders = async (): Promise<Order[]> => {
     phoneNumber: row.phone_number,
     status: row.status,
     whatsappSent: row.whatsapp_sent,
-    createdAt: Number(row.created_at),
+      createdAt: Number.isFinite(Number(row.created_at)) ? Number(row.created_at) : new Date(row.created_at ?? 0).getTime(),
     deliveredAt: row.delivered_at ?? undefined,
     deleteAfter: row.delete_after ?? undefined,
   })) as Order[];

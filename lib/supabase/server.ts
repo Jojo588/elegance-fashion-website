@@ -10,7 +10,9 @@ export async function createClient() {
   const cookieStore = await cookies()
 
   const supabaseUrl =
+    process.env.dpewbmudjpvgbepjutcr_SUPABASE_URL ||
     process.env.NEXT_PUBLIC_dpewbmudjpvgbepjutcr_SUPABASE_URL ||
+    process.env.SUPABASE_URL ||
     process.env.NEXT_PUBLIC_SUPABASE_URL ||
     'https://dpewbmudjpvgbepjutcr.supabase.co'
   const supabaseKey =
