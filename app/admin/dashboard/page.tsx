@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useMemo, useState } from 'react';
-import { getAllProducts, getAllOrders, getRevenueRecords, resetRevenue, Product, Order, RevenueRecord } from '@/lib/supabase/db';
+import { resetRevenue, Product, Order, RevenueRecord } from '@/lib/supabase/db';
 import { Package, ShoppingCart, TrendingUp, Clock, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 
@@ -16,14 +16,30 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [productsData, ordersData, revenueData] = await Promise.all([
-          getAllProducts(),
-          getAllOrders(),
-          getRevenueRecords(),
-        ]);
-        setProducts(productsData);
-        setOrders(ordersData);
-        setRevenueRecords(revenueData);
+        const response = await fetch('/api/admin/dashboard', { cache: 'no-store' });
+        if (!response.ok) throw new Error('Dashboard data request failed');
+        const payload = await response.json();
+        setProducts((payload.products ?? []).map((row: Record<string, unknown>) => ({
+          id: String(row.id), name: String(row.name ?? ''), price: Number(row.price ?? 0),
+          description: String(row.description ?? ''), category: String(row.category ?? ''),
+          image: String(row.image ?? ''), images: Array.isArray(row.images) ? row.images as string[] : [],
+          sizes: Array.isArray(row.sizes) ? row.sizes as string[] : [], colors: Array.isArray(row.colors) ? row.colors as string[] : [],
+          isFeatured: Boolean(row.isfeatured), isNew: Boolean(row.isnew), isBestSeller: Boolean(row.isbestseller),
+          isSold: Boolean(row.is_sold), createdAt: Number(row.createdat ?? 0), updatedAt: Number(row.updatedat ?? 0),
+        })));
+        setOrders((payload.orders ?? []).map((row: Record<string, unknown>) => ({
+          id: row.id, productId: String(row.product_id ?? ''), productName: String(row.product_name ?? ''),
+          productImage: String(row.product_image ?? ''), size: String(row.size ?? ''), color: String(row.color ?? ''),
+          quantity: Number(row.quantity ?? 0), price: Number(row.price ?? 0), totalPrice: Number(row.total_price ?? 0),
+          customerName: row.customer_name as string | undefined, customerLocation: row.customer_location as string | undefined,
+          phoneNumber: row.phone_number as string | undefined, status: row.status, whatsappSent: Boolean(row.whatsapp_sent),
+          createdAt: Number(row.created_at ?? 0), deliveredAt: row.delivered_at as string | undefined,
+        })));
+        setRevenueRecords((payload.revenueRecords ?? []).map((row: Record<string, unknown>) => ({
+          id: String(row.id), orderId: String(row.order_id ?? ''), productName: String(row.product_name ?? ''),
+          totalPrice: Number(row.total_price ?? 0), orderCreatedAt: Number(row.order_created_at ?? 0),
+          deliveredAt: String(row.delivered_at ?? ''),
+        })));
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error);
       } finally {
@@ -36,7 +52,7 @@ export default function AdminDashboardPage() {
 
   const totalRevenue = useMemo(() => (
     revenueRecords.reduce((sum, record) => sum + record.totalPrice, 0) +
-    orders.filter((order) => order.status === 'delivered').reduce((sum, order) => sum + order.totalPrice, 0)
+    orders.filter((order) => order.status === 'delivered' && !revenueRecords.some((record) => record.orderId === order.id)).reduce((sum, order) => sum + order.totalPrice, 0)
   ), [orders, revenueRecords]);
 
   const pendingOrders = orders.filter((o) => o.status === 'pending').length;
