@@ -97,10 +97,7 @@ function PurchasePageContent() {
         customerLocation: customerLocation || undefined,
       };
 
-      // Open immediately from the click handler so browsers do not block the new tab.
-      openWhatsAppChat(orderDetails);
-
-      // Save the order after opening WhatsApp; a database delay must not prevent messaging.
+      // Save the order before opening WhatsApp so the admin list always receives it.
       await addOrder({
         productId: product.id || "",
         productName: product.name,
@@ -116,9 +113,12 @@ function PurchasePageContent() {
         whatsappSent: true,
         createdAt: Date.now(),
       });
+
+      // Only redirect after persistence succeeds. This keeps WhatsApp ordering and admin records in sync.
+      openWhatsAppChat(orderDetails);
     } catch (error) {
-      console.error("Failed to save order after opening WhatsApp:", error);
-      alert("WhatsApp was opened, but we could not save your order. Please send the message and try again if needed.");
+      console.error("Failed to save order before opening WhatsApp:", error);
+      alert("We could not save your order. Please try again so it appears in the admin order list.");
     } finally {
       setIsSubmitting(false);
     }

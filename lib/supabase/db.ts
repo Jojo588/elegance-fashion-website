@@ -278,7 +278,7 @@ export const addOrder = async (order: Omit<Order, 'id'>): Promise<void> => {
       phone_number: order.phoneNumber,
       status: order.status,
       whatsapp_sent: order.whatsappSent,
-      created_at: Date.now(),
+      created_at: new Date().toISOString(),
     }),
   });
   if (!response.ok) throw new Error('Unable to save order');
