@@ -140,15 +140,15 @@ export default function PurchaseConfirmPage() {
           {/* Order Details and Selection */}
           <div className="space-y-6">
             {/* Price Information */}
-            <div className="bg-gray-50 rounded-lg p-6 space-y-3">
+            <div className="space-y-3 rounded-lg border border-border bg-muted p-6 text-foreground">
               <div className="flex justify-between items-center">
                 <span className="text-foreground font-medium">Unit Price:</span>
                 <span className="text-lg font-semibold text-primary">GHS {product.price.toFixed(2)}</span>
               </div>
-              <div className="border-t border-border pt-3">
+              <div className="border-t border-border pt-3 text-foreground">
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-foreground font-medium">Quantity:</span>
-                  <div className="flex items-center gap-3 bg-background border border-border rounded-lg">
+                  <div className="flex items-center gap-3 rounded-lg border border-border bg-background text-foreground">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className="px-3 py-2 text-primary hover:bg-primary/10 transition-colors"
@@ -165,7 +165,7 @@ export default function PurchaseConfirmPage() {
                   </div>
                 </div>
               </div>
-              <div className="border-t border-border pt-3">
+              <div className="border-t border-border pt-3 text-foreground">
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-bold text-foreground">Total:</span>
                   <span className="text-2xl font-bold text-primary">GHS {totalPrice.toFixed(2)}</span>
@@ -184,7 +184,7 @@ export default function PurchaseConfirmPage() {
               </button>
               <button
                 onClick={handleCancel}
-                className="w-full px-4 py-3 bg-gray-200 text-foreground rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                className="w-full rounded-lg border border-border bg-muted px-4 py-3 font-semibold text-foreground transition-colors hover:bg-accent"
               >
                 No, Go Back
               </button>
