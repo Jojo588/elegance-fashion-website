@@ -179,19 +179,25 @@ function PurchasePageContent() {
                 </p>
               </div>
 
-              <div className="space-y-2 border-t-2 border-border pt-6">
+              <div className="space-y-3 border-t-2 border-border pt-6">
                 <div className="flex items-center justify-between gap-4 rounded-lg bg-muted p-3 text-foreground">
-                  <span className="text-muted-foreground">Quantity:</span>
+                  <span className="text-sm text-muted-foreground">Unit Price:</span>
+                  <span className="font-semibold text-foreground">GHS {product.price}</span>
+                </div>
+                <div className="flex items-center justify-between gap-4 rounded-lg bg-muted p-3 text-foreground">
+                  <span className="text-sm text-muted-foreground">Quantity:</span>
                   <span className="font-semibold text-foreground">{quantity}</span>
                 </div>
               </div>
 
               {/* Total Price */}
               <div className="rounded-lg border-2 border-primary bg-primary/10 p-4 text-foreground">
-                <p className="mb-1 text-sm text-muted-foreground">Total Price</p>
-                <p className="text-3xl font-bold text-primary">
-                  GHS {totalPrice}
-                </p>
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-sm text-muted-foreground">Total Price</p>
+                  <p className="text-2xl font-bold text-primary sm:text-3xl">
+                    GHS {totalPrice}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -217,7 +223,7 @@ function PurchasePageContent() {
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="rounded-lg border-2 border-border bg-background px-4 py-2 text-foreground transition-colors hover:border-primary"
+                    className="rounded-lg border-2 border-border bg-background px-4 py-2 text-foreground transition-colors hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
                   >
                     -
                   </button>
@@ -232,7 +238,7 @@ function PurchasePageContent() {
                   />
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="rounded-lg border-2 border-border bg-background px-4 py-2 text-foreground transition-colors hover:border-primary"
+                    className="rounded-lg border-2 border-border bg-background px-4 py-2 text-foreground transition-colors hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
                   >
                     +
                   </button>
