@@ -281,7 +281,10 @@ export const addOrder = async (order: Omit<Order, 'id'>): Promise<void> => {
       created_at: new Date().toISOString(),
     }),
   });
-  if (!response.ok) throw new Error('Unable to save order');
+  if (!response.ok) {
+    const result = await response.json().catch(() => null);
+    throw new Error(result?.detail || result?.error || 'Unable to save order');
+  }
 };
 
 export const getAllOrders = async (): Promise<Order[]> => {

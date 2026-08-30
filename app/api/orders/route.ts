@@ -21,12 +21,34 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const payload = await request.json()
-    const { error } = await supabase.from('orders').insert(payload)
+    const order = {
+      product_id: String(payload.product_id ?? ''),
+      product_name: String(payload.product_name ?? ''),
+      product_image: String(payload.product_image ?? ''),
+      size: String(payload.size ?? 'Not applicable'),
+      color: String(payload.color ?? 'Not applicable'),
+      quantity: Math.max(1, Number(payload.quantity ?? 1)),
+      price: Number(payload.price ?? 0),
+      total_price: Number(payload.total_price ?? 0),
+      customer_name: payload.customer_name ? String(payload.customer_name) : null,
+      customer_location: payload.customer_location ? String(payload.customer_location) : null,
+      phone_number: payload.phone_number ? String(payload.phone_number) : null,
+      status: 'pending',
+      whatsapp_sent: true,
+      created_at: new Date().toISOString(),
+    }
+
+    if (!order.product_id || !order.product_name || !Number.isFinite(order.price) || !Number.isFinite(order.total_price)) {
+      return NextResponse.json({ error: 'Missing required order details' }, { status: 400 })
+    }
+
+    const { data, error } = await supabase.from('orders').insert(order).select('id').single()
     if (error) throw error
-    return NextResponse.json({ ok: true }, { status: 201 })
+    return NextResponse.json({ ok: true, id: data.id }, { status: 201 })
   } catch (error) {
     console.error('[orders] create failed', error)
-    return NextResponse.json({ error: 'Unable to create order' }, { status: 500 })
+    const detail = error instanceof Error ? error.message : 'Unknown database error'
+    return NextResponse.json({ error: 'Unable to create order', detail }, { status: 500 })
   }
 }
 
