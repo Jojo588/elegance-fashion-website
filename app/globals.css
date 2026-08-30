@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-playfair), 'Playfair Display Fallback';
   --font-sans: var(--font-geist-sans), 'Geist Fallback';
   --font-mono: var(--font-geist-mono), 'Geist Mono Fallback';
   --color-sidebar-ring: var(--sidebar-ring);
@@ -86,20 +86,21 @@
 
 .dark {
   color-scheme: dark;
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #111111;
+  --card-foreground: #ffffff;
+  --popover: #111111;
+  --popover-foreground: #ffffff;
+  /* Deep black surfaces with bright, high-contrast controls. */
+  --primary: #f06a9f;
+  --primary-foreground: #ffffff;
+  --secondary: #242424;
+  --secondary-foreground: #ffffff;
+  --muted: #1a1a1a;
+  --muted-foreground: #c7c7c7;
+  --accent: #343434;
+  --accent-foreground: #ffffff;
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
@@ -109,62 +110,66 @@
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    color-scheme: dark;
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
-  }
+  --sidebar: #080808;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #f06a9f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1f1f1f;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #2d2d2d;
+  --sidebar-ring: #f06a9f;
 }
 
 @layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    min-width: 0;
+  }
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  img,
+  video,
+  svg,
+  canvas {
+    display: block;
+    max-width: 100%;
+  }
+  button,
+  a,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  label {
+    overflow-wrap: anywhere;
+  }
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
-    @apply font-sans;
+    @apply min-h-full bg-background font-sans;
+    background-color: var(--background);
+  }
+  body {
+    @apply min-h-screen bg-background text-foreground;
+    background-color: var(--background);
+    overflow-x: clip;
+    transition: background-color 240ms ease, color 240ms ease;
+  }
+  img, svg, video, canvas {
+    max-width: 100%;
+  }
+  button, a {
+    max-width: 100%;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold text-foreground;
@@ -183,20 +188,16 @@
     box-shadow: 0 12px 40px rgba(231, 76, 140, 0.15);
   }
 
-  .transition-smooth {
-    @apply transition-all duration-300 ease-in-out;
-  }
-
   .btn-primary {
-    @apply px-6 py-3 bg-primary text-white rounded-lg font-medium transition-smooth hover:opacity-90 active:scale-95;
+    @apply max-w-full whitespace-normal break-words px-6 py-3 text-center bg-primary text-white rounded-lg font-medium transition-all duration-300 ease-in-out hover:opacity-90 active:scale-95;
   }
 
   .btn-secondary {
-    @apply px-6 py-3 bg-secondary text-primary rounded-lg font-medium transition-smooth hover:bg-accent hover:text-foreground;
+    @apply max-w-full whitespace-normal break-words px-6 py-3 text-center bg-secondary text-primary rounded-lg font-medium transition-all duration-300 ease-in-out hover:bg-accent hover:text-foreground;
   }
 
   .btn-outline {
-    @apply px-6 py-3 border-2 border-primary text-primary rounded-lg font-medium transition-smooth hover:bg-primary hover:text-white;
+    @apply max-w-full whitespace-normal break-words px-6 py-3 text-center border-2 border-primary text-primary rounded-lg font-medium transition-all duration-300 ease-in-out hover:bg-primary hover:text-white;
   }
 
   .text-balance {

@@ -1,91 +1,76 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import Link from "next/link";
-import { Menu, X, Heart } from "lucide-react";
+import { useState } from 'react'
+import Link from 'next/link'
+import { Menu, X, Heart } from 'lucide-react'
+import ThemeToggle from '@/components/ThemeToggle'
+import { useFavorites } from '@/lib/favorites'
+
+const links = [
+  ['/', 'Home'],
+  ['/#products', 'Shop'],
+  ['/#new-arrivals', 'New Arrivals'],
+  ['/#best-sellers', 'Best Sellers'],
+  ['/about', 'About'],
+  ['/contact', 'Contact'],
+] as const
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const [isOpen, setIsOpen] = useState(false)
+  const { favoriteIds } = useFavorites()
+  const favoriteLabel = favoriteIds.length > 0 ? ` (${favoriteIds.length})` : ''
 
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-elegant">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <Heart className="w-6 h-6 text-white fill-white" />
+    <>
+      <nav className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/95 shadow-elegant backdrop-blur supports-[backdrop-filter]:bg-background/85">
+        <div className="mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8">
+          <div className="flex min-h-20 items-center justify-between gap-4 py-3">
+            <Link href="/" className="group min-w-0 max-w-[62vw] shrink-0" aria-label="Niella's FashionHub home">
+              <span className="block truncate font-serif text-base font-bold tracking-tight text-foreground transition-colors group-hover:text-primary sm:text-xl md:text-2xl">
+                Niella&apos;s <span className="text-primary">FashionHub</span>
+              </span>
+              <span className="block max-w-full truncate text-[0.5rem] font-medium uppercase tracking-[0.14em] text-muted-foreground sm:text-[0.6rem] sm:tracking-[0.2em]">
+                look good. feel good. be you
+              </span>
+            </Link>
+
+            <div className="hidden min-w-0 items-center gap-2 lg:flex xl:gap-5">
+              {links.map(([href, label]) => (
+                <Link key={href} href={href} className="whitespace-nowrap font-medium text-foreground transition-colors hover:text-primary">
+                  {label}
+                </Link>
+              ))}
+              <Link href="/favorites" className="flex min-w-0 items-center gap-2 whitespace-nowrap font-medium text-foreground transition-colors hover:text-primary">
+                <Heart className="size-4 shrink-0" />
+                <span>Favourites{favoriteLabel}</span>
+              </Link>
+              <ThemeToggle />
             </div>
-            <span className="text-2xl font-bold text-foreground hidden sm:inline">
-              Elegance<span className="text-primary">.</span>
-            </span>
-          </Link>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex gap-8 items-center">
-            <Link href="/" className="text-foreground hover:text-primary transition-smooth font-medium">
-              Home
-            </Link>
-            <Link href="/#dresses" className="text-foreground hover:text-primary transition-smooth font-medium">
-              Shop
-            </Link>
-            <Link href="/#new-arrivals" className="text-foreground hover:text-primary transition-smooth font-medium">
-              New Arrivals
-            </Link>
-            <Link href="/#best-sellers" className="text-foreground hover:text-primary transition-smooth font-medium">
-              Best Sellers
-            </Link>
+            <div className="flex shrink-0 items-center gap-1 sm:gap-2 lg:hidden">
+              <ThemeToggle />
+              <button type="button" onClick={() => setIsOpen((open) => !open)} aria-label={isOpen ? 'Close menu' : 'Open menu'} aria-expanded={isOpen} className="rounded-lg p-2 text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                {isOpen ? <X className="size-5 sm:size-6" /> : <Menu className="size-5 sm:size-6" />}
+              </button>
+            </div>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMenu}
-            className="md:hidden p-2 rounded-lg hover:bg-muted transition-smooth"
-          >
-            {isOpen ? (
-              <X className="w-6 h-6 text-foreground" />
-            ) : (
-              <Menu className="w-6 h-6 text-foreground" />
-            )}
-          </button>
+          {isOpen && (
+            <div className="flex flex-col gap-1 border-t border-border py-3 lg:hidden">
+              {links.map(([href, label]) => (
+                <Link key={href} href={href} className="rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted hover:text-primary sm:text-base" onClick={() => setIsOpen(false)}>
+                  {label}
+                </Link>
+              ))}
+              <Link href="/favorites" className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted hover:text-primary sm:text-base" onClick={() => setIsOpen(false)}>
+                <Heart className="size-4 shrink-0" /> Favourites{favoriteLabel}
+              </Link>
+            </div>
+          )}
         </div>
-
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div className="md:hidden pb-4 space-y-2 border-t border-border">
-            <Link
-              href="/"
-              className="block px-4 py-2 text-foreground hover:text-primary transition-smooth"
-              onClick={() => setIsOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
-              href="/#dresses"
-              className="block px-4 py-2 text-foreground hover:text-primary transition-smooth"
-              onClick={() => setIsOpen(false)}
-            >
-              Shop
-            </Link>
-            <Link
-              href="/#new-arrivals"
-              className="block px-4 py-2 text-foreground hover:text-primary transition-smooth"
-              onClick={() => setIsOpen(false)}
-            >
-              New Arrivals
-            </Link>
-            <Link
-              href="/#best-sellers"
-              className="block px-4 py-2 text-foreground hover:text-primary transition-smooth"
-              onClick={() => setIsOpen(false)}
-            >
-              Best Sellers
-            </Link>
-          </div>
-        )}
-      </div>
-    </nav>
-  );
+      </nav>
+      <div aria-hidden="true" className="h-20 shrink-0" />
+    </>
+  )
 }
+

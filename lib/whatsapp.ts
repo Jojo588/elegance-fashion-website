@@ -5,7 +5,6 @@ export interface OrderDetails {
   color: string;
   quantity: number;
   price: number;
-  imageUrl: string;
   customerName?: string;
   customerLocation?: string;
 }
@@ -15,7 +14,7 @@ const WHATSAPP_NUMBER = "233248993067";
 export function generateWhatsAppMessage(order: OrderDetails): string {
   const message = `Hello,
 
-I would like to order the following dress from Elegance Fashion.
+I would like to order the following product from Niella's FashionHub.
 
 *Product Details:*
 • Product ID: ${order.productId}
@@ -24,9 +23,6 @@ I would like to order the following dress from Elegance Fashion.
 • Color: ${order.color}
 • Quantity: ${order.quantity}
 • Price: GHS ${order.price}
-
-*Product Image:*
-${order.imageUrl}
 
 ${order.customerName ? `*Customer Name:* ${order.customerName}\n` : ""}${order.customerLocation ? `*Location:* ${order.customerLocation}\n` : ""}
 Please let me know the available payment and delivery options.
@@ -39,20 +35,19 @@ Thank you!`;
 export function generateWhatsAppLink(order: OrderDetails): string {
   const message = generateWhatsAppMessage(order);
   const encodedMessage = encodeURIComponent(message);
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+  return `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodedMessage}`;
 }
 
-export function openWhatsAppChat(order: OrderDetails): void {
+export function openWhatsAppChat(order: OrderDetails): boolean {
+  if (typeof window === "undefined") return false;
+
   const link = generateWhatsAppLink(order);
-  
-  // Check if we're in an iframe
-  if (typeof window !== "undefined") {
-    if (window.self !== window.top) {
-      // We're in an iframe, open in a new tab
-      window.open(link, "_blank");
-    } else {
-      // We're not in an iframe, redirect current tab
-      window.location.href = link;
-    }
+  const popup = window.open(link, "_blank", "noopener,noreferrer");
+
+  // Browsers can block a new tab from an iframe. Fall back to the current tab.
+  if (!popup) {
+    window.location.assign(link);
   }
+
+  return true;
 }

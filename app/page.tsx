@@ -2,20 +2,16 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import ProductGrid from "@/components/ProductGrid";
 import Footer from "@/components/Footer";
-import { products } from "@/data/products";
 
 export const metadata = {
-  title: "Elegance Fashion - Discover Premium Dresses",
-  description: "Browse our beautiful collection of elegant dresses perfect for any occasion. Shop now and order via WhatsApp.",
+  title: "Niella's FashionHub - Fashion, Beauty & Lifestyle",
+  description: "Shop clothes, bags, shoes, accessories, jewelry, cosmetics, room decor, and more at Niella's FashionHub.",
 };
 
 export default function HomePage() {
-  const featuredProducts = products.filter((p) => p.isFeatured).slice(0, 6);
-  const newArrivals = products.filter((p) => p.isNew).slice(0, 6);
-  const bestSellers = products.filter((p) => p.isBestSeller).slice(0, 6);
 
   return (
-    <main className="bg-white">
+    <main className="min-w-0 overflow-x-clip bg-background">
       {/* Navigation */}
       <Navbar />
 
@@ -23,7 +19,7 @@ export default function HomePage() {
       <HeroSection />
 
       {/* Featured Section */}
-      <section id="featured" className="bg-white">
+      <section id="featured" className="min-w-0 overflow-hidden bg-background">
         <ProductGrid
           title="Featured Collection"
           subtitle="Handpicked pieces for the elegant woman"
@@ -34,13 +30,13 @@ export default function HomePage() {
 
       {/* Statistics Section */}
       <section className="bg-gradient-to-r from-primary/5 to-accent/5 py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 items-center justify-items-center gap-6 text-center sm:grid-cols-3 sm:gap-8">
             <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
                 Premium
               </div>
-              <p className="text-foreground text-lg">
+              <p className="text-pretty text-foreground text-base sm:text-lg">
                 High-quality fabrics and craftsmanship
               </p>
             </div>
@@ -48,7 +44,7 @@ export default function HomePage() {
               <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
                 Affordable
               </div>
-              <p className="text-foreground text-lg">
+              <p className="text-pretty text-foreground text-base sm:text-lg">
                 Luxury doesn&apos;t have to break the bank
               </p>
             </div>
@@ -56,7 +52,7 @@ export default function HomePage() {
               <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
                 Instant
               </div>
-              <p className="text-foreground text-lg">
+              <p className="text-pretty text-foreground text-base sm:text-lg">
                 Order via WhatsApp for quick service
               </p>
             </div>
@@ -84,27 +80,27 @@ export default function HomePage() {
         />
       </section>
 
-      {/* All Dresses Section */}
-      <section id="dresses" className="bg-white">
+      {/* All Products Section */}
+      <section id="products" className="min-w-0 overflow-hidden bg-background">
         <ProductGrid
-          title="Browse All Dresses"
-          subtitle="Find your perfect dress"
+          title="Browse All Products"
+          subtitle="Shop dresses, shoes, accessories, and more"
           showFilters={true}
         />
       </section>
 
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-primary to-accent py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+        <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-6 px-4 text-center sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-5xl font-bold text-white">
-            Ready to find your elegance?
+            Ready to find your next favorite?
           </h2>
           <p className="text-lg text-white/90 max-w-2xl mx-auto">
             Browse our stunning collection and place your order directly through WhatsApp. We&apos;ll help you with everything you need.
           </p>
           <a
-            href="#dresses"
-            className="inline-block px-8 py-4 bg-white text-primary font-semibold rounded-lg hover:opacity-90 transition-smooth"
+            href="#products"
+            className="inline-block px-8 py-4 bg-white text-primary font-semibold rounded-lg hover:opacity-90 transition-all duration-300 ease-in-out"
           >
             Shop Now
           </a>
