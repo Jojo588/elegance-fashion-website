@@ -106,7 +106,7 @@ export default function ProductViewPage() {
                 src={selectedImage || product.image}
                 alt={product.name}
                 fill
-                className="object-cover"
+className="object-contain p-3 sm:p-5"
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
