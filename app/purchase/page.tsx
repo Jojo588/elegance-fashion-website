@@ -118,7 +118,8 @@ function PurchasePageContent() {
       openWhatsAppChat(orderDetails);
     } catch (error) {
       console.error("Failed to save order before opening WhatsApp:", error);
-      alert("We could not save your order. Please try again so it appears in the admin order list.");
+      const message = error instanceof Error ? error.message : "Unknown error";
+      alert(`We could not save your order. ${message}`);
     } finally {
       setIsSubmitting(false);
     }
