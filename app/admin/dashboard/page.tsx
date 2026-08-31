@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useMemo, useState } from 'react';
-import { resetRevenue, Product, Order, RevenueRecord } from '@/lib/supabase/db';
+import { getRevenueRecords, resetRevenue, Product, Order, RevenueRecord } from '@/lib/supabase/db';
 import { Package, ShoppingCart, TrendingUp, Clock, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 
@@ -14,11 +14,19 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    let active = true;
+
+    const refreshDashboard = async (showLoading = false) => {
+      if (showLoading) setLoading(true);
       try {
-        const response = await fetch('/api/admin/dashboard', { cache: 'no-store' });
+        const response = await fetch('/api/admin/dashboard', {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' },
+        });
         if (!response.ok) throw new Error('Dashboard data request failed');
         const payload = await response.json();
+        if (!active) return;
+
         setProducts((payload.products ?? []).map((row: Record<string, unknown>) => ({
           id: String(row.id), name: String(row.name ?? ''), price: Number(row.price ?? 0),
           description: String(row.description ?? ''), category: String(row.category ?? ''),
@@ -41,13 +49,27 @@ export default function AdminDashboardPage() {
           deliveredAt: String(row.delivered_at ?? ''),
         })));
       } catch (error) {
-        console.error('Failed to fetch dashboard data:', error);
+        if (active) console.error('Failed to fetch dashboard data:', error);
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
 
-    fetchData();
+    void refreshDashboard(true);
+    const interval = window.setInterval(() => void refreshDashboard(), 15000);
+    const handleFocus = () => void refreshDashboard();
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') void refreshDashboard();
+    };
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
 
   const totalRevenue = useMemo(() => (
@@ -88,7 +110,7 @@ export default function AdminDashboardPage() {
       totals.set(key, (totals.get(key) ?? 0) + record.totalPrice);
     });
 
-    orders.filter((order) => order.status === 'delivered').forEach((order) => {
+    orders.filter((order) => order.status === 'delivered' && !revenueRecords.some((record) => record.orderId === order.id)).forEach((order) => {
       const date = new Date(order.createdAt);
       if (Number.isNaN(date.getTime())) return;
       const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
