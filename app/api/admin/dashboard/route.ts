@@ -12,20 +12,28 @@ const supabase = createClient(
 export async function GET() {
   try {
     const [productsResult, ordersResult, revenueResult] = await Promise.all([
-      supabase.from('products').select('*').order('createdat', { ascending: false }),
-      supabase.from('orders').select('*').order('created_at', { ascending: false }),
-      supabase.from('revenue_records').select('*').order('delivered_at', { ascending: false }),
+      supabase.from('products').select('*'),
+      supabase.from('orders').select('*'),
+      supabase.from('revenue_records').select('*'),
     ])
 
     if (productsResult.error) throw productsResult.error
     if (ordersResult.error) throw ordersResult.error
-    if (revenueResult.error) throw revenueResult.error
+
+    const products = [...(productsResult.data ?? [])].sort((a, b) =>
+      Number(b.createdat ?? b.created_at ?? 0) - Number(a.createdat ?? a.created_at ?? 0),
+    )
+    const orders = [...(ordersResult.data ?? [])].sort((a, b) => {
+      const aTime = Number.isFinite(Number(a.created_at)) ? Number(a.created_at) : new Date(a.created_at ?? 0).getTime()
+      const bTime = Number.isFinite(Number(b.created_at)) ? Number(b.created_at) : new Date(b.created_at ?? 0).getTime()
+      return bTime - aTime
+    })
 
     return NextResponse.json({
-      products: productsResult.data ?? [],
-      orders: ordersResult.data ?? [],
-      revenueRecords: revenueResult.data ?? [],
-    })
+      products,
+      orders,
+      revenueRecords: revenueResult.error ? [] : (revenueResult.data ?? []),
+    }, { headers: { 'Cache-Control': 'no-store, max-age=0' } })
   } catch (error) {
     console.error('[dashboard] data read failed', error)
     return NextResponse.json({ error: 'Unable to load dashboard data' }, { status: 500 })
