@@ -12,6 +12,7 @@ export default function AdminDashboardPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [revenueRecords, setRevenueRecords] = useState<RevenueRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dashboardError, setDashboardError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -25,7 +26,9 @@ export default function AdminDashboardPage() {
         });
         if (!response.ok) throw new Error('Dashboard data request failed');
         const payload = await response.json();
+        if (!response.ok) throw new Error(payload?.detail || payload?.error || 'Dashboard data request failed');
         if (!active) return;
+        setDashboardError(null);
 
         setProducts((payload.products ?? []).map((row: Record<string, unknown>) => ({
           id: String(row.id), name: String(row.name ?? ''), price: Number(row.price ?? 0),
@@ -54,7 +57,10 @@ export default function AdminDashboardPage() {
           deliveredAt: String(row.delivered_at ?? ''),
         })));
       } catch (error) {
-        if (active) console.error('Failed to fetch dashboard data:', error);
+        if (active) {
+          console.error('[v0] Failed to fetch dashboard data:', error);
+          setDashboardError(error instanceof Error ? error.message : 'Unable to load dashboard data');
+        }
       } finally {
         if (active) setLoading(false);
       }
@@ -141,6 +147,12 @@ export default function AdminDashboardPage() {
       {/* Header */}
       <div>
         <h1 className="text-4xl font-bold text-foreground">Dashboard</h1>
+        {dashboardError && (
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
+            <span>Dashboard data could not be loaded: {dashboardError}</span>
+            <button type="button" onClick={() => window.location.reload()} className="font-semibold underline">Retry</button>
+          </div>
+        )}
         <p className="text-muted-foreground mt-2">Welcome to your Niella&apos;s FashionHub admin portal</p>
       </div>
 

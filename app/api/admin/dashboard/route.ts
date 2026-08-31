@@ -4,8 +4,16 @@ import { createClient } from '@supabase/supabase-js'
 export const dynamic = 'force-dynamic'
 
 const supabase = createClient(
-  process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://dpewbmudjpvgbepjutcr.supabase.co',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'missing-key',
+  process.env.dpewbmudjpvgbepjutcr_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_dpewbmudjpvgbepjutcr_SUPABASE_URL ||
+    process.env.SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    'https://dpewbmudjpvgbepjutcr.supabase.co',
+  process.env.dpewbmudjpvgbepjutcr_SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.dpewbmudjpvgbepjutcr_SUPABASE_SECRET_KEY ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_SECRET_KEY ||
+    'missing-key',
   { auth: { autoRefreshToken: false, persistSession: false } },
 )
 
@@ -17,8 +25,8 @@ export async function GET() {
       supabase.from('revenue_records').select('*'),
     ])
 
-    if (productsResult.error) throw productsResult.error
-    if (ordersResult.error) throw ordersResult.error
+    if (productsResult.error) console.error('[dashboard] products query failed', productsResult.error)
+    if (ordersResult.error) console.error('[dashboard] orders query failed', ordersResult.error)
 
     const products = [...(productsResult.data ?? [])].sort((a, b) =>
       Number(b.createdat ?? b.created_at ?? 0) - Number(a.createdat ?? a.created_at ?? 0),
@@ -36,6 +44,7 @@ export async function GET() {
     }, { headers: { 'Cache-Control': 'no-store, max-age=0' } })
   } catch (error) {
     console.error('[dashboard] data read failed', error)
-    return NextResponse.json({ error: 'Unable to load dashboard data' }, { status: 500 })
+    const detail = error instanceof Error ? error.message : 'Unknown database error'
+    return NextResponse.json({ error: 'Unable to load dashboard data', detail }, { status: 500 })
   }
 }
