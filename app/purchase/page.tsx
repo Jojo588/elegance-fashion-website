@@ -84,6 +84,10 @@ function PurchasePageContent() {
     setIsSubmitting(true);
 
     try {
+      const maxQuantity = Math.max(0, product.quantityAvailable);
+      if (maxQuantity < 1 || quantity > maxQuantity) {
+        throw new Error(`Only ${maxQuantity} item${maxQuantity === 1 ? '' : 's'} available.`);
+      }
       const totalPrice = product.price * quantity;
 
       const orderDetails: OrderDetails = {
@@ -223,6 +227,7 @@ function PurchasePageContent() {
                 </h3>
                 <div className="flex items-center gap-4">
                   <button
+                    type="button"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     className="rounded-lg border-2 border-border bg-background px-4 py-2 text-foreground transition-colors hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
                   >
@@ -231,19 +236,26 @@ function PurchasePageContent() {
                   <input
                     type="number"
                     min="1"
+                    max={product.quantityAvailable}
                     value={quantity}
-                    onChange={(e) =>
-                      setQuantity(Math.max(1, parseInt(e.target.value) || 1))
-                    }
+                    onChange={(e) => {
+                      const nextQuantity = Number.parseInt(e.target.value, 10);
+                      setQuantity(Math.min(product.quantityAvailable, Math.max(1, nextQuantity || 1)));
+                    }}
                     className="w-20 rounded-lg border-2 border-border bg-background px-3 py-2 text-center text-foreground focus:outline-none focus:border-primary"
                   />
                   <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="rounded-lg border-2 border-border bg-background px-4 py-2 text-foreground transition-colors hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    type="button"
+                    onClick={() => setQuantity(Math.min(product.quantityAvailable, quantity + 1))}
+                    disabled={quantity >= product.quantityAvailable}
+                    className="rounded-lg border-2 border-border bg-background px-4 py-2 text-foreground transition-colors hover:border-primary disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary/30"
                   >
                     +
                   </button>
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  {product.quantityAvailable > 0 ? `${product.quantityAvailable} available` : "Currently out of stock"}
+                </p>
               </div>
 
               {/* Optional Customer Info */}
