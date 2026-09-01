@@ -5,6 +5,7 @@ const mapProduct = (row: Record<string, unknown>): Product => ({
   id: String(row.id),
   name: String(row.name ?? ''),
   price: Number(row.price ?? 0),
+  quantityAvailable: Number(row.quantity_available ?? row.quantityAvailable ?? 0),
   description: String(row.description ?? ''),
   category: String(row.category ?? ''),
   image: String(row.image ?? (Array.isArray(row.images) ? row.images[0] : '') ?? ''),
@@ -23,6 +24,7 @@ export interface Product {
   id: string;
   name: string;
   price: number;
+  quantityAvailable: number;
   description: string;
   category: string;
   image: string;
@@ -151,6 +153,7 @@ export const addProduct = async (product: Omit<Product, 'id' | 'createdAt' | 'up
         {
           name: product.name,
           price: product.price,
+          quantity_available: product.quantityAvailable,
           description: product.description,
           category: product.category,
           image: product.image,

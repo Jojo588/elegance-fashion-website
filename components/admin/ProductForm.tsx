@@ -25,6 +25,7 @@ export default function ProductForm({
   const [formData, setFormData] = useState({
     name: initialProduct?.name || '',
     price: initialProduct?.price || 0,
+    quantityAvailable: initialProduct?.quantityAvailable ?? 0,
     description: initialProduct?.description || '',
     category: initialProduct?.category || 'Casual',
     sizes: initialProduct?.sizes || ['S', 'M', 'L', 'XL'],
@@ -73,6 +74,9 @@ export default function ProductForm({
       }
       if (formData.price <= 0) {
         throw new Error('Price must be greater than 0');
+      }
+      if (!Number.isInteger(formData.quantityAvailable) || formData.quantityAvailable < 0) {
+        throw new Error('Quantity available must be a whole number of 0 or more');
       }
       
       let imageUrls = initialProduct?.images?.length ? initialProduct.images : initialProduct?.image ? [initialProduct.image] : [];
@@ -210,6 +214,26 @@ export default function ProductForm({
                 <option>Party</option>
               </select>
             </div>
+          </div>
+
+          {/* Quantity Available */}
+          <div className="space-y-2">
+            <label htmlFor="quantityAvailable" className="block text-sm font-medium text-foreground">
+              Quantity Available
+            </label>
+            <input
+              id="quantityAvailable"
+              type="number"
+              name="quantityAvailable"
+              min="0"
+              step="1"
+              value={formData.quantityAvailable}
+              onChange={handleInputChange}
+              placeholder="10"
+              className="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+              required
+            />
+            <p className="text-xs text-muted-foreground">Enter the number currently available for sale.</p>
           </div>
 
           {/* Description */}
