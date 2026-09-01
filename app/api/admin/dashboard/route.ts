@@ -38,7 +38,10 @@ export async function GET() {
     })
 
     return NextResponse.json({
-      products,
+      products: products.map((product) => ({
+        ...product,
+        quantity_available: Number(product.quantity_available ?? 0),
+      })),
       orders,
       revenueRecords: revenueResult.error ? [] : (revenueResult.data ?? []),
     }, { headers: { 'Cache-Control': 'no-store, max-age=0' } })

@@ -12,10 +12,10 @@ const mapProduct = (row: Record<string, unknown>): Product => ({
   images: Array.isArray(row.images) ? (row.images as string[]) : String(row.image ?? '') ? [String(row.image)] : [],
   sizes: (row.sizes as string[] | null) ?? [],
   colors: (row.colors as string[] | null) ?? [],
-  isFeatured: Boolean(row.isfeatured ?? row.isFeatured),
-  isNew: Boolean(row.isnew ?? row.isNew),
-  isBestSeller: Boolean(row.isbestseller ?? row.isBestSeller),
-  isSold: Boolean(row.is_sold ?? row.isSold),
+  isFeatured: row.isfeatured === true || row.isfeatured === 'true' || row.isFeatured === true || row.isFeatured === 'true',
+  isNew: row.isnew === true || row.isnew === 'true' || row.isNew === true || row.isNew === 'true',
+  isBestSeller: row.isbestseller === true || row.isbestseller === 'true' || row.isBestSeller === true || row.isBestSeller === 'true',
+  isSold: row.is_sold === true || row.is_sold === 'true' || row.isSold === true || row.isSold === 'true',
   createdAt: Number(row.createdat ?? row.createdAt ?? 0),
   updatedAt: Number(row.updatedat ?? row.updatedAt ?? 0),
 });
@@ -189,6 +189,7 @@ export const updateProduct = async (
       .update({
         ...(updates.name !== undefined && { name: updates.name }),
         ...(updates.price !== undefined && { price: updates.price }),
+        ...(updates.quantityAvailable !== undefined && { quantity_available: updates.quantityAvailable }),
         ...(updates.description !== undefined && { description: updates.description }),
         ...(updates.category !== undefined && { category: updates.category }),
         ...(updates.image !== undefined && { image: updates.image }),
