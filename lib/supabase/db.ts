@@ -15,7 +15,7 @@ const mapProduct = (row: Record<string, unknown>): Product => ({
   isFeatured: row.isfeatured === true || row.isfeatured === 'true' || row.isFeatured === true || row.isFeatured === 'true',
   isNew: row.isnew === true || row.isnew === 'true' || row.isNew === true || row.isNew === 'true',
   isBestSeller: row.isbestseller === true || row.isbestseller === 'true' || row.isBestSeller === true || row.isBestSeller === 'true',
-  isSold: row.is_sold === true || row.is_sold === 'true' || row.isSold === true || row.isSold === 'true',
+  isSold: Number(row.quantity_available ?? row.quantityAvailable ?? 0) === 0,
   createdAt: Number(row.createdat ?? row.createdAt ?? 0),
   updatedAt: Number(row.updatedat ?? row.updatedAt ?? 0),
 });
