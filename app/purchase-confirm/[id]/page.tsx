@@ -25,6 +25,7 @@ export default function PurchaseConfirmPage() {
         if (productId) {
           const data = await getProductById(productId);
           setProduct(data);
+          setQuantity(data?.quantityAvailable > 0 ? 1 : 0);
         }
       } catch (error) {
         console.error('Failed to fetch product:', error);
@@ -37,6 +38,10 @@ export default function PurchaseConfirmPage() {
   }, [productId]);
 
   const handleContinuePurchase = () => {
+    if (!product || product.quantityAvailable < 1 || quantity < 1 || quantity > product.quantityAvailable) {
+      return;
+    }
+
     const orderSummary = {
       productId: product?.id,
       productName: product?.name,
@@ -150,6 +155,7 @@ export default function PurchaseConfirmPage() {
                   <span className="text-foreground font-medium">Quantity:</span>
                   <div className="flex items-center gap-3 rounded-lg border border-border bg-background text-foreground">
                     <button
+                      type="button"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className="px-3 py-2 text-primary hover:bg-primary/10 transition-colors"
                     >
@@ -157,13 +163,18 @@ export default function PurchaseConfirmPage() {
                     </button>
                     <span className="px-4 font-semibold text-foreground">{quantity}</span>
                     <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="px-3 py-2 text-primary hover:bg-primary/10 transition-colors"
+                      type="button"
+                      onClick={() => setQuantity(Math.min(product.quantityAvailable, quantity + 1))}
+                      disabled={quantity >= product.quantityAvailable}
+                      className="px-3 py-2 text-primary transition-colors hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       +
                     </button>
                   </div>
                 </div>
+                <p className="text-right text-sm text-muted-foreground">
+                  {product.quantityAvailable > 0 ? `${product.quantityAvailable} available` : "Currently out of stock"}
+                </p>
               </div>
               <div className="border-t border-border pt-3 text-foreground">
                 <div className="flex justify-between items-center">
@@ -177,7 +188,8 @@ export default function PurchaseConfirmPage() {
             <div className="space-y-3 pt-4">
               <button
                 onClick={handleContinuePurchase}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white rounded-lg font-semibold hover:opacity-90 transition-all"
+                disabled={product.quantityAvailable < 1 || quantity < 1}
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 font-semibold text-white transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <CheckCircle className="w-5 h-5" />
                 <span>Yes, Continue Purchase</span>
