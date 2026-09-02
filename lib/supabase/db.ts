@@ -366,10 +366,48 @@ export const updateOrderStatus = async (orderId: string, status: Order['status']
   const supabase = createClient();
   const { data: order, error: orderLookupError } = await supabase
     .from('orders')
-    .select('id, product_id, product_name, total_price, created_at')
+    .select('id, product_id, product_name, total_price, quantity, created_at, status')
     .eq('id', orderId)
     .single();
   if (orderLookupError) throw orderLookupError;
+
+  const inventoryStatuses = new Set<Order['status']>(['confirmed', 'shipped', 'delivered']);
+  const wasInventoryDeducted = inventoryStatuses.has(order.status);
+  const shouldDeductInventory = inventoryStatuses.has(status) && !wasInventoryDeducted;
+  const shouldRestoreInventory = !inventoryStatuses.has(status) && wasInventoryDeducted;
+
+  if (shouldDeductInventory) {
+    const { data: product, error: productLookupError } = await supabase
+      .from('products')
+      .select('quantity_available')
+      .eq('id', order.product_id)
+      .single();
+    if (productLookupError) throw productLookupError;
+    const available = Number(product.quantity_available ?? 0);
+    if (!Number.isInteger(available) || available < Number(order.quantity)) {
+      throw new Error(`Only ${Math.max(0, available)} item${available === 1 ? '' : 's'} available`);
+    }
+    const { data: updatedProduct, error: productError } = await supabase
+      .from('products')
+      .update({ quantity_available: available - Number(order.quantity) })
+      .eq('id', order.product_id)
+      .eq('quantity_available', available)
+      .select('id');
+    if (productError) throw productError;
+    if (!updatedProduct?.length) throw new Error('Stock changed while updating the order. Please try again.');
+  } else if (shouldRestoreInventory) {
+    const { data: product, error: productLookupError } = await supabase
+      .from('products')
+      .select('quantity_available')
+      .eq('id', order.product_id)
+      .single();
+    if (productLookupError) throw productLookupError;
+    const { error: productError } = await supabase
+      .from('products')
+      .update({ quantity_available: Number(product.quantity_available ?? 0) + Number(order.quantity) })
+      .eq('id', order.product_id);
+    if (productError) throw productError;
+  }
 
   if (status === 'delivered') {
     // Preserve collected revenue, then keep the order/product visible for 24 hours.
