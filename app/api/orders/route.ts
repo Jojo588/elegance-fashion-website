@@ -42,10 +42,44 @@ export async function POST(request: Request) {
     if (!order.product_id || !order.product_name || !Number.isFinite(order.price) || !Number.isFinite(order.total_price)) {
       return NextResponse.json({ error: 'Missing required order details' }, { status: 400 })
     }
+    if (!Number.isInteger(order.quantity) || order.quantity < 1) {
+      return NextResponse.json({ error: 'Quantity must be a positive whole number' }, { status: 400 })
+    }
+
+    // Compare-and-swap prevents two simultaneous orders from overselling stock.
+    let reservedFrom = 0
+    let reservedTo = 0
+    let reserved = false
+    for (let attempt = 0; attempt < 3 && !reserved; attempt += 1) {
+      const { data: product, error: productLookupError } = await supabase
+        .from('products')
+        .select('quantity_available')
+        .eq('id', order.product_id)
+        .single()
+      if (productLookupError) throw productLookupError
+      const available = Number(product.quantity_available ?? 0)
+      if (!Number.isInteger(available) || available < order.quantity) {
+        return NextResponse.json({ error: `Only ${Math.max(0, available)} item${available === 1 ? '' : 's'} available` }, { status: 409 })
+      }
+      reservedFrom = available
+      reservedTo = available - order.quantity
+      const { data: updatedProduct, error: reserveError } = await supabase
+        .from('products')
+        .update({ quantity_available: reservedTo })
+        .eq('id', order.product_id)
+        .eq('quantity_available', reservedFrom)
+        .select('id')
+      if (reserveError) throw reserveError
+      reserved = Boolean(updatedProduct?.length)
+    }
+    if (!reserved) return NextResponse.json({ error: 'Stock changed while placing the order. Please try again.' }, { status: 409 })
 
     const { error } = await supabase.from('orders').insert(order)
-    if (error) throw error
-    return NextResponse.json({ ok: true }, { status: 201 })
+    if (error) {
+      await supabase.from('products').update({ quantity_available: reservedFrom }).eq('id', order.product_id).eq('quantity_available', reservedTo)
+      throw error
+    }
+    return NextResponse.json({ ok: true, quantityAvailable: reservedTo }, { status: 201 })
   } catch (error) {
     console.error('[orders] create failed', error)
     const detail = error instanceof Error ? error.message : 'Unknown database error'
