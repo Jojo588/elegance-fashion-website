@@ -21,7 +21,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Image Container */}
       <div className="relative w-full aspect-[2/3] overflow-hidden bg-muted">
         {/* Badge */}
-        {product.isSold && (
+        {product.quantityAvailable === 0 && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-foreground/35">
             <span className="rounded-full bg-foreground px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-background shadow-elegant sm:px-5 sm:py-2 md:text-sm">
               Sold

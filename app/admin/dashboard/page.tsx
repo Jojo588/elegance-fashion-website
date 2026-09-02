@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useMemo, useState } from 'react';
-import { resetRevenue, Product, Order, RevenueRecord } from '@/lib/supabase/db';
+import { getRevenueRecords, resetRevenue, Product, Order, RevenueRecord } from '@/lib/supabase/db';
 import { Package, ShoppingCart, TrendingUp, Clock, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 
@@ -12,20 +12,35 @@ export default function AdminDashboardPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [revenueRecords, setRevenueRecords] = useState<RevenueRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dashboardError, setDashboardError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    let active = true;
+
+    const refreshDashboard = async (showLoading = false) => {
+      if (showLoading) setLoading(true);
       try {
-        const response = await fetch('/api/admin/dashboard', { cache: 'no-store' });
+        const response = await fetch('/api/admin/dashboard', {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' },
+        });
         if (!response.ok) throw new Error('Dashboard data request failed');
         const payload = await response.json();
+        if (!response.ok) throw new Error(payload?.detail || payload?.error || 'Dashboard data request failed');
+        if (!active) return;
+        setDashboardError(null);
+
         setProducts((payload.products ?? []).map((row: Record<string, unknown>) => ({
           id: String(row.id), name: String(row.name ?? ''), price: Number(row.price ?? 0),
           description: String(row.description ?? ''), category: String(row.category ?? ''),
           image: String(row.image ?? ''), images: Array.isArray(row.images) ? row.images as string[] : [],
           sizes: Array.isArray(row.sizes) ? row.sizes as string[] : [], colors: Array.isArray(row.colors) ? row.colors as string[] : [],
-          isFeatured: Boolean(row.isfeatured), isNew: Boolean(row.isnew), isBestSeller: Boolean(row.isbestseller),
-          isSold: Boolean(row.is_sold), createdAt: Number(row.createdat ?? 0), updatedAt: Number(row.updatedat ?? 0),
+          isFeatured: row.isfeatured === true || row.isfeatured === 'true' || row.is_featured === true || row.is_featured === 'true',
+          isNew: row.isnew === true || row.isnew === 'true' || row.is_new === true || row.is_new === 'true',
+          isBestSeller: row.isbestseller === true || row.isbestseller === 'true' || row.is_best_seller === true || row.is_best_seller === 'true',
+          isSold: row.is_sold === true || row.is_sold === 'true',
+          createdAt: Number.isFinite(Number(row.createdat)) ? Number(row.createdat) : new Date(String(row.created_at ?? 0)).getTime(),
+          updatedAt: Number.isFinite(Number(row.updatedat)) ? Number(row.updatedat) : new Date(String(row.updated_at ?? 0)).getTime(),
         })));
         setOrders((payload.orders ?? []).map((row: Record<string, unknown>) => ({
           id: row.id, productId: String(row.product_id ?? ''), productName: String(row.product_name ?? ''),
@@ -33,7 +48,8 @@ export default function AdminDashboardPage() {
           quantity: Number(row.quantity ?? 0), price: Number(row.price ?? 0), totalPrice: Number(row.total_price ?? 0),
           customerName: row.customer_name as string | undefined, customerLocation: row.customer_location as string | undefined,
           phoneNumber: row.phone_number as string | undefined, status: row.status, whatsappSent: Boolean(row.whatsapp_sent),
-          createdAt: Number(row.created_at ?? 0), deliveredAt: row.delivered_at as string | undefined,
+          createdAt: Number.isFinite(Number(row.created_at)) ? Number(row.created_at) : new Date(String(row.created_at ?? 0)).getTime(),
+          deliveredAt: row.delivered_at as string | undefined,
         })));
         setRevenueRecords((payload.revenueRecords ?? []).map((row: Record<string, unknown>) => ({
           id: String(row.id), orderId: String(row.order_id ?? ''), productName: String(row.product_name ?? ''),
@@ -41,13 +57,30 @@ export default function AdminDashboardPage() {
           deliveredAt: String(row.delivered_at ?? ''),
         })));
       } catch (error) {
-        console.error('Failed to fetch dashboard data:', error);
+        if (active) {
+          console.error('[v0] Failed to fetch dashboard data:', error);
+          setDashboardError(error instanceof Error ? error.message : 'Unable to load dashboard data');
+        }
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
 
-    fetchData();
+    void refreshDashboard(true);
+    const interval = window.setInterval(() => void refreshDashboard(), 15000);
+    const handleFocus = () => void refreshDashboard();
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') void refreshDashboard();
+    };
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
 
   const totalRevenue = useMemo(() => (
@@ -88,7 +121,7 @@ export default function AdminDashboardPage() {
       totals.set(key, (totals.get(key) ?? 0) + record.totalPrice);
     });
 
-    orders.filter((order) => order.status === 'delivered').forEach((order) => {
+    orders.filter((order) => order.status === 'delivered' && !revenueRecords.some((record) => record.orderId === order.id)).forEach((order) => {
       const date = new Date(order.createdAt);
       if (Number.isNaN(date.getTime())) return;
       const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
@@ -114,6 +147,12 @@ export default function AdminDashboardPage() {
       {/* Header */}
       <div>
         <h1 className="text-4xl font-bold text-foreground">Dashboard</h1>
+        {dashboardError && (
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
+            <span>Dashboard data could not be loaded: {dashboardError}</span>
+            <button type="button" onClick={() => window.location.reload()} className="font-semibold underline">Retry</button>
+          </div>
+        )}
         <p className="text-muted-foreground mt-2">Welcome to your Niella&apos;s FashionHub admin portal</p>
       </div>
 

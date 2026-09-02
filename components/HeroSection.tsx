@@ -38,7 +38,7 @@ export default function HeroSection() {
           </div>
 
           {/* Stats */}
-          <div className="grid w-full max-w-md grid-cols-3 gap-2 pt-8 sm:gap-4 md:pt-12">
+          <div className="mx-auto grid w-full max-w-2xl grid-cols-3 items-center justify-items-center gap-4 pt-8 text-center sm:gap-8 md:pt-12">
             <div className="text-center">
               <p className="text-3xl md:text-4xl font-bold text-primary">500+</p>
               <p className="text-sm text-muted-foreground">Products</p>

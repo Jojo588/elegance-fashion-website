@@ -5,16 +5,17 @@ const mapProduct = (row: Record<string, unknown>): Product => ({
   id: String(row.id),
   name: String(row.name ?? ''),
   price: Number(row.price ?? 0),
+  quantityAvailable: Number(row.quantity_available ?? row.quantityAvailable ?? 0),
   description: String(row.description ?? ''),
   category: String(row.category ?? ''),
   image: String(row.image ?? (Array.isArray(row.images) ? row.images[0] : '') ?? ''),
   images: Array.isArray(row.images) ? (row.images as string[]) : String(row.image ?? '') ? [String(row.image)] : [],
   sizes: (row.sizes as string[] | null) ?? [],
   colors: (row.colors as string[] | null) ?? [],
-  isFeatured: Boolean(row.isfeatured ?? row.isFeatured),
-  isNew: Boolean(row.isnew ?? row.isNew),
-  isBestSeller: Boolean(row.isbestseller ?? row.isBestSeller),
-  isSold: Boolean(row.is_sold ?? row.isSold),
+  isFeatured: row.isfeatured === true || row.isfeatured === 'true' || row.isFeatured === true || row.isFeatured === 'true',
+  isNew: row.isnew === true || row.isnew === 'true' || row.isNew === true || row.isNew === 'true',
+  isBestSeller: row.isbestseller === true || row.isbestseller === 'true' || row.isBestSeller === true || row.isBestSeller === 'true',
+  isSold: Number(row.quantity_available ?? row.quantityAvailable ?? 0) === 0,
   createdAt: Number(row.createdat ?? row.createdAt ?? 0),
   updatedAt: Number(row.updatedat ?? row.updatedAt ?? 0),
 });
@@ -23,6 +24,7 @@ export interface Product {
   id: string;
   name: string;
   price: number;
+  quantityAvailable: number;
   description: string;
   category: string;
   image: string;
@@ -49,8 +51,8 @@ export const getAllProducts = async (): Promise<Product[]> => {
     if (error) throw error;
     return (data ?? []).map((row) => mapProduct(row as Record<string, unknown>));
   } catch (error) {
-    console.error('[v0] Error fetching products:', error);
-    throw error;
+    console.error('Failed to fetch products:', error);
+    return [];
   }
 };
 
@@ -151,6 +153,7 @@ export const addProduct = async (product: Omit<Product, 'id' | 'createdAt' | 'up
         {
           name: product.name,
           price: product.price,
+          quantity_available: product.quantityAvailable,
           description: product.description,
           category: product.category,
           image: product.image,
@@ -186,6 +189,7 @@ export const updateProduct = async (
       .update({
         ...(updates.name !== undefined && { name: updates.name }),
         ...(updates.price !== undefined && { price: updates.price }),
+        ...(updates.quantityAvailable !== undefined && { quantity_available: updates.quantityAvailable }),
         ...(updates.description !== undefined && { description: updates.description }),
         ...(updates.category !== undefined && { category: updates.category }),
         ...(updates.image !== undefined && { image: updates.image }),
@@ -278,7 +282,7 @@ export const addOrder = async (order: Omit<Order, 'id'>): Promise<void> => {
       phone_number: order.phoneNumber,
       status: order.status,
       whatsapp_sent: order.whatsappSent,
-      created_at: new Date().toISOString(),
+      created_at: Date.now(),
     }),
   });
   if (!response.ok) {
@@ -362,15 +366,61 @@ export const updateOrderStatus = async (orderId: string, status: Order['status']
   const supabase = createClient();
   const { data: order, error: orderLookupError } = await supabase
     .from('orders')
-    .select('id, product_id, product_name, total_price, created_at')
+    .select('id, product_id, product_name, total_price, quantity, created_at, status')
     .eq('id', orderId)
     .single();
   if (orderLookupError) throw orderLookupError;
 
+  const inventoryStatuses = new Set<Order['status']>(['confirmed', 'shipped', 'delivered']);
+  const wasInventoryDeducted = inventoryStatuses.has(order.status);
+  const shouldDeductInventory = inventoryStatuses.has(status) && !wasInventoryDeducted;
+  const shouldRestoreInventory = !inventoryStatuses.has(status) && wasInventoryDeducted;
+
+  if (shouldDeductInventory) {
+    const { data: product, error: productLookupError } = await supabase
+      .from('products')
+      .select('quantity_available')
+      .eq('id', order.product_id)
+      .single();
+    if (productLookupError) throw productLookupError;
+    const available = Number(product.quantity_available ?? 0);
+    if (!Number.isInteger(available) || available < Number(order.quantity)) {
+      throw new Error(`Only ${Math.max(0, available)} item${available === 1 ? '' : 's'} available`);
+    }
+    const { data: updatedProduct, error: productError } = await supabase
+      .from('products')
+      .update({ quantity_available: available - Number(order.quantity) })
+      .eq('id', order.product_id)
+      .eq('quantity_available', available)
+      .select('id');
+    if (productError) throw productError;
+    if (!updatedProduct?.length) throw new Error('Stock changed while updating the order. Please try again.');
+  } else if (shouldRestoreInventory) {
+    const { data: product, error: productLookupError } = await supabase
+      .from('products')
+      .select('quantity_available')
+      .eq('id', order.product_id)
+      .single();
+    if (productLookupError) throw productLookupError;
+    const { error: productError } = await supabase
+      .from('products')
+      .update({ quantity_available: Number(product.quantity_available ?? 0) + Number(order.quantity) })
+      .eq('id', order.product_id);
+    if (productError) throw productError;
+  }
+
   if (status === 'delivered') {
-    // Preserve collected revenue, then keep the order/product visible for 24 hours.
+    // Preserve collected revenue. Start the deletion timer only when this delivery exhausts stock.
     const deliveredAt = new Date();
-    const deleteAfter = new Date(deliveredAt.getTime() + 24 * 60 * 60 * 1000);
+    const { data: deliveredProduct, error: deliveredProductError } = await supabase
+      .from('products')
+      .select('quantity_available')
+      .eq('id', order.product_id)
+      .single();
+    if (deliveredProductError) throw deliveredProductError;
+    const deleteAfter = Number(deliveredProduct.quantity_available ?? 0) === 0
+      ? new Date(deliveredAt.getTime() + 24 * 60 * 60 * 1000)
+      : null;
     const { error: revenueError } = await supabase.from('revenue_records').upsert({
       order_id: order.id,
       product_name: order.product_name,
@@ -385,10 +435,16 @@ export const updateOrderStatus = async (orderId: string, status: Order['status']
       .update({
         status,
         delivered_at: deliveredAt.toISOString(),
-        delete_after: deleteAfter.toISOString(),
+        delete_after: deleteAfter?.toISOString() ?? null,
       })
       .eq('id', orderId);
     if (deliveredError) throw deliveredError;
+
+    const { error: productError } = await supabase
+      .from('products')
+      .update({ is_sold: true })
+      .eq('id', order.product_id);
+    if (productError) throw productError;
     return;
   }
 
@@ -398,4 +454,12 @@ export const updateOrderStatus = async (orderId: string, status: Order['status']
     delete_after: null,
   }).eq('id', orderId);
   if (error) throw error;
+
+  if (status !== 'cancelled') {
+    const { error: productError } = await supabase
+      .from('products')
+      .update({ is_sold: false })
+      .eq('id', order.product_id);
+    if (productError) throw productError;
+  }
 };

@@ -101,8 +101,8 @@ export default function ProductGrid({
 
     // Keep sold products in the queue: available products always appear first,
     // while sold products retain their selected sort order at the end.
-    const availableProducts = filtered.filter((product) => !product.isSold);
-    const soldProducts = filtered.filter((product) => product.isSold);
+    const availableProducts = filtered.filter((product) => product.quantityAvailable > 0);
+    const soldProducts = filtered.filter((product) => product.quantityAvailable === 0);
 
     return [...availableProducts, ...soldProducts];
   }, [products, searchQuery, selectedCategory, priceRange, sortBy]);

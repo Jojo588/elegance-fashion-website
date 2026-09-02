@@ -31,7 +31,7 @@ export default function HomePage() {
       {/* Statistics Section */}
       <section className="bg-gradient-to-r from-primary/5 to-accent/5 py-12 md:py-16">
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 items-center justify-items-center gap-6 text-center sm:grid-cols-3 sm:gap-8">
+          <div className="mx-auto grid w-full max-w-5xl grid-cols-1 items-center justify-items-center gap-8 text-center sm:grid-cols-3 sm:gap-10">
             <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
                 Premium

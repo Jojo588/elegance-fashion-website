@@ -35,16 +35,21 @@ export async function POST(request: Request) {
       phone_number: payload.phone_number ? String(payload.phone_number) : null,
       status: 'pending',
       whatsapp_sent: true,
-      created_at: new Date().toISOString(),
+      // The existing order model stores timestamps as milliseconds.
+      created_at: Date.now(),
     }
 
     if (!order.product_id || !order.product_name || !Number.isFinite(order.price) || !Number.isFinite(order.total_price)) {
       return NextResponse.json({ error: 'Missing required order details' }, { status: 400 })
     }
+    if (!Number.isInteger(order.quantity) || order.quantity < 1) {
+      return NextResponse.json({ error: 'Quantity must be a positive whole number' }, { status: 400 })
+    }
 
-    const { data, error } = await supabase.from('orders').insert(order).select('id').single()
+    // Inventory is reserved only after an admin confirms, ships, or delivers the order.
+    const { error } = await supabase.from('orders').insert(order)
     if (error) throw error
-    return NextResponse.json({ ok: true, id: data.id }, { status: 201 })
+    return NextResponse.json({ ok: true }, { status: 201 })
   } catch (error) {
     console.error('[orders] create failed', error)
     const detail = error instanceof Error ? error.message : 'Unknown database error'

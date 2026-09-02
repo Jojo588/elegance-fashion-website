@@ -30,6 +30,18 @@ function PurchasePageContent() {
         if (productId) {
           const data = await getProductById(productId);
           setProduct(data);
+
+          const savedSummary = sessionStorage.getItem("orderSummary");
+          if (savedSummary) {
+            try {
+              const summary = JSON.parse(savedSummary) as { quantity?: number };
+              if (Number.isInteger(summary.quantity) && summary.quantity > 0) {
+                setQuantity(Math.min(summary.quantity, data?.quantityAvailable ?? summary.quantity));
+              }
+            } catch {
+              sessionStorage.removeItem("orderSummary");
+            }
+          }
         }
       } catch (error) {
         console.error("Failed to fetch product:", error);
@@ -84,6 +96,10 @@ function PurchasePageContent() {
     setIsSubmitting(true);
 
     try {
+      const maxQuantity = Math.max(0, product.quantityAvailable);
+      if (maxQuantity < 1 || quantity < 1 || quantity > maxQuantity) {
+        throw new Error(`Only ${maxQuantity} item${maxQuantity === 1 ? '' : 's'} available.`);
+      }
       const totalPrice = product.price * quantity;
 
       const orderDetails: OrderDetails = {
@@ -118,7 +134,8 @@ function PurchasePageContent() {
       openWhatsAppChat(orderDetails);
     } catch (error) {
       console.error("Failed to save order before opening WhatsApp:", error);
-      alert("We could not save your order. Please try again so it appears in the admin order list.");
+      const message = error instanceof Error ? error.message : "Unknown error";
+      alert(`We could not save your order. ${message}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -215,34 +232,15 @@ function PurchasePageContent() {
 
             {/* Form */}
             <div className="space-y-8">
-              {/* Quantity */}
+              {/* Quantity selected on the confirmation page */}
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-foreground">
-                  Quantity <span className="text-primary">*</span>
-                </h3>
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="rounded-lg border-2 border-border bg-background px-4 py-2 text-foreground transition-colors hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  >
-                    -
-                  </button>
-                  <input
-                    type="number"
-                    min="1"
-                    value={quantity}
-                    onChange={(e) =>
-                      setQuantity(Math.max(1, parseInt(e.target.value) || 1))
-                    }
-                    className="w-20 rounded-lg border-2 border-border bg-background px-3 py-2 text-center text-foreground focus:outline-none focus:border-primary"
-                  />
-                  <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="rounded-lg border-2 border-border bg-background px-4 py-2 text-foreground transition-colors hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  >
-                    +
-                  </button>
+                <h3 className="text-xl font-semibold text-foreground">Quantity</h3>
+                <div className="flex min-h-12 items-center rounded-lg border-2 border-border bg-muted px-4 text-lg font-semibold text-foreground">
+                  {quantity}
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  This quantity was selected on the purchase confirmation page and cannot be changed here.
+                </p>
               </div>
 
               {/* Optional Customer Info */}
