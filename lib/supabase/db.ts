@@ -410,9 +410,17 @@ export const updateOrderStatus = async (orderId: string, status: Order['status']
   }
 
   if (status === 'delivered') {
-    // Preserve collected revenue, then keep the order/product visible for 24 hours.
+    // Preserve collected revenue. Start the deletion timer only when this delivery exhausts stock.
     const deliveredAt = new Date();
-    const deleteAfter = new Date(deliveredAt.getTime() + 24 * 60 * 60 * 1000);
+    const { data: deliveredProduct, error: deliveredProductError } = await supabase
+      .from('products')
+      .select('quantity_available')
+      .eq('id', order.product_id)
+      .single();
+    if (deliveredProductError) throw deliveredProductError;
+    const deleteAfter = Number(deliveredProduct.quantity_available ?? 0) === 0
+      ? new Date(deliveredAt.getTime() + 24 * 60 * 60 * 1000)
+      : null;
     const { error: revenueError } = await supabase.from('revenue_records').upsert({
       order_id: order.id,
       product_name: order.product_name,
@@ -427,7 +435,7 @@ export const updateOrderStatus = async (orderId: string, status: Order['status']
       .update({
         status,
         delivered_at: deliveredAt.toISOString(),
-        delete_after: deleteAfter.toISOString(),
+        delete_after: deleteAfter?.toISOString() ?? null,
       })
       .eq('id', orderId);
     if (deliveredError) throw deliveredError;
