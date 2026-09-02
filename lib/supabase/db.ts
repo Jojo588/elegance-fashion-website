@@ -51,8 +51,8 @@ export const getAllProducts = async (): Promise<Product[]> => {
     if (error) throw error;
     return (data ?? []).map((row) => mapProduct(row as Record<string, unknown>));
   } catch (error) {
-    console.error('[v0] Error fetching products:', error);
-    throw error;
+    console.error('Failed to fetch products:', error);
+    return [];
   }
 };
 
@@ -393,6 +393,12 @@ export const updateOrderStatus = async (orderId: string, status: Order['status']
       })
       .eq('id', orderId);
     if (deliveredError) throw deliveredError;
+
+    const { error: productError } = await supabase
+      .from('products')
+      .update({ is_sold: true })
+      .eq('id', order.product_id);
+    if (productError) throw productError;
     return;
   }
 
@@ -402,4 +408,12 @@ export const updateOrderStatus = async (orderId: string, status: Order['status']
     delete_after: null,
   }).eq('id', orderId);
   if (error) throw error;
+
+  if (status !== 'cancelled') {
+    const { error: productError } = await supabase
+      .from('products')
+      .update({ is_sold: false })
+      .eq('id', order.product_id);
+    if (productError) throw productError;
+  }
 };
