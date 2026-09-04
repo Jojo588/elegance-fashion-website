@@ -90,11 +90,11 @@ export default function Footer() {
                 <span className="leading-5">+233 248 993 067</span>
               </a>
               <a
-                href="mailto:hello@niellasfashionhub.com"
+                href="mailto:daniellaakakpo18@gmail.com"
                 className="flex items-start gap-2 hover:text-primary transition-colors"
               >
                 <Mail className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-                <span className="break-all leading-5">hello@niellasfashionhub.com</span>
+                <span className="break-all leading-5">daniellaakakpo18@gmail.com</span>
               </a>
               <p className="pl-6 leading-5">Available on WhatsApp for instant support</p>
             </div>
