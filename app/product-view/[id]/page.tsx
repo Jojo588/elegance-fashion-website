@@ -72,7 +72,8 @@ export default function ProductViewPage() {
 
   const handleDownload = async () => {
     try {
-      const response = await fetch(product.image);
+      const imageToDownload = selectedImage || product.image;
+      const response = await fetch(imageToDownload);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');

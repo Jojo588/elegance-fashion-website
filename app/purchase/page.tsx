@@ -93,6 +93,11 @@ function PurchasePageContent() {
   const handleOrderSubmit = async () => {
     if (!product) return;
 
+    if (!customerName.trim() || !customerLocation.trim()) {
+      alert("Please enter your name and Location/Delivery Area before placing your order.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -246,15 +251,17 @@ function PurchasePageContent() {
               {/* Optional Customer Info */}
               <div className="rounded-lg bg-card p-6 text-card-foreground shadow-elegant">
                 <h3 className="text-lg font-semibold text-foreground">
-                  Additional Information (Optional)
+                  Additional Information (Required)
                 </h3>
 
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Your Name
+                  <label htmlFor="customer-name" className="block text-sm font-medium text-foreground mb-2">
+                    Your Name <span className="text-primary">*</span>
                   </label>
                   <input
+                    id="customer-name"
                     type="text"
+                    required
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="Enter your name"
@@ -263,11 +270,13 @@ function PurchasePageContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Location/Delivery Area
+                  <label htmlFor="customer-location" className="block text-sm font-medium text-foreground mb-2">
+                    Location/Delivery Area <span className="text-primary">*</span>
                   </label>
                   <input
+                    id="customer-location"
                     type="text"
+                    required
                     value={customerLocation}
                     onChange={(e) => setCustomerLocation(e.target.value)}
                     placeholder="Enter your location"
@@ -279,7 +288,7 @@ function PurchasePageContent() {
               {/* Submit Button */}
               <button
                 onClick={handleOrderSubmit}
-                disabled={isSubmitting}
+                disabled={isSubmitting || !customerName.trim() || !customerLocation.trim()}
                 className={`w-full py-4 rounded-lg font-semibold text-lg flex items-center justify-center gap-2 transition-smooth ${
                   isSubmitting
                     ? "bg-muted text-muted-foreground cursor-not-allowed"

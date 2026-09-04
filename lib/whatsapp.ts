@@ -19,8 +19,6 @@ I would like to order the following product from Niella's FashionHub.
 *Product Details:*
 • Product ID: ${order.productId}
 • Dress Name: ${order.productName}
-• Size: ${order.size}
-• Color: ${order.color}
 • Quantity: ${order.quantity}
 • Price: GHS ${order.price}
 
