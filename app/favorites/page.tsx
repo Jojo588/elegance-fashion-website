@@ -10,8 +10,8 @@ import { getAllProducts, type Product } from "@/lib/supabase/db";
 import { useFavorites } from "@/lib/favorites";
 
 export default function FavoritesPage() {
-  const { favoriteIds } = useFavorites();
   const { data: products = [], isLoading } = useSWR<Product[]>("/favorites/products", getAllProducts);
+  const { favoriteIds } = useFavorites(products.map((product) => product.id));
   const favoriteProducts = favoriteIds
     .map((id) => products.find((product) => product.id === id))
     .filter((product): product is Product => Boolean(product));

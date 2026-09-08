@@ -44,7 +44,7 @@ export default function AdminSidebar() {
               return <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)} className={`flex items-center gap-3 rounded-lg px-4 py-3 transition-colors ${active ? 'bg-primary/10 font-medium text-primary' : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'}`}><Icon className="size-5" /><span>{item.label}</span></Link>
             })}
           </nav>
-          <div className="border-t border-border p-4">
+          <div className="border-t border-border p-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] md:pb-4">
             <button type="button" onClick={handleLogout} className="flex w-full items-center gap-3 rounded-lg px-4 py-3 font-medium text-destructive transition-colors hover:bg-destructive/10"><LogOut className="size-5" /><span>Logout</span></button>
           </div>
         </div>

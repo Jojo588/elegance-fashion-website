@@ -16,8 +16,13 @@ export const metadata: Metadata = {
   description: "Shop fashion, beauty, accessories, jewelry, and room decor at Niella's FashionHub.",
   generator: 'v0.app',
   icons: {
-    icon: '/favicon.png',
-    apple: '/favicon.png',
+    icon: [
+      { url: '/favicon.png', type: 'image/png' },
+      { url: '/icon-light-32x32.png', type: 'image/png', media: '(prefers-color-scheme: light)' },
+      { url: '/icon-dark-32x32.png', type: 'image/png', media: '(prefers-color-scheme: dark)' },
+    ],
+    shortcut: '/favicon.png',
+    apple: '/apple-icon.png',
   },
 }
 

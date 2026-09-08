@@ -71,7 +71,7 @@ export default function ProductsManagementPage() {
             setEditingProduct(null);
             setShowForm(!showForm);
           }}
-          className="btn-primary flex items-center gap-2"
+          className="btn-primary flex items-center justify-center gap-2"
         >
           <Plus className="w-5 h-5" />
           Add Product
