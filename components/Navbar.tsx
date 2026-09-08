@@ -4,6 +4,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, X, Heart } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
+import useSWR from 'swr'
+import { getAllProducts, type Product } from '@/lib/supabase/db'
 import { useFavorites } from '@/lib/favorites'
 
 const links = [
@@ -17,7 +19,8 @@ const links = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
-  const { favoriteIds } = useFavorites()
+  const { data: products = [] } = useSWR<Product[]>('/favorites/products', getAllProducts)
+  const { favoriteIds } = useFavorites(products.map((product) => product.id))
   const favoriteLabel = favoriteIds.length > 0 ? ` (${favoriteIds.length})` : ''
 
   return (

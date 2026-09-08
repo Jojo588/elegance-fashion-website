@@ -20,11 +20,16 @@ function writeFavorites(ids: string[]) {
   window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
-export function useFavorites() {
+export function useFavorites(validIds?: string[]) {
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
 
   useEffect(() => {
-    const sync = () => setFavoriteIds(readFavorites());
+    const sync = () => {
+      const storedIds = readFavorites();
+      const nextIds = validIds ? storedIds.filter((id) => validIds.includes(id)) : storedIds;
+      if (nextIds.length !== storedIds.length) writeFavorites(nextIds);
+      setFavoriteIds(nextIds);
+    };
     sync();
     window.addEventListener(CHANGE_EVENT, sync);
     window.addEventListener("storage", sync);
