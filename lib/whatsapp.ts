@@ -9,7 +9,7 @@ export interface OrderDetails {
   customerLocation?: string;
 }
 
-const WHATSAPP_NUMBER = "233248993067";
+const WHATSAPP_NUMBER = "233503005629";
 
 export function generateWhatsAppMessage(order: OrderDetails): string {
   const message = `Hello,

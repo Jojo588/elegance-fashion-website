@@ -81,13 +81,13 @@ export default function Footer() {
             <h4 className="font-semibold mb-4 text-lg">Contact Us</h4>
             <div className="flex flex-col gap-3 text-sm text-background/70">
               <a
-                href="https://wa.me/233248993067"
+                href="https://wa.me/233503005629"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-start gap-2 hover:text-primary transition-colors"
               >
                 <Phone className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-                <span className="leading-5">+233 248 993 067</span>
+                <span className="leading-5">+233 503 005 629</span>
               </a>
               <a
                 href="mailto:daniellaakakpo18@gmail.com"
